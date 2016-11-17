@@ -1,0 +1,179 @@
+\documentclass[a4paper,12pt]{article}
+
+% 1.5 line spacing
+\linespread{1.25}
+
+% Psudeocode w/ per-section numbering
+\usepackage[algosection]{algorithm2e}
+
+% Zebra-style code highlighting
+% \usepackage[T1]{fontenc}
+\usepackage{courier}
+\usepackage{beramono}
+\usepackage{listings}
+\usepackage[rgb,dvipsnames]{xcolor}
+
+\newcommand\realnumberstyle[1]{}
+
+\makeatletter
+\newcommand{\zebra}[3]{%
+    {\realnumberstyle{#3}}%
+    \begingroup
+    \lst@basicstyle
+    \ifodd\value{lstnumber}%
+        \color{#1}%
+    \else
+        \color{#2}%
+    \fi
+        \rlap{\hspace*{\lst@numbersep}%
+        \color@block{\linewidth}{\ht\strutbox}{\dp\strutbox}%
+        }%
+    \endgroup
+}
+\makeatother
+
+\lstset{ 
+    language=C,
+    basicstyle=\footnotesize\ttfamily,
+    numberstyle=\zebra{gray!35}{white!35},
+    numbers=left,
+    frame=single,
+    rulecolor=\color{black},
+    keywordstyle=\color{blue}\ttfamily\bfseries,
+    commentstyle=\color{OliveGreen}\ttfamily,
+    showstringspaces=false,
+}
+
+% Per-section numbering
+\usepackage{chngcntr}
+\counterwithin{figure}{section} % Figures
+\counterwithin{table}{section} % Tables
+% \counterwithin{lstlisting}{section} % Code extracts
+
+% Bibliography
+\usepackage{natbib}
+\bibliographystyle{agsm}
+
+% Cover page image
+\usepackage{graphicx}
+\usepackage{eso-pic}
+\newcommand\BackgroundPic{
+\put(0,0){
+\parbox[b][\paperheight]{\paperwidth}{%
+\vfill
+\centering
+\includegraphics[width=\paperwidth,height=\paperheight,
+keepaspectratio]{pic1.pdf}%
+\vfill
+}}}
+
+\usepackage[utf8]{inputenc}
+
+% Front page
+\begin{document}
+\pagenumbering{gobble} 
+\AddToShipoutPicture*{\BackgroundPic}
+\begin{center}
+\mbox{}\\[5em]
+{\LARGE Numerical solution of Loewner's equation and applications}\\[3em]
+{\large Dolica Akello-Egwel}\\[3em]
+\today\\[6em]
+Dissertation submitted in partial fulfillment 
+of the MSc Scientific Computing, UCL\\[6em]
+Supervised by:\\[1em]
+Prof. Robb McDonald, Department of Mathematics.\\[2em]
+(Supervisor 1, Department.)
+\end{center}
+
+% Declaration
+\pagebreak
+\section*{Declaration}
+
+% Abstract
+\pagebreak
+\section*{Abstract}
+
+% Acknowledgments
+\pagebreak 
+\section*{Acknowledgments}
+
+% Contents
+\pagebreak
+\tableofcontents
+
+% Lists of Figures
+\pagebreak
+\pagenumbering{roman} % Roman numerals numbering
+\addcontentsline{toc}{section}{\protect List of Figures}
+\listoffigures
+
+% List of Tables
+\addcontentsline{toc}{section}{\protect List of Tables}
+\listoftables
+
+% List of Psuedocode
+\addcontentsline{toc}{section}{\protect List of Algorithms}
+\listofalgorithms
+
+% Introduction
+\pagebreak
+\section{Introduction}
+
+% Background
+\section{Background}
+
+% Design
+\pagenumbering{arabic} % Arabic numbering
+\section{Design}
+
+\begin{algorithm}[H]
+ 	\While{not at end of this document}{
+  		read current\;
+  		\eIf{understand}{
+   			go to next section\;
+   			current section becomes this one\;
+   		}{
+   			go back to the beginning of current section\;
+  		}
+ 	}
+\caption{How to write algorithms}
+\label{alg:algorithm1}
+\end{algorithm}
+
+% Implementation
+\section{Implementation}
+
+\begin{lstlisting}
+/**
+* Prints Hello World. $x_3$
+**/
+#include <stdio.h>
+
+int main(void) 
+{
+   printf("Hello World!");
+   return 0;
+}
+\end{lstlisting}
+
+% Testing
+\section{Testing}
+
+% Results
+\section{Results}
+
+% Conclusions
+\section{Conclusions}
+
+% Bibliography
+\pagebreak
+\addcontentsline{toc}{section}{\protect References}
+\nocite{*}
+\bibliography{report}
+
+% Appendix
+\pagebreak
+\addcontentsline{toc}{section}{\protect Appendix}
+\section*{Appendix}
+
+\end{document}

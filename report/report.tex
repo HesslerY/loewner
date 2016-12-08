@@ -1,4 +1,5 @@
 \documentclass[a4paper,12pt]{article}
+\usepackage[a4paper, total={6.5in, 9in}]{geometry}
 
 % 1.5 line spacing
 \linespread{1.25}
@@ -6,12 +7,27 @@
 % Psudeocode w/ per-section numbering
 \usepackage[algosection]{algorithm2e}
 
-% Zebra-style code highlighting
-% \usepackage[T1]{fontenc}
-\usepackage{courier}
-\usepackage{beramono}
-\usepackage{listings}
-\usepackage[rgb,dvipsnames]{xcolor}
+% Syntax highlighting
+\usepackage{minted}
+\usemintedstyle{emacs}
+
+\newminted{fortran}{
+fontfamily=tt,
+numbersep=12pt,
+numbersep=5pt,
+gobble=0,
+frame=single,
+framerule=0.4pt,
+framesep=2mm,
+funcnamehighlighting=true,
+tabsize=4,
+obeytabs=false,
+mathescape=true
+samepage=true, %with this setting you can force the list to appear on the same page
+showspaces=false,
+showtabs =false,
+texcl=false,
+}
 
 \newcommand\realnumberstyle[1]{}
 
@@ -31,18 +47,6 @@
     \endgroup
 }
 \makeatother
-
-\lstset{ 
-    language=C,
-    basicstyle=\footnotesize\ttfamily,
-    numberstyle=\zebra{gray!35}{white!35},
-    numbers=left,
-    frame=single,
-    rulecolor=\color{black},
-    keywordstyle=\color{blue}\ttfamily\bfseries,
-    commentstyle=\color{OliveGreen}\ttfamily,
-    showstringspaces=false,
-}
 
 % Per-section numbering
 \usepackage{chngcntr}
@@ -143,21 +147,31 @@ Prof. Robb McDonald, Department of Mathematics.\\[2em]
 % Implementation
 \section{Implementation}
 
-\begin{lstlisting}
-/**
-* Prints Hello World. 
-**/
-#include <stdio.h>
-
-int main(void) 
-{
-   printf("Hello World!");
-   return 0;
-}
-\end{lstlisting}
+\begin{fortrancode*}{}
+do j = 1, NN
+    
+    g_T2 = (g_T1 / 2) + i * sqrt((2 * delta) - ((g_T1 ** 2) / 4))
+    print *, g_T2
+    g_T1 = g_T2
+        
+end do
+\end{fortrancode*}
 
 % Testing
 \section{Testing}
+
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+	Fixture & Action & Expected Result & Actual Result & Coverage\\
+\hline \hline
+	21 & 22 & 23 & 24 & 25\\
+\hline
+	31 & 32 & 33 & 34 & 35\\
+\hline
+	41 & 42 & 43 & 44 & 45\\
+\hline
+\end{tabular}
+
 
 % Results
 \section{Results}

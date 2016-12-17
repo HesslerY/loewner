@@ -1,4 +1,6 @@
+from scipy.interpolate import spline
 import matplotlib.pyplot as plt
+plt.style.use('ggplot')
 
 results_file = open('result.txt', 'r')
 
@@ -11,6 +13,8 @@ for line in results_file:
 
     x_values.append(values[0])
     y_values.append(values[1])
+
+
 
 plt.plot(x_values,y_values)
 plt.show()

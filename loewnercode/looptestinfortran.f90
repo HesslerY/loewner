@@ -9,6 +9,8 @@ program Loewner
 implicit none
 
     real, parameter :: step = 0.1               !
+    real, parameter :: final_T = 10             !
+    
     integer, parameter :: NN = 500              !
     real :: two_delta  = 0.0                    !
     integer :: j                                ! Loop counter
@@ -17,6 +19,9 @@ implicit none
     complex :: g_T1 = 0.                        ! 
     complex :: g_T2 = 0.                        !
     complex, parameter :: i = complex(0,1)      ! Imaginary unit
+
+    ! Open the output file
+    open(unit = 1, file = "result.txt")
 
     do j = 1,100
 
@@ -31,8 +36,10 @@ implicit none
         
         end do
 
-        print *, g_T2
+        write (1,*) g_T2
 
     end do
+
+    close(1)
 
 end program Loewner

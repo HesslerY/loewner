@@ -5,6 +5,12 @@
 ! Author: Dolica Akello-Egwel                                          !
 !                                                                      !
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+function square(i) result(j)
+    complex :: i ! input
+    complex :: j ! output
+    j = i ** 2
+end function square
+ 
 program Loewner
 implicit none
     
@@ -18,7 +24,8 @@ implicit none
     complex :: g_T2                             !
     complex, parameter :: i = complex(0,1)      ! Imaginary unit
     real, parameter :: pi = 3.1415927
-    real :: driving_function 
+    real :: driv_func
+    complex :: square
 
     ! Open the output file
     open(unit = 1, file = "result.txt")
@@ -27,10 +34,11 @@ implicit none
 
         T = T + step
         two_delta = 2 * (T / NN)
+        driv_func = 0
         
         do k = 1, NN
     
-            g_T2 = (g_T1 / 2) + i * sqrt(two_delta - ((g_T1 ** 2) / 4))
+            g_T2 = ((g_T1 + driv_func) / 2) + i * sqrt(two_delta + (g_T1 * driv_func) - (square(g_T1 - driv_func) / 4))
             g_T1 = g_T2
         
         end do

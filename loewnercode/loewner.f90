@@ -34,6 +34,7 @@ implicit none
         end do
 
         write (1,*) g_T2
+        print *, g_T2
 
     end do
 

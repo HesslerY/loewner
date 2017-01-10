@@ -1,7 +1,7 @@
 from scipy.interpolate import spline
 import matplotlib.pyplot as plt
 from numpy import linspace, nan_to_num
-plt.style.use('ggplot')
+# plt.style.use('ggplot')
 
 results_file = open('result.txt', 'r')
 

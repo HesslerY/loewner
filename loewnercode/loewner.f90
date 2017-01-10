@@ -1,8 +1,9 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !                                                                      !
 ! Program: Loewner Equation                                            !
-! Purpose:                                                             !
-! Author: Dolica Akello-Egwel                                          !
+! Purpose: Obtain exact solutions for Loewner's equation with a        !
+!          variety of driving functions.                               !
+! Author:  Dolica Akello-Egwel                                         !
 !                                                                      !
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -12,9 +13,9 @@ function square(i) result(j)
     complex(8) :: j ! Return value
     
     j = i ** 2
-    
+
 end function square
- 
+
 program Loewner
 implicit none
     
@@ -40,7 +41,7 @@ implicit none
 
         T = T + step
         two_delta = 2 * (T / NN)
-        drive_func = T * cos(T * pi)
+        drive_func = sin(T)
         
         do k = 1, NN
     

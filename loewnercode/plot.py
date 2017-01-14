@@ -1,7 +1,22 @@
 from scipy.interpolate import spline
 import matplotlib.pyplot as plt
 from numpy import linspace, nan_to_num
-# plt.style.use('ggplot')
+import sys
+
+plt.style.use('ggplot')
+
+all_labels = ["$\\xi (T) = 0$",
+              "$\\xi (T) = T$",
+              "$\\xi (T) = \cos(T)$",
+              "$\\xi (T) = \cos(\pi T)$",
+              "$\\xi (T) = T * \cos(T)$",
+              "$\\xi (T) = T * \cos(\pi T)$",
+              "$\\xi (T) = \sin(T)$",
+              "$\\xi (T) = \sin(\pi T)$",
+              "$\\xi (T) = T * \sin(T)$",
+              "$\\xi (T) = T * \sin(\pi T)$"]
+              
+label_index = int(sys.argv[1])
 
 results_file = open('result.txt', 'r')
 
@@ -27,6 +42,8 @@ if smooth_curve:
 
     plt.plot(xnew,y_smooth)
     plt.show()
+    
+plt.title(all_labels[label_index],fontsize=18, color='black', y=1.03)
 
 plt.plot(x_values,y_values)
 plt.show()

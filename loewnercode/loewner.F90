@@ -22,7 +22,7 @@ function driving_function(T) result(drive)
     real :: T ! Argument
     real :: drive ! Return value
     
-    drive = T * cos(T)
+    drive = T * sin(T * pi)
 
 end function driving_function
 

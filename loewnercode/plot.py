@@ -9,12 +9,23 @@ all_labels = ["$\\xi (T) = 0$",
               "$\\xi (T) = T$",
               "$\\xi (T) = \cos(T)$",
               "$\\xi (T) = \cos(\pi T)$",
-              "$\\xi (T) = T * \cos(T)$",
-              "$\\xi (T) = T * \cos(\pi T)$",
+              "$\\xi (T) = T \ \cos(T)$",
+              "$\\xi (T) = T \ \cos(\pi T)$",
               "$\\xi (T) = \sin(T)$",
               "$\\xi (T) = \sin(\pi T)$",
-              "$\\xi (T) = T * \sin(T)$",
-              "$\\xi (T) = T * \sin(\pi T)$"]
+              "$\\xi (T) = T \ \sin(T)$",
+              "$\\xi (T) = T \ \sin(\pi T)$"]
+              
+all_filenames = ["zero",
+                 "T",
+                 "cos(T)",
+                 "cos(pi * T)",
+                 "T * cos(T)",
+                 "T * cos(pi * T)",
+                 "sin(T)",
+                 "sin(pi * T)",
+                 "T * sin(T)",
+                 "T * sin(pi * T)"]
               
 label_index = int(sys.argv[1])
 
@@ -46,9 +57,11 @@ if smooth_curve:
 plt.title(all_labels[label_index],fontsize=18, color='black', y=1.03)
 
 plt.plot(x_values,y_values)
-plt.show()
+plt.savefig("output/" + all_filenames[label_index] + ".png")
+# plt.show()
 
 plt.scatter(x_values,y_values)
-plt.show()
+plt.savefig("output/" + all_filenames[label_index] + " [scatter] .png")
+# plt.show()
 
 

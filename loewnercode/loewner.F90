@@ -16,13 +16,13 @@ function square(i) result(j)
 
 end function square
 
-function driving_function(a) result(r)
+function driving_function(T) result(drive)
 
     real, parameter :: pi = 3.1415927
-    real :: a ! Argument
-    real :: r ! Return value
+    real :: T ! Argument
+    real :: drive ! Return value
     
-    r = cos(a * pi)
+    drive = T * cos(T)
 
 end function driving_function
 
@@ -52,7 +52,7 @@ implicit none
         T = step * j
         delta = T / NN
         two_delta = 2 * delta
-        drive_func = driving_function(T - delta)
+        drive_func = driving_function(T)
 
         do k = 1, NN
         

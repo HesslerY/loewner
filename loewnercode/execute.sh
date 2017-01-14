@@ -4,13 +4,10 @@
 drive_line=25
 
 # Partial string for drive_func assignment code
-drive_code="    r ="
+drive_code="    drive ="
 
 # Array of possible driving functions
-drive_options=("0" "a" "cos(a)" "cos(a * pi)" "a * cos(a)" "a * cos(a * pi)" "sin(a)" "sin(a * pi)" "a * sin(a)" "a * sin(a * pi)")
-
-# Subtract delta
-
+drive_options=("0" "T" "cos(T)" "cos(T * pi)" "T * cos(T)" "T * cos(T * pi)" "sin(T)" "sin(T * pi)" "T * sin(T)" "T * sin(T * pi)" "ALL")
 
 # Ask for drive function selection
 for (( i=0; i<${#drive_options[*]}; i++ )) do
@@ -23,6 +20,8 @@ echo "Select a driving function:"
 
 # Store user input as variable
 read drive_selection
+
+
 
 # Print to verify read worked correctly
 # echo "${drive_options[$drive_selection]}"
@@ -38,4 +37,4 @@ gfortran loewner.F90 -o loewner.out
 ./loewner.out
 
 # Plot results with Python
-python plot.py
+python plot.py "$drive_selection"

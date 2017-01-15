@@ -14,7 +14,13 @@ all_labels = ["$\\xi (T) = 0$",
               "$\\xi (T) = \sin(T)$",
               "$\\xi (T) = \sin(\pi T)$",
               "$\\xi (T) = T \ \sin(T)$",
-              "$\\xi (T) = T \ \sin(\pi T)$"]
+              "$\\xi (T) = T \ \sin(\pi T)$",
+              "$\\xi (T) = 2 \ \sqrt{K \ (1 - T)}$",
+              "$\\xi (T) = 2 \ \sqrt{1 \ (1 - T)}$",
+              "$\\xi (T) = 2 \ \sqrt{3.5 \ (1 - T)}$",
+              "$\\xi (T) = 2 \ \sqrt{4 \ (1 - T)}$",
+              "$\\xi (T) = 2 \ \sqrt{6 \ (1 - T)}$",
+              "$\\xi (T) = 2 \ \sqrt{8 \ (1 - T)}$"]
               
 all_filenames = ["zero",
                  "T",
@@ -25,7 +31,13 @@ all_filenames = ["zero",
                  "sin(T)",
                  "sin(pi * T)",
                  "T * sin(T)",
-                 "T * sin(pi * T)"]
+                 "T * sin(pi * T)",
+                 "2 * sqrt(K * (1 - T))",
+                 "2 * sqrt(1 * (1 - T))",
+                 "2 * sqrt(3.5 * (1 - T))",
+                 "2 * sqrt(4 * (1 - T))",
+                 "2 * sqrt(6 * (1 - T))",
+                 "2 * sqrt(8 * (1 - T))"]
               
 label_index = int(sys.argv[1])
 
@@ -61,7 +73,7 @@ plt.savefig("output/" + all_filenames[label_index] + ".png")
 # plt.show()
 
 plt.scatter(x_values,y_values)
-plt.savefig("output/" + all_filenames[label_index] + " [scatter] .png")
+plt.savefig("output/" + all_filenames[label_index] + " [scatter].png")
 # plt.show()
 
 

@@ -17,7 +17,6 @@ drive_options=("0"
                "sin(T * pi)"
                "T * sin(T)"
                "T * sin(T * pi)"
-               "2 * sqrt(K * (1 - T))"
                "2 * sqrt(1 * (1 - T))"
                "2 * sqrt(3.5 * (1 - T))"
                "2 * sqrt(4 * (1 - T))"
@@ -27,6 +26,12 @@ drive_options=("0"
                
 # Copy file just in case
 cp loewner.F90 loewner_backup.F90
+
+if [ ! -d "output" ]; then
+    mkdir "output"
+fi
+
+exit
 
 function read_input()
 {   
@@ -50,7 +55,7 @@ function all_drive()
     # Call run_loewner for all but last element in driving function array
     for (( i=0; i<$((${#drive_options[*]} - 1)); i++ )) do
 
-	    run_loewner "${drive_options[$i]}" "$i"
+        run_loewner "${drive_options[$i]}" "$i"
 	
     done
 }

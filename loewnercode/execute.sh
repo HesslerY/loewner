@@ -27,11 +27,13 @@ drive_options=("0"
 # Copy file just in case
 cp loewner.F90 loewner_backup.F90
 
+# Make an output directory if it does not already exist
+# Delete all items in directory if it does exist
 if [ ! -d "output" ]; then
     mkdir "output"
+elif [ "$(ls output)" != "" ]; then
+    rm -r output/*
 fi
-
-exit
 
 function read_input()
 {   
@@ -63,16 +65,16 @@ function all_drive()
 function run_loewner()
 {
     # Change file in light of user selection
-    sed -i "$drive_line s/.*/$drive_code $1/" loewner.F90
+    sed -i "$drive_line s/.*/$drive_code $1/" loewner.F03
     
     # Compile and execute Loewner code
-    gfortran loewner.F90 -o loewner.out
+    gfortran loewner.F03 -o loewner.out
     ./loewner.out
     
     # Plot results with Python
     python plot.py "$2"
     
-    echo "Completed execution for $1"
+    # echo "Completed execution for $1"
 }
 
 # Ask for user input
@@ -82,9 +84,11 @@ read_input
 if [ "${drive_options[$drive_selection]}" == "ALL" ]; then
 
     all_drive
+    nemo "output"
     exit
 fi
 
 # Run for driving function selection
 run_loewner "${drive_options[$drive_selection]}" "$drive_selection"
+nemo "output"
 

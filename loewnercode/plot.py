@@ -1,6 +1,7 @@
-from scipy.interpolate import spline
+# from scipy.interpolate import spline
 import matplotlib.pyplot as plt
-from numpy import linspace, nan_to_num
+import numpy as np
+import cmath
 import sys
 
 plt.style.use('ggplot')
@@ -41,37 +42,39 @@ label_index = int(sys.argv[1])
 
 results_file = open('result.txt', 'r')
 
-x_values = []
-y_values = []
+# x_values = []
+# y_values = []
+
+g_zero_array = np.empty((0))
 
 smooth_curve = False
 
 for line in results_file:
 
     values = line.split()
-
-    x_values.append(float(values[0]))
-    y_values.append(float(values[1]))
-
-# x_values = nan_to_num(x_values)
-# y_values = nan_to_num(y_values)
-
-# Don't smooth curve in case of a straight line
-if smooth_curve:
-    xnew = linspace(min(x_values),max(x_values),50)
-    y_smooth = spline(x_values,y_values,xnew)
-
-    plt.plot(xnew,y_smooth)
-    plt.show()
     
-plt.title(all_labels[label_index],fontsize=18, color='black', y=1.03)
+    g_zero = complex(float(values[0]),float(values[1]))
+    g_zero_array = np.append(g_zero_array,g_zero)
+    
+partial_filename = "output/" + all_filenames[label_index]
+    
+plt.title(all_labels[label_index],fontsize = 18, color='black', y = 1.03)
+plt.plot(g_zero_array.real,g_zero_array.imag)
+plt.savefig(partial_filename + ".png")
+plt.cla()
 
-plt.plot(x_values,y_values)
-plt.savefig("output/" + all_filenames[label_index] + ".png")
-# plt.show()
+plt.title(all_labels[label_index],fontsize = 18, color='black', y = 1.03)
+plt.scatter(g_zero_array.real,g_zero_array.imag)
+plt.savefig(partial_filename + " [scatter].png")
+plt.cla()
 
-plt.scatter(x_values,y_values)
-plt.savefig("output/" + all_filenames[label_index] + " [scatter].png")
-# plt.show()
+plt.title(all_labels[label_index],fontsize = 18, color='black', y = 1.03)
+for complex_num in g_zero_array:
+    
+    plt.polar([0,cmath.polar(complex_num)[1]],[0,cmath.polar(complex_num)[0]],marker='o')
+
+plt.savefig(partial_filename + " [polar].png")
+
+print("Saved plots for " + partial_filename[7:])
 
 

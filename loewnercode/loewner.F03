@@ -16,13 +16,13 @@ function square(i) result(j)
 
 end function square
 
-function driving_function(T) result(drive)
+function driving_function(t) result(drive)
 
     real, parameter :: pi = 3.1415927
-    real :: T ! Argument
+    real :: t ! Argument
     real :: drive ! Return value
     
-    drive = 2 * sqrt(8 * (1 - T))
+    drive = t * cos(t * pi)
 
 end function driving_function
 
@@ -71,7 +71,7 @@ implicit none
         write (1,*) real(g_t2), imag(g_t2)
         j = j + 1
 
-    end do
+    end do ! This loop is off by one
 
     close(1)
 

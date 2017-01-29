@@ -30,21 +30,26 @@ program Loewner
 implicit none
     
     integer :: max_t
-    get_command_argument(1,max_t)
-    integer, parameter :: NN = 500              !
+    character (len = 32) :: arg
+    integer :: NN
     real, parameter :: step = 0.1               !
     real :: two_delta                           !
     integer :: j = 0                            ! Loop counter
     integer :: k = 0                            !
     real :: t = 0                               !
     complex(8) :: g_t1                          ! 
-    complex(8) :: g_t2                          !
+    complex(8) :: g_t2 
     complex(8) :: term
     complex, parameter :: i = complex(0,1)      ! Imaginary unit
     real :: drive_func                          ! Driving function
     complex(8) :: square                        ! Compute x^2
     real :: driving_function
     real :: delta
+    
+    call get_command_argument(1, arg)
+    read(arg,*) max_t
+    
+    NN = nint(max_t / step)
     
     ! Open the output file
     open(unit = 1, file = "result.txt")

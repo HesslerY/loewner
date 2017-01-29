@@ -49,6 +49,12 @@ function read_input()
     
     # Store user input as variable
     read drive_selection
+    
+    # Ask for drive function selection
+    echo "Enter the max time:"
+    
+    # Store user input as variable
+    read max_time
 }
 
 
@@ -57,7 +63,7 @@ function all_drive()
     # Call run_loewner for all but last element in driving function array
     for (( i=0; i<$((${#drive_options[*]} - 1)); i++ )) do
 
-        run_loewner "${drive_options[$i]}" "$i"
+        run_loewner "${drive_options[$i]}" "$max_time" "$i"
 	
     done
 }
@@ -69,10 +75,10 @@ function run_loewner()
     
     # Compile and execute Loewner code
     gfortran loewner.F03 -o loewner.out
-    ./loewner.out
+    ./loewner.out "$2"
     
     # Plot results with Python
-    python plot.py "$2"
+    python plot.py "$3"
     
     # echo "Completed execution for $1"
 }
@@ -89,6 +95,6 @@ if [ "${drive_options[$drive_selection]}" == "ALL" ]; then
 fi
 
 # Run for driving function selection
-run_loewner "${drive_options[$drive_selection]}" "$drive_selection"
+run_loewner "${drive_options[$drive_selection]}" "$max_time" "$drive_selection"
 nemo "output"
 

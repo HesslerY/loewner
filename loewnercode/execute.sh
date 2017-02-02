@@ -7,7 +7,7 @@ drive_line=25
 drive_code="    drive ="
 
 # Array of possible driving functions
-drive_options=("0"
+drive_options=("0.0"
                "t"
                "cos(t)"
                "cos(t * pi)"
@@ -25,7 +25,7 @@ drive_options=("0"
                "ALL")
                
 # Copy file just in case
-cp loewner.F90 loewner_backup.F90
+cp loewner.F03 loewner_backup.F03
 
 # Make an output directory if it does not already exist
 # Delete all items in directory if it does exist
@@ -79,6 +79,8 @@ function run_loewner()
     
     # Plot results with Python
     python plot.py "$3"
+    
+    rm -r result.txt
     
     # echo "Completed execution for $1"
 }

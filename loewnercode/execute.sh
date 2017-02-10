@@ -23,7 +23,7 @@ drive_options=("0.0"
                "2 * sqrt(6 * (1 - t))"
                "2 * sqrt(8 * (1 - t))"
                "ALL")
-               
+
 # Copy file just in case
 cp loewner.F03 loewner_backup.F03
 
@@ -36,23 +36,23 @@ elif [ "$(ls output)" != "" ]; then
 fi
 
 function read_input()
-{   
+{
     # Ask for drive function selection
     echo "Select a driving function:"
-    
+
     # Display all driving function options
     for (( i=0; i<${#drive_options[*]}; i++ )) do
 
 	    echo "[$i] ${drive_options[$i]}"
-	
+
     done
-    
+
     # Store user input as variable
     read drive_selection
-    
+
     # Ask for drive function selection
     echo "Enter the max time:"
-    
+
     # Store user input as variable
     read max_time
 }
@@ -64,7 +64,7 @@ function all_drive()
     for (( i=0; i<$((${#drive_options[*]} - 1)); i++ )) do
 
         run_loewner "${drive_options[$i]}" "$max_time" "$i"
-	
+
     done
 }
 
@@ -72,17 +72,23 @@ function run_loewner()
 {
     # Change file in light of user selection
     sed -i "$drive_line s/.*/$drive_code $1/" loewner.F03
-    
+
     # Compile and execute Loewner code
     gfortran loewner.F03 -o loewner.out
-    ./loewner.out "$2"
-    
+    ./loewner.out "$2" "500"
+
     # Plot results with Python
     python plot.py "$3"
-    
+
+    # Check length of output file
+    wc -l "result.txt"
+
+    # Print the end of the output file
+    tail "result.txt"
+
     rm -r result.txt
-    
-    # echo "Completed execution for $1"
+
+    echo "Completed execution for $1"
 }
 
 # Ask for user input
@@ -92,7 +98,7 @@ read_input
 if [ "${drive_options[$drive_selection]}" == "ALL" ]; then
 
     all_drive
-    nemo "output"
+    # nemo "output"
     exit
 fi
 

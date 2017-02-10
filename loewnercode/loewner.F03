@@ -11,68 +11,97 @@ function square(i) result(j)
 
     complex(8) :: i ! Argument
     complex(8) :: j ! Return value
-    
+
     j = i ** 2
 
 end function square
 
 function driving_function(t) result(drive)
 
-    real, parameter :: pi = 3.1415927
-    real :: t ! Argument
-    real :: drive ! Return value
-    
-    drive = 2 * sqrt(8 * (1 - t))
+    real(8), parameter :: pi = 3.1415927
+    real(8) :: t ! Argument
+    complex(8) :: drive ! Return value
+
+    drive = sin(t * pi)
 
 end function driving_function
 
 program Loewner
 implicit none
-    
-    integer :: max_t
+
+    ! Variables
     character (len = 32) :: arg
-    integer :: NN
-    real, parameter :: step = 0.1               !
-    real :: two_delta                           !
-    integer :: j = 0                            ! Loop counter
-    integer :: k = 0                            !
-    real :: t = 0                               !
-    complex(8) :: g_t1 = complex(0,0)                          ! 
-    complex(8) :: g_t2 = complex(0,0)
-    complex(8) :: term
-    complex, parameter :: i = complex(0,1)      ! Imaginary unit
-    real :: drive_func                          ! Driving function
-    complex(8) :: square                        ! Compute x^2
-    real :: driving_function
-    
+
+    integer :: NN = 0
+    integer :: j = 0
+    integer :: k = 0
+    integer :: MM = 1000
+
+    real(8) :: delta_t
+    real(8) :: two_delta_t
+    real(8) :: t = 0
+    real(8) :: init_g_arg = 0
+    real(8) :: n_intervals = 0
+    real(8) :: max_t = 0
+
+    !! Test !!
+    real(8) :: step = 0.1
+
+    complex(8) :: g_t1 = 0
+    complex(8) :: g_t2 = 0
+    complex(8) :: term = 0
+    complex(8) :: drive_value = 0
+
+    complex, parameter :: i = complex(0,1)
+
+    ! Functions
+    complex(8) :: square
+    complex(8) :: driving_function
+
+    ! Find the value for the maximum time
     call get_command_argument(1, arg)
     read(arg,*) max_t
-    
-    NN = nint(max_t / step)
-    
-    g_t1 = driving_function(0.0)
-    two_delta = 2.0 * step
-    
+
+    ! Find the value for the number of intervals
+    call get_command_argument(2, arg)
+    read(arg,*) n_intervals
+
+    ! Determine delta_t and convert the number of intervals to an integer
+    ! delta_t = ( max_t / n_intervals )
+    ! NN = nint( n_intervals )
+
+    !! Test !!
+    NN = nint( 1 / step )
+    delta_t = ( max_t / MM )
+
+    ! Obtain the initial value for g
+    g_t1 = driving_function(init_g_arg)
+    two_delta_t = 2.0 * delta_t
+
     ! Open the output file
     open(unit = 1, file = "result.txt")
 
-    do while (t < max_t)
+    ! Compute g_0 NN times
+    do j = 1, MM
 
-        t = step * j
-        drive_func = driving_function(t - step)
+        ! Increment the time by delta_t at every interation
+        t = delta_t * j
+
+        ! Compute the driving value for the updated time
+        drive_value = driving_function(t - delta_t)
 
         do k = 1, NN
-        
-            term = ((g_t1 + drive_func) / 2.0)
-            g_t2 = term + i * cdsqrt(two_delta + (g_t1 * drive_func) - square(term))
+
+            term = ((g_t1 + drive_value) / 2)
+            g_t2 = term + i * cdsqrt((2 * step) + (g_t1 * drive_value) - square(term))
             g_t1 = g_t2
 
         end do
 
+        ! Write the value of g_0 to the file
         write (1,*) real(g_t2), imag(g_t2)
-        j = j + 1
 
-    end do ! This loop is off by one
+    end do
 
     close(1)
 

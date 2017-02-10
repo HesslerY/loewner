@@ -12,26 +12,6 @@ function write_latex_file()
     echo "$1" >> "$latex_file"
 }
 
-function begin_image()
-{
-    write_latex_file "\begin{figure}[t]"
-    write_latex_file "\centering"
-}
-function end_image()
-{
-    write_latex_file "\end{figure}"
-}
-function first_picture()
-{
-    begin_image
-    write_latex_file "$1"
-}
-function second_picture()
-{
-    write_latex_file "$1"
-    end_image
-}
-
 # Write the preamble to the latex file
 write_latex_file "\documentclass[a4paper, 12pt]{article}"
 write_latex_file "\usepackage[letterpaper, portrait, margin=0.8in]{geometry}"
@@ -43,13 +23,16 @@ write_latex_file "\begin{document}"
 for f in $output_folder; do
 
     if [[ $f == *"[scatter]"* ]]; then
-    
-        second_picture "\includegraphics[width=0.8\textwidth]{${f:9}}"
-        
+
+        write_latex_file "\includegraphics[width=0.9\textwidth]{${f:9}}"
+        write_latex_file "\end{figure}"
+
     else
-        
-        first_picture "\includegraphics[width=0.8\textwidth]{${f:9}}"
-        
+
+        write_latex_file "\begin{figure}[t]"
+        write_latex_file "\centering"
+        write_latex_file "\includegraphics[width=0.9\textwidth]{${f:9}}"
+
     fi
 
 done
@@ -58,4 +41,5 @@ done
 write_latex_file "\end{document}"
 
 # Compile the latex file
-# pdflatex plots.tex
+pdflatex plots.tex
+

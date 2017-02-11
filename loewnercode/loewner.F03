@@ -12,7 +12,7 @@ function square(i) result(j)
     complex(8) :: i ! Argument
     complex(8) :: j ! Return value
 
-    j = i ** 2
+    j = i * i
 
 end function square
 
@@ -22,7 +22,7 @@ function driving_function(t) result(drive)
     real(8) :: t ! Argument
     complex(8) :: drive ! Return value
 
-    drive = sin(t * pi)
+    drive = t * sin(t * pi)
 
 end function driving_function
 
@@ -33,9 +33,8 @@ implicit none
     character (len = 32) :: arg
 
     integer :: NN = 0
-    integer :: j = 0
+    integer :: j = 1
     integer :: k = 0
-    integer :: MM = 1000
 
     real(8) :: delta_t
     real(8) :: two_delta_t
@@ -45,7 +44,7 @@ implicit none
     real(8) :: max_t = 0
 
     !! Test !!
-    real(8) :: step = 0.1
+    real(8) :: step = 0.01
 
     complex(8) :: g_t1 = 0
     complex(8) :: g_t2 = 0
@@ -67,37 +66,38 @@ implicit none
     read(arg,*) n_intervals
 
     ! Determine delta_t and convert the number of intervals to an integer
-    ! delta_t = ( max_t / n_intervals )
-    ! NN = nint( n_intervals )
+    delta_t = ( max_t / n_intervals )
+    NN = nint( n_intervals )
 
-    !! Test !!
-    NN = nint( 1 / step )
-    delta_t = ( max_t / MM )
+    print *, "delta_t:", delta_t
+    print *, "NN:", NN
 
     ! Obtain the initial value for g
     g_t1 = driving_function(init_g_arg)
     two_delta_t = 2.0 * delta_t
 
+    t = delta_t
+
     ! Open the output file
     open(unit = 1, file = "result.txt")
 
     ! Compute g_0 NN times
-    do j = 1, MM
-
-        ! Increment the time by delta_t at every interation
-        t = delta_t * j
+    do while (t < max_t)
 
         ! Compute the driving value for the updated time
         drive_value = driving_function(t - delta_t)
+        ! g_t1 = driving_function(t)
 
         do k = 1, NN
 
             term = ((g_t1 + drive_value) / 2)
-            g_t2 = term + i * cdsqrt((2 * step) + (g_t1 * drive_value) - square(term))
+            g_t2 = term + cdsqrt(square(term) - two_delta_t - (g_t1 * drive_value))
             g_t1 = g_t2
 
         end do
 
+        j = j + 1
+        t = delta_t * j
         ! Write the value of g_0 to the file
         write (1,*) real(g_t2), imag(g_t2)
 

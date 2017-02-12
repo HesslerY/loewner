@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Line where drive_func assignment takes place in loewner.f90 file
+# Line where drive_func assignment takes place in loewner.F03 file
 drive_line=25
 
 # Partial string for drive_func assignment code
@@ -35,27 +35,31 @@ elif [ "$(ls output)" != "" ]; then
     rm -r output/*
 fi
 
-function read_input()
-{
-    # Ask for drive function selection
-    echo "Select a driving function:"
 
-    # Display all driving function options
-    for (( i=0; i<${#drive_options[*]}; i++ )) do
+# Ask for drive function selection
+echo "Select a driving function:"
 
-	    echo "[$i] ${drive_options[$i]}"
+# Display all driving function options
+for (( i=0; i<${#drive_options[*]}; i++ )) do
 
-    done
+    echo "[$i] ${drive_options[$i]}"
 
-    # Store user input as variable
-    read drive_selection
+done
 
-    # Ask for drive function selection
-    echo "Enter the max time:"
+# Store user input as variable
+read drive_selection
 
-    # Store user input as variable
-    read max_time
-}
+# Ask for drive function selection
+echo "Enter the max time:"
+
+# Store user input as variable
+read max_time
+
+# Ask for the number of intervals
+echo "Enter the number of intervals:"
+
+# Store the user input as a variable
+read n_intervals
 
 
 function all_drive()
@@ -63,7 +67,8 @@ function all_drive()
     # Call run_loewner for all but last element in driving function array
     for (( i=0; i<$((${#drive_options[*]} - 1)); i++ )) do
 
-        run_loewner "${drive_options[$i]}" "$max_time" "$i"
+        drive_selection=$i
+        run_loewner
 
     done
 }
@@ -71,38 +76,34 @@ function all_drive()
 function run_loewner()
 {
     # Change file in light of user selection
-    sed -i "$drive_line s/.*/$drive_code $1/" loewner.F03
+    sed -i "$drive_line s/.*/$drive_code ${drive_options[$drive_selection]}/" loewner.F03
 
     # Compile and execute Loewner code
     gfortran loewner.F03 -o loewner.out
-    ./loewner.out "$2" "500"
+    ./loewner.out "$max_time" "$n_intervals"
 
     # Plot results with Python
-    python plot.py "$3"
-
-    # Check length of output file
-    wc -l "result.txt"
-
-    # Print the end of the output file
-    tail "result.txt"
+    python plot.py "$drive_selection"
 
     rm -r result.txt
 
-    echo "Completed execution for $1"
-}
+    echo "Completed execution for ${drive_options[$drive_selection]}"
 
-# Ask for user input
-read_input
+}
 
 # Run for all driving functions in case of ALL
 if [ "${drive_options[$drive_selection]}" == "ALL" ]; then
 
     all_drive
-    # nemo "output"
     exit
 fi
 
 # Run for driving function selection
-run_loewner "${drive_options[$drive_selection]}" "$max_time" "$drive_selection"
-nemo "output"
+run_loewner
 
+echo "Enter a comment:"
+read comment
+
+echo "Max Time: $max_time" >> Parameters.txt
+echo "Intervals: $n_intervals" >> Parameters.txt
+echo "Comment: $comment" >> Parameters.txt

@@ -12,17 +12,17 @@ function square(i) result(j)
     complex(8) :: i ! Argument
     complex(8) :: j ! Return value
 
-    j = i * i
+    j = i ** 2
 
 end function square
 
 function driving_function(t) result(drive)
 
-    real(8), parameter :: pi = 3.1415927
+    real(8), parameter :: pi = 4. * atan(1.)
     real(8) :: t ! Argument
-    complex(8) :: drive ! Return value
+    real(8) :: drive ! Return value
 
-    drive = t * sin(t * pi)
+    drive = 2 * sqrt(8 * (1 - t))
 
 end function driving_function
 
@@ -36,68 +36,69 @@ implicit none
     integer :: j = 1
     integer :: k = 0
 
+    ! Email
+    integer :: tau_max = 5
+    integer :: M = 100
+
     real(8) :: delta_t
     real(8) :: two_delta_t
     real(8) :: t = 0
     real(8) :: init_g_arg = 0
-    real(8) :: n_intervals = 0
     real(8) :: max_t = 0
+    real(8) :: drive_value = 0
 
-    !! Test !!
-    real(8) :: step = 0.01
+    real(8) :: tau = 0
 
     complex(8) :: g_t1 = 0
     complex(8) :: g_t2 = 0
-    complex(8) :: term = 0
-    complex(8) :: drive_value = 0
+    complex(8) :: b_term = 0
+    complex(8) :: c_term = 0
 
     complex, parameter :: i = complex(0,1)
 
     ! Functions
     complex(8) :: square
-    complex(8) :: driving_function
+    real(8) :: driving_function
 
     ! Find the value for the maximum time
     call get_command_argument(1, arg)
-    read(arg,*) max_t
+    read(arg,*) M
 
     ! Find the value for the number of intervals
     call get_command_argument(2, arg)
-    read(arg,*) n_intervals
+    read(arg,*) NN
 
-    ! Determine delta_t and convert the number of intervals to an integer
-    delta_t = ( max_t / n_intervals )
-    NN = nint( n_intervals )
-
-    print *, "delta_t:", delta_t
-    print *, "NN:", NN
-
-    ! Obtain the initial value for g
-    g_t1 = driving_function(init_g_arg)
+    ! Determine delta_t
+    delta_t = ( max_t / NN )
     two_delta_t = 2.0 * delta_t
-
-    t = delta_t
 
     ! Open the output file
     open(unit = 1, file = "result.txt")
 
+    g_t1 = driving_function(init_g_arg)
+    
+    delta_t = 0.001
+    two_delta_t = delta_t * 2
+
     ! Compute g_0 NN times
-    do while (t < max_t)
+    do j = 1, M
 
-        ! Compute the driving value for the updated time
-        drive_value = driving_function(t - delta_t)
-        ! g_t1 = driving_function(t)
+        max_t = j * 0.1
+        NN = nint(max_t / delta_t)
+        g_t1 = complex(driving_function(max_t),0)
 
-        do k = 1, NN
+        do k = 0, NN
 
-            term = ((g_t1 + drive_value) / 2)
-            g_t2 = term + cdsqrt(square(term) - two_delta_t - (g_t1 * drive_value))
+            t = max_t - (k * delta_t)
+            drive_value = driving_function(t - delta_t)
+            
+            b_term = (drive_value + g_t1) * 0.5
+            c_term = (drive_value * g_t1) + two_delta_t
+            g_t2 = b_term + cdsqrt(c_term - square(b_term)) * i
             g_t1 = g_t2
-
+            
         end do
 
-        j = j + 1
-        t = delta_t * j
         ! Write the value of g_0 to the file
         write (1,*) real(g_t2), imag(g_t2)
 

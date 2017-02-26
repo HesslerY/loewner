@@ -50,16 +50,22 @@ done
 read drive_selection
 
 # Ask for drive function selection
-echo "Enter the max time:"
+echo "Enter number of g_0 values:"
 
 # Store user input as variable
-read max_time
+read n_g_0
 
 # Ask for the number of intervals
-echo "Enter the number of intervals:"
+echo "Enter the change in max_t:"
 
 # Store the user input as a variable
-read n_intervals
+read max_t_change
+
+# Ask for the number of intervals
+echo "Enter delta_t:"
+
+# Store the user input as a variable
+read delta_t
 
 
 function all_drive()
@@ -80,7 +86,7 @@ function run_loewner()
 
     # Compile and execute Loewner code
     gfortran loewner.F03 -o loewner.out
-    ./loewner.out "$max_time" "$n_intervals"
+    ./loewner.out "$n_g_0" "$max_t_change" "$delta_t"
 
     # Plot results with Python
     python plot.py "$drive_selection"
@@ -100,10 +106,3 @@ fi
 
 # Run for driving function selection
 run_loewner
-
-echo "Enter a comment:"
-read comment
-
-echo "Max Time: $max_time" >> Parameters.txt
-echo "Intervals: $n_intervals" >> Parameters.txt
-echo "Comment: $comment" >> Parameters.txt

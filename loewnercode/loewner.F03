@@ -33,21 +33,16 @@ implicit none
     character (len = 32) :: arg
 
     integer :: NN = 0
-    integer :: j = 1
+    integer :: j = 0
     integer :: k = 0
+    integer :: M = 0
 
-    ! Email
-    integer :: tau_max = 5
-    integer :: M = 100
-
-    real(8) :: delta_t
-    real(8) :: two_delta_t
+    real(8) :: delta_t = 0
+    real(8) :: two_delta_t = 0
     real(8) :: t = 0
-    real(8) :: init_g_arg = 0
     real(8) :: max_t = 0
+    real(8) :: max_t_incr = 0
     real(8) :: drive_value = 0
-
-    real(8) :: tau = 0
 
     complex(8) :: g_t1 = 0
     complex(8) :: g_t2 = 0
@@ -60,30 +55,27 @@ implicit none
     complex(8) :: square
     real(8) :: driving_function
 
-    ! Find the value for the maximum time
+    ! Find the value for the the number of g_0 values
     call get_command_argument(1, arg)
     read(arg,*) M
 
-    ! Find the value for the number of intervals
+    ! Find the value for the max_t increment
     call get_command_argument(2, arg)
-    read(arg,*) NN
+    read(arg,*) max_t_incr
 
-    ! Determine delta_t
-    delta_t = ( max_t / NN )
-    two_delta_t = 2.0 * delta_t
+    ! Find the value for delta_t and two_delta_t
+    call get_command_argument(3, arg)
+    read(arg,*) delta_t
+    two_delta_t = delta_t * 2
 
     ! Open the output file
     open(unit = 1, file = "result.txt")
 
-    g_t1 = driving_function(init_g_arg)
-    
-    delta_t = 0.001
-    two_delta_t = delta_t * 2
-
-    ! Compute g_0 NN times
+    ! Compute g_0 M times
     do j = 1, M
 
-        max_t = j * 0.1
+
+        max_t = j * max_t_incr
         NN = nint(max_t / delta_t)
         g_t1 = complex(driving_function(max_t),0)
 
@@ -98,6 +90,8 @@ implicit none
             g_t1 = g_t2
             
         end do
+
+        print *, t
 
         ! Write the value of g_0 to the file
         write (1,*) real(g_t2), imag(g_t2)

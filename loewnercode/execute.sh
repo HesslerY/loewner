@@ -67,7 +67,6 @@ echo "Enter delta_t:"
 # Store the user input as a variable
 read delta_t
 
-
 function all_drive()
 {
     # Call run_loewner for all but last element in driving function array
@@ -90,8 +89,6 @@ function run_loewner()
 
     # Plot results with Python
     python plot.py "$drive_selection"
-
-    rm -r result.txt
 
     echo "Completed execution for ${drive_options[$drive_selection]}"
 

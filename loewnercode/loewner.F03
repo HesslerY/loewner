@@ -22,7 +22,7 @@ function driving_function(t) result(drive)
     real(8) :: t ! Argument
     real(8) :: drive ! Return value
 
-    drive = 2 * sqrt(8 * (1 - t))
+    drive = t * cos(t * pi)
 
 end function driving_function
 
@@ -68,6 +68,9 @@ implicit none
     read(arg,*) delta_t
     two_delta_t = delta_t * 2
 
+    print *, max_t_incr
+    print *, delta_t
+
     ! Open the output file
     open(unit = 1, file = "result.txt")
 
@@ -90,8 +93,6 @@ implicit none
             g_t1 = g_t2
             
         end do
-
-        print *, t
 
         ! Write the value of g_0 to the file
         write (1,*) real(g_t2), imag(g_t2)

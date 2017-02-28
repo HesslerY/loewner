@@ -16,8 +16,10 @@ all_labels = ["$\\xi (t) = 0$",
               "$\\xi (t) = t \ \sin(t)$",
               "$\\xi (t) = t \ \sin(\pi t)$",
               "$\\xi (t) = 2 \ \sqrt{1 \ (1 - t)}$",
+              "$\\xi (t) = 2 \ \sqrt{2.5 \ (1 - t)}$",
               "$\\xi (t) = 2 \ \sqrt{3.5 \ (1 - t)}$",
               "$\\xi (t) = 2 \ \sqrt{4 \ (1 - t)}$",
+              "$\\xi (t) = 2 \ \sqrt{4.5 \ (1 - t)}$",
               "$\\xi (t) = 2 \ \sqrt{6 \ (1 - t)}$",
               "$\\xi (t) = 2 \ \sqrt{8 \ (1 - t)}$"]
 
@@ -32,8 +34,10 @@ all_filenames = ["zero",
                  "t * sin(t)",
                  "t * sin(pi * t)",
                  "2 * sqrt(1 * (1 - t))",
+                 "2 * sqrt(2.5 * (1 - t))",
                  "2 * sqrt(3.5 * (1 - t))",
                  "2 * sqrt(4 * (1 - t))",
+                 "2 * sqrt(4.5 * (1 - t))",
                  "2 * sqrt(6 * (1 - t))",
                  "2 * sqrt(8 * (1 - t))"]
 
@@ -43,8 +47,6 @@ results_file = open('result.txt', 'r')
 
 real_values = []
 imag_values = []
-
-g_zero_array = np.empty((0))
 
 for line in results_file:
 

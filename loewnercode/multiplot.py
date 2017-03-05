@@ -11,8 +11,14 @@ labels = ["100","1000","10000","100000","200000"]
 for i in range(5):
 
     # Obtain the filename and open the file
-    filename = "multiple/" + str(i) + ".txt"
-    result_file = open(filename,"r")
+    
+    try:
+    
+        filename = "multiple/" + str(i) + ".txt"
+        result_file = open(filename,"r")
+        
+    except FileNotFoundError:
+        break
     
     # Create empty lists
     real_values = []
@@ -29,10 +35,6 @@ for i in range(5):
     # Remove the last value in both lists
     real_values.pop()
     imag_values.pop()
-    
-    # Remove the first value in both lists
-    real_values.pop(0)
-    imag_values.pop(0)
 
     # Create a plot
     plt.plot(real_values,imag_values,colour_options[i],label=labels[i])

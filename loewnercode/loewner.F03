@@ -22,7 +22,7 @@ function driving_function(t) result(drive)
     real(8) :: t ! Argument
     real(8) :: drive ! Return value
 
-    drive = t * cos(t * pi)
+    drive = 2 * sqrt(1 * (1 - t))
 
 end function driving_function
 
@@ -68,15 +68,11 @@ implicit none
     read(arg,*) delta_t
     two_delta_t = delta_t * 2
 
-    print *, max_t_incr
-    print *, delta_t
-
     ! Open the output file
     open(unit = 1, file = "result.txt")
 
     ! Compute g_0 M times
     do j = 1, M
-
 
         max_t = j * max_t_incr
         NN = nint(max_t / delta_t)

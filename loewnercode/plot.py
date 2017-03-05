@@ -1,6 +1,4 @@
 import matplotlib.pyplot as plt
-import numpy as np
-import cmath
 import sys
 
 plt.style.use('ggplot')

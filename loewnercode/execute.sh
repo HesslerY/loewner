@@ -91,7 +91,6 @@ function run_loewner()
     ./loewner.out "$n_g_0" "$max_t_change" "$delta_t"
 
     echo "Completed execution for ${drive_options[$drive_selection]}"
-
 }
 
 function resolution()
@@ -112,16 +111,14 @@ function resolution()
 
             run_loewner
             
-            # Remove the last lin in the file
-            sed '$d' result.txt
-            
             # Move the result file to a different folder
             mv result.txt "multiple/$j.txt"
             
         done
 
         # Plot the results
-        python multiplot.py 
+        cp multiple/* "backup/$i"
+        python multiplot.py "$i"&
         rm -r multiple/*
 
     done    

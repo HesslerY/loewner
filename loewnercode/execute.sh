@@ -30,9 +30,6 @@ drive_options=("0.0"
 # Array of different numbers of iterations for resolution mode
 declare -a res_iterations
 
-# Array of different values of max_t_incr for resolution mode
-declare -a max_time
-
 declare -a selection_array
 
 # Copy file just in case
@@ -85,11 +82,10 @@ function create_resolution_args()
 {
     words=("first" "second" "third" "fourth" "fifth")
 
-    for (( i=0; i<5; i++)) do
+    echo "Enter the max time value:"
+    read max_t
 
-        echo "Enter the max time value for the ${words[$i]} iteration:"
-        read max_t
-        max_time+=("$max_t")
+    for (( i=0; i<5; i++)) do
 
         echo "Enter the number of g_0 values for the ${words[$i]} iteration:"
         read n_iterations
@@ -108,7 +104,6 @@ function run_resolution()
         # Execute Loewner code for different values of M, delta_t, and max_t_incr
         for (( i=0; i<5; i++)) do
 
-            max_t=${max_time[$i]}
             n_iterations=${res_iterations[$i]}
 
             run_loewner

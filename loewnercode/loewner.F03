@@ -22,7 +22,7 @@ function driving_function(t) result(drive)
     real(8) :: t ! Argument
     real(8) :: drive ! Return value
 
-    drive = 2 * sqrt(1 * (1 - t))
+    drive = t
 
 end function driving_function
 
@@ -36,6 +36,7 @@ implicit none
     integer :: j = 0
     integer :: k = 0
     integer :: M = 0
+    integer :: final_time = 0
 
     real(8) :: delta_t = 0
     real(8) :: two_delta_t = 0
@@ -55,21 +56,20 @@ implicit none
     complex(8) :: square
     real(8) :: driving_function
 
-    ! Find the value for the the number of g_0 values
+    ! Find the value for the largest value of max_t
     call get_command_argument(1, arg)
-    read(arg,*) M
+    read(arg,*) final_time
 
-    ! Find the value for the max_t increment
+    ! Find the value for the the number of g_0 values
     call get_command_argument(2, arg)
-    read(arg,*) max_t_incr
-
-    ! Find the value for delta_t and two_delta_t
-    call get_command_argument(3, arg)
-    read(arg,*) delta_t
-    two_delta_t = delta_t * 2
+    read(arg,*) M
 
     ! Open the output file
     open(unit = 1, file = "result.txt")
+
+    max_t_incr = final_time / M
+    delta_t = max_t_incr /  100
+    two_delta_t = delta_t * 2
 
     ! Compute g_0 M times
     do j = 1, M

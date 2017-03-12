@@ -70,7 +70,7 @@ function run_loewner()
 
     # Compile and execute Loewner code
     gfortran loewner.F03 -o loewner.out
-    ./loewner.out "$n_g_0" "$max_t_change" "$delta_t"
+    ./loewner.out "$max_t" "$n_iterations"
 
     echo "Completed execution for ${drive_options[$drive_selection]}"
 }
@@ -108,9 +108,8 @@ function run_resolution()
         # Execute Loewner code for different values of M, delta_t, and max_t_incr
         for (( i=0; i<5; i++)) do
 
-            n_g_0=${res_iterations[$i]}
-            max_t_change=${res_maxtimeinc[$i]}
-            delta_t=${res_deltatimei[$i]}
+            max_t=${max_time[$i]}
+            n_iterations=${res_iterations[$i]}
 
             run_loewner
             
@@ -164,22 +163,16 @@ if [ "$resolution_mode" == "Y" ]; then
 fi
 
 # Ask for drive function selection
-echo "Enter number of g_0 values:"
+echo "Enter the final value of max_t:"
 
 # Store user input as variable
-read n_g_0
+read max_t
 
 # Ask for the number of intervals
-echo "Enter the change in max_t:"
+echo "Enter the number of g_0 values to be computed:"
 
 # Store the user input as a variable
-read max_t_change
-
-# Ask for the number of intervals
-echo "Enter delta_t:"
-
-# Store the user input as a variable
-read delta_t
+read n_iterations
 
 # Run for driving function selection
 run_loewner

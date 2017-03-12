@@ -67,7 +67,7 @@ implicit none
     ! Open the output file
     open(unit = 1, file = "result.txt")
 
-    max_t_incr = final_time / M
+    max_t_incr = (1.0 * final_time) / M
     delta_t = max_t_incr /  100
     two_delta_t = delta_t * 2
 

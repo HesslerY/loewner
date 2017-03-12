@@ -24,44 +24,26 @@ drive_options=("0.0"
                "2 * sqrt(4.5 * (1 - t))"
                "2 * sqrt(6 * (1 - t))"
                "2 * sqrt(8 * (1 - t))"
+               "MULTIPLE"
                "ALL")
 
 # Array of different numbers of iterations for resolution mode
-res_iterations=("100",
-                "1000",
-                "10000",
-                "100000",
-                "200000")
+declare -a res_iterations
 
 # Array of different values of max_t_incr for resolution mode
-res_maxtimeinc=("0.01",
-                "0.001",
-                "0.0001",
-                "0.00001",
-                "0.000005")
+declare -a max_time
 
-# Array of different values of delta_t for resolution mode
-res_deltatimei=("0.001",
-                "0.0001",
-                "0.00001",
-                "0.000001",
-                "0.0000005")
+declare -a selection_array
 
 # Copy file just in case
 cp loewner.F03 loewner_backup.F03
 
-# Make an output directory if it does not already exist
-# Delete all items in directory if it does exist
-if [ ! -d "output" ]; then
-    mkdir "output"
-elif [ "$(ls output)" != "" ]; then
-    rm -r output/*
-fi
+rm -r output/*
 
 function all_drive()
 {
     # Call run_loewner for all but last element in driving function array
-    for (( i=0; i<$((${#drive_options[*]} - 1)); i++ )) do
+    for (( i=0; i<$((${#drive_options[*]} - 2)); i++ )) do
 
         drive_selection=$i
         run_loewner
@@ -93,44 +75,57 @@ function run_loewner()
     echo "Completed execution for ${drive_options[$drive_selection]}"
 }
 
-function resolution()
+function multiple_input()
 {
-    # Iterate over kappa driving functions
-    for (( i=10; i<=16; i++)) do
-        
-        # Set drive_selection variable and modify Loewner file
-        drive_selection=i
+    echo "Enter the driving function indexes seperated by a space:"
+    read -a selection_array
+}
+
+function create_resolution_args()
+{
+    words=("first" "second" "third" "fourth" "fifth")
+
+    for (( i=0; i<5; i++)) do
+
+        echo "Enter the max time value for the ${words[$i]} iteration:"
+        read max_t
+        max_time+=("$max_t")
+
+        echo "Enter the number of g_0 values for the ${words[$i]} iteration:"
+        read n_iterations
+        res_iterations+=("$n_iterations")
+
+    done
+}
+
+function run_resolution()
+{
+    for selection in ${selection_array[@]}; do
+
+        drive_selection=$selection
         change_drive
 
         # Execute Loewner code for different values of M, delta_t, and max_t_incr
-        for (( j=0; j<5; j++)) do
+        for (( i=0; i<5; i++)) do
 
-            n_g_0=${res_iterations[$j]}
-            max_t_change=${res_maxtimeinc[$j]}
-            delta_t=${res_deltatimei[$j]}
+            n_g_0=${res_iterations[$i]}
+            max_t_change=${res_maxtimeinc[$i]}
+            delta_t=${res_deltatimei[$i]}
 
             run_loewner
             
             # Move the result file to a different folder
-            mv result.txt "multiple/$j.txt"
-            
+            mv result.txt "multiple/$i.txt"
+
         done
 
         # Plot the results
-        cp multiple/* "backup/$i"
-        python multiplot.py "$i"&
+        cp multiple/* "backup/$drive_selection"
+        python multiplot.py "$drive_selection"&
         rm -r multiple/*
 
-    done    
+    done
 }
-
-echo "Vary Resolution? [Y/N]"
-read resolution_mode
-
-if [ "$resolution_mode" == "Y" ]; then
-    resolution
-    exit
-fi
 
 # Ask for drive function selection
 echo "Select a driving function:"
@@ -144,6 +139,29 @@ done
 
 # Store user input as variable
 read drive_selection
+
+# Run for all driving functions in case of ALL
+if [ "${drive_options[$drive_selection]}" == "ALL" ]; then
+    all_drive
+    exit
+fi
+
+selection_array+=($drive_selection)
+
+if [ "${drive_options[$drive_selection]}" == "MULTIPLE" ]; then
+    multiple_input
+fi
+
+# echo "${selection_array[@]}" 
+
+echo "Vary Resolution? [Y/N]"
+read resolution_mode
+
+if [ "$resolution_mode" == "Y" ]; then
+    create_resolution_args
+    run_resolution
+    exit
+fi
 
 # Ask for drive function selection
 echo "Enter number of g_0 values:"
@@ -162,13 +180,6 @@ echo "Enter delta_t:"
 
 # Store the user input as a variable
 read delta_t
-
-# Run for all driving functions in case of ALL
-if [ "${drive_options[$drive_selection]}" == "ALL" ]; then
-
-    all_drive
-    exit
-fi
 
 # Run for driving function selection
 run_loewner

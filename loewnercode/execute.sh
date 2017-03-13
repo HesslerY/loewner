@@ -105,6 +105,7 @@ function run_resolution()
         for (( i=0; i<5; i++)) do
 
             n_iterations=${res_iterations[$i]}
+            echo $n_iterations >> iterations.txt
 
             run_loewner
             
@@ -114,9 +115,12 @@ function run_resolution()
         done
 
         # Plot the results
+        mkdir "backup/$drive_selection"
         cp multiple/* "backup/$drive_selection"
-        python multiplot.py "$drive_selection"&
+        python multiplot.py "$drive_selection"
         rm -r multiple/*
+
+        rm -r iterations.txt
 
     done
 }
@@ -169,6 +173,10 @@ echo "Enter the number of g_0 values to be computed:"
 # Store the user input as a variable
 read n_iterations
 
-# Run for driving function selection
-run_loewner
-plot_single
+for selection in ${selection_array[@]}; do
+
+    drive_selection=$selection
+    run_loewner
+    plot_single
+
+done

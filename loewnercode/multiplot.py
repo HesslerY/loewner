@@ -4,8 +4,11 @@ from sys import argv
 # List of colour options for each of the different plots
 colour_options = ["b","g","r","k","m"]
 
-# Label of number of iterations for each of the different plots
-labels = ["100","1000","10000","100000","200000"]
+iterations_file = open("iterations.txt","r")
+labels = []
+
+for line in iterations_file:
+    labels.append(line)
 
 all_titles = ["$\\xi (t) = 0$",
               "$\\xi (t) = t$",

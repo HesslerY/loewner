@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from sys import argv
 
 # List of colour options for each of the different plots
-colour_options = ["b","g","r","k","m"]
+colour_options = ["b", "g", "r", "c", "m", "y", "k"]
 
 iterations_file = open("iterations.txt","r")
 labels = []
@@ -35,11 +35,11 @@ dir_name = "backup/" + str(title_index) + "/"
 plt.title(all_titles[title_index],fontsize = 18, color='black', y = 1.03)
 
 # Iterate over the results files
-for i in range(5):
+for i in range(len(labels)):
 
     # Obtain the filename and open the file
     try:
-        filename = dir_name + str(i) + ".txt"
+        filename = dir_name + str(labels[i][:-1]) + ".txt"
         result_file = open(filename,"r")
         print("Opened a file!")
 

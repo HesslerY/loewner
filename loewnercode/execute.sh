@@ -96,15 +96,15 @@ function run_resolution()
         change_drive
 
         # Execute Loewner code for different values of M, delta_t, and max_t_incr
-        for (( i=0; i<5; i++)) do
+        for iteration_no in ${res_iterations[@]}; do
 
-            n_iterations=${res_iterations[$i]}
+            n_iterations=$iteration_no
             echo $n_iterations >> iterations.txt
 
             run_loewner
             
             # Move the result file to a different folder
-            mv result.txt "multiple/$i.txt"
+            mv result.txt "multiple/$iteration_no.txt"
 
         done
 

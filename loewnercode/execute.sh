@@ -80,18 +80,12 @@ function multiple_input()
 
 function create_resolution_args()
 {
-    words=("first" "second" "third" "fourth" "fifth")
 
     echo "Enter the max time value:"
     read max_t
 
-    for (( i=0; i<5; i++)) do
-
-        echo "Enter the number of g_0 values for the ${words[$i]} iteration:"
-        read n_iterations
-        res_iterations+=("$n_iterations")
-
-    done
+    echo "Enter the number of g_0 values seperated by a space:"
+    read -a res_iterations
 }
 
 function run_resolution()

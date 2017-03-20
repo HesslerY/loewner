@@ -8,7 +8,7 @@ iterations_file = open("iterations.txt","r")
 labels = []
 
 for line in iterations_file:
-    labels.append(line)
+    labels.append(line[:-1])
 
 all_titles = ["$\\xi (t) = 0$",
               "$\\xi (t) = t$",
@@ -39,7 +39,7 @@ for i in range(len(labels)):
 
     # Obtain the filename and open the file
     try:
-        filename = dir_name + str(labels[i][:-1]) + ".txt"
+        filename = dir_name + str(labels[i]) + ".txt"
         result_file = open(filename,"r")
         print("Opened a file!")
 

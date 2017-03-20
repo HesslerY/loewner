@@ -22,7 +22,7 @@ function driving_function(t) result(drive)
     real(8) :: t ! Argument
     real(8) :: drive ! Return value
 
-    drive = t
+    drive = 2 * sqrt(1 * (1 - t))
 
 end function driving_function
 
@@ -44,6 +44,8 @@ implicit none
     real(8) :: max_t = 0
     real(8) :: max_t_incr = 0
     real(8) :: drive_value = 0
+    real(8) :: start_time = 0
+    real(8) :: total_change = 0
 
     complex(8) :: g_t1 = 0
     complex(8) :: g_t2 = 0
@@ -56,7 +58,7 @@ implicit none
     complex(8) :: square
     real(8) :: driving_function
 
-    ! Find the value for the largest value of max_t
+    ! Find the value for the final value of max_t
     call get_command_argument(1, arg)
     read(arg,*) final_time
 
@@ -64,17 +66,23 @@ implicit none
     call get_command_argument(2, arg)
     read(arg,*) M
 
+    ! Find the value for the starting time
+    call get_command_argument(3, arg)
+    read(arg,*) start_time
+
     ! Open the output file
     open(unit = 1, file = "result.txt")
 
-    max_t_incr = (1.0 * final_time) / M
+    total_change = (1.0 * final_time) - start_time
+
+    max_t_incr = total_change / M
     delta_t = max_t_incr /  100
     two_delta_t = delta_t * 2
 
     ! Compute g_0 M times
     do j = 1, M
 
-        max_t = j * max_t_incr
+        max_t = start_time + (j * max_t_incr)
         NN = nint(max_t / delta_t)
         g_t1 = complex(driving_function(max_t),0)
 

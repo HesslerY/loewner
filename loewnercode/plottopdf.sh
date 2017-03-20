@@ -1,7 +1,7 @@
 #!/bin/bash
 
 latex_file="plots.tex"
-output_folder=./output/*.png
+output_folder=
 
 # Delete the previous file
 rm -r "$latex_file"
@@ -20,20 +20,24 @@ write_latex_file "\usepackage[space]{grffile}"
 write_latex_file "\graphicspath{ {output/} }"
 write_latex_file "\begin{document}"
 
-for f in $output_folder; do
+counter=0
 
-    if [[ $f == *"[scatter]"* ]]; then
+for f in *".png"; do
 
-        write_latex_file "\includegraphics[width=0.9\textwidth]{${f:9}}"
+    if [[ $((counter % 2)) -eq "1" ]]; then
+
+        write_latex_file "\includegraphics[width=0.9\textwidth]{${f}}"
         write_latex_file "\end{figure}"
 
     else
 
         write_latex_file "\begin{figure}[t]"
         write_latex_file "\centering"
-        write_latex_file "\includegraphics[width=0.9\textwidth]{${f:9}}"
+        write_latex_file "\includegraphics[width=0.9\textwidth]{${f}}"
 
     fi
+    
+    counter=$((counter + 1))
 
 done
 

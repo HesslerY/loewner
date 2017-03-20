@@ -27,6 +27,8 @@ drive_options=("0.0"
                "MULTIPLE"
                "ALL")
 
+remove_last_entry = ("0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "1" "1" "1" "1" "1" "1")
+
 # Array of different numbers of iterations for resolution mode
 declare -a res_iterations
 
@@ -57,7 +59,7 @@ function change_drive()
 
 function plot_single()
 {
-    python plot.py "$drive_selection"
+    python plot.py "$drive_selection" "${remove_last_entry[$drive_selection]}"
 }
 
 function run_loewner()
@@ -67,7 +69,7 @@ function run_loewner()
 
     # Compile and execute Loewner code
     gfortran loewner.F03 -o loewner.out
-    ./loewner.out "$max_t" "$n_iterations"
+    ./loewner.out "$max_t" "$n_iterations" "$start_time"
 
     echo "Completed execution for ${drive_options[$drive_selection]}"
 }
@@ -166,6 +168,9 @@ echo "Enter the number of g_0 values to be computed:"
 
 # Store the user input as a variable
 read n_iterations
+
+echo "Enter the starting time"
+read start_time
 
 for selection in ${selection_array[@]}; do
 

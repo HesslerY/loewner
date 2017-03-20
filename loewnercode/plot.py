@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-import sys
+from sys import argv
 
 plt.style.use('ggplot')
 
@@ -39,7 +39,8 @@ all_filenames = ["zero",
                  "2 * sqrt(6 * (1 - t))",
                  "2 * sqrt(8 * (1 - t))"]
 
-label_index = int(sys.argv[1])
+label_index = int(argv[1])
+remove_last = int(argv[2])
 
 results_file = open('result.txt', 'r')
 
@@ -52,6 +53,11 @@ for line in results_file:
 
     real_values.append(float(values[0]))
     imag_values.append(float(values[1]))
+
+if remove_last is "1":
+
+    real_values.pop()
+    imag_values.pop()
 
 partial_filename = "output/" + all_filenames[label_index]
 

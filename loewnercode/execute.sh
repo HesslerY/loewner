@@ -27,7 +27,7 @@ drive_options=("0.0"
                "MULTIPLE"
                "ALL")
 
-remove_last_entry = ("0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "1" "1" "1" "1" "1" "1")
+remove_last_entry=("0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "1" "1" "1" "1" "1" "1")
 
 # Array of different numbers of iterations for resolution mode
 declare -a res_iterations

@@ -1,5 +1,5 @@
-import matplotlib.pyplot as plt
 from sys import argv
+import matplotlib.pyplot as plt
 
 plt.style.use('ggplot')
 
@@ -54,8 +54,9 @@ for line in results_file:
     real_values.append(float(values[0]))
     imag_values.append(float(values[1]))
 
-if remove_last is "1":
+if remove_last == 1:
 
+    print("Get rid of the last entry.")
     real_values.pop()
     imag_values.pop()
 

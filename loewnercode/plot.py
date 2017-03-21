@@ -56,7 +56,6 @@ for line in results_file:
 
 if remove_last == 1:
 
-    print("Get rid of the last entry.")
     real_values.pop()
     imag_values.pop()
 

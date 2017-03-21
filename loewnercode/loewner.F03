@@ -7,22 +7,22 @@
 !                                                                              !
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-function square(i) result(j)
+pure function square(i) result(j)
 
-    complex(8) :: i ! Argument
+    complex(8), intent(in) :: i ! Argument
     complex(8) :: j ! Return value
 
     j = i ** 2
 
 end function square
 
-function driving_function(t) result(drive)
+pure function driving_function(t) result(drive)
 
     real(8), parameter :: pi = 4. * atan(1.)
-    real(8) :: t ! Argument
+    real(8), intent(in) :: t ! Argument
     real(8) :: drive ! Return value
 
-    drive = 2 * sqrt(1 * (1 - t))
+    drive = 2 * sqrt(3.5 * (1 - t))
 
 end function driving_function
 

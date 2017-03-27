@@ -41,6 +41,13 @@ for f in *".png"; do
 
 done
 
+if [[ $((counter % 2)) -eq "0" ]]; then
+
+    write_latex_file "\includegraphics[width=0.9\textwidth]{${f}}"
+    write_latex_file "\end{figure}"
+
+done
+
 # Write the final part of the latex file
 write_latex_file "\end{document}"
 

@@ -16,7 +16,7 @@ pure function cotan(phi) result(cotan_phi)
 
 end function cotan  
 
-program Loewner
+program ExactLoewner
 implicit none
 
     ! Variables
@@ -59,4 +59,4 @@ implicit none
 
     close(1)
 
-end program Loewner
+end program ExactLoewner

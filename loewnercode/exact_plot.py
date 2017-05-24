@@ -8,7 +8,7 @@ def set_data_dir(directory):
     global data_dir
     data_dir = directory
 
-def file_to_plot(filename, label, remove_last = False):
+def file_to_plot(filename, label = None, remove_last = False):
 
     global counter
     global data_dir

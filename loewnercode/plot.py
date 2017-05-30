@@ -1,5 +1,7 @@
 from sys import argv
 import matplotlib.pyplot as plt
+from math import pi, degrees
+from numpy import arctan2
 
 plt.style.use('ggplot')
 
@@ -43,6 +45,7 @@ all_filenames = ["zero",
 
 label_index = int(argv[1])
 remove_last = int(argv[2])
+alpha_value = float(argv[3])
 
 results_file = open('result.txt', 'r')
 
@@ -60,6 +63,10 @@ if remove_last == 1:
 
     real_values.pop()
     imag_values.pop()
+
+if label_index >= 17:
+    angle = arctan2(imag_values[-1] , real_values[-1]) / pi
+    print(angle)
 
 partial_filename = "output/" + all_filenames[label_index]
 

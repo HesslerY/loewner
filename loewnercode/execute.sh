@@ -1,10 +1,14 @@
 #!/bin/bash
 
 # Line where drive_func assignment takes place in loewner.F03 file
-drive_line=33
+drive_line=38
 
 # Partial string for drive_func assignment code
 drive_code="    drive ="
+
+alpha_line=35
+
+alpha_code="    alpha ="
 
 # Array of possible driving functions
 drive_options=("0.0"
@@ -24,7 +28,7 @@ drive_options=("0.0"
                "2 * dsqrt(4.5 * (1 - t))"
                "2 * dsqrt(6 * (1 - t))"
                "2 * dsqrt(8 * (1 - t))"
-	       "dsqrt(t)"
+	       "dsqrt(t) * c_alpha"
                "MULTIPLE"
                "ALL")
 
@@ -52,6 +56,8 @@ declare -a res_iterations
 
 declare -a selection_array
 
+alpha_value=""
+
 # Copy file just in case
 cp loewner.F03 loewner_backup.F03
 
@@ -75,6 +81,11 @@ function change_drive()
     sed -i "$drive_line s/.*/$drive_code ${drive_options[$drive_selection]}/" loewner.F03  
 }
 
+function change_alpha()
+{
+    sed -i "$alpha_line s/.*/$alpha_code $alpha_value/" loewner.F03  
+}
+
 function plot_single()
 {
     python plot.py "$drive_selection" "${remove_last_entry[$drive_selection]}"
@@ -84,6 +95,14 @@ function run_loewner()
 {
     # Change the driving function
     change_drive
+
+    if [[ ${drive_options[$drive_selection]} == *"c_alpha"* ]]; then
+
+        echo "Enter the alpha value:"
+        read alpha_value
+
+        change_alpha
+    fi
 
     # Compile and execute Loewner code
     gfortran loewner.F03 -o loewner.out
@@ -153,9 +172,10 @@ done
 read drive_selection
 
 # Run for all driving functions in case of ALL
-if [ "${drive_options[$drive_selection]}" == "ALL" ]; then
-    
+if [ "${drive_options[$drive_selection]}" == "ALL" ]; then    
     selection_array=$(seq 0 1 $((${#drive_options[@]} - 3)))
+else
+    selection_array+=($drive_selection)
 fi
 
 if [ "${drive_options[$drive_selection]}" == "MULTIPLE" ]; then

@@ -22,7 +22,7 @@ pure function driving_function(t) result(drive)
     real(8), intent(in) :: t ! Argument
     real(8) :: drive ! Return value
 
-    drive = 2 * sqrt(3.5 * (1 - t))
+    drive = t * sin(t * pi)
 
 end function driving_function
 
@@ -58,17 +58,17 @@ implicit none
     complex(8) :: square
     real(8) :: driving_function
 
-    ! Find the value for the final value of max_t
+    ! Find the value for the starting time
     call get_command_argument(1, arg)
-    read(arg,*) final_time
+    read(arg,*) start_time
 
     ! Find the value for the the number of g_0 values
     call get_command_argument(2, arg)
     read(arg,*) M
 
-    ! Find the value for the starting time
+    ! Find the value for max_t
     call get_command_argument(3, arg)
-    read(arg,*) start_time
+    read(arg,*) final_time
 
     ! Open the output file
     open(unit = 1, file = "result.txt")
@@ -98,6 +98,7 @@ implicit none
             
         end do
 
+        print *, g_t2
         ! Write the value of g_0 to the file
         write (1,*) real(g_t2), imag(g_t2)
 

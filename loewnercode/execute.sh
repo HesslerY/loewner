@@ -24,10 +24,28 @@ drive_options=("0.0"
                "2 * sqrt(4.5 * (1 - t))"
                "2 * sqrt(6 * (1 - t))"
                "2 * sqrt(8 * (1 - t))"
+	       "dsqrt(t)"
                "MULTIPLE"
                "ALL")
 
-remove_last_entry=("0" "0" "0" "0" "0" "0" "0" "0" "0" "0" "1" "1" "1" "1" "1" "1")
+remove_last_entry=("0" 
+                   "0" 
+                   "0" 
+                   "0" 
+                   "0" 
+                   "0" 
+                   "0" 
+                   "0" 
+                   "0" 
+                   "0" 
+                   "1" 
+                   "1" 
+                   "1" 
+                   "1" 
+                   "1" 
+                   "1"
+                   "1"
+		   "0")
 
 # Array of different numbers of iterations for resolution mode
 declare -a res_iterations
@@ -69,7 +87,7 @@ function run_loewner()
 
     # Compile and execute Loewner code
     gfortran loewner.F03 -o loewner.out
-    ./loewner.out "$max_t" "$n_iterations" "$start_time"
+    ./loewner.out "$start_time" "$n_iterations" "$max_t"
 
     echo "Completed execution for ${drive_options[$drive_selection]}"
 }

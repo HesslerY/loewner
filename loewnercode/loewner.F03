@@ -11,15 +11,16 @@ module constants
 implicit none 
 
    real, parameter :: pi = 3.1415926536
+   complex, parameter :: i = complex(0,1)
  
 end module constants
 
-pure function square(i) result(j)
+pure function square(x) result(j)
 
-    complex(8), intent(in) :: i ! Argument
+    complex(8), intent(in) :: x ! Argument
     complex(8) :: j ! Return value
 
-    j = i ** 2
+    j = x ** 2
 
 end function square
 
@@ -29,17 +30,18 @@ use constants
     real(8), intent(in) :: t ! argument
     real(8) :: drive ! return value
 
-    drive = dsqrt(t)
+    drive = 0.0
 
 end function driving_function
 
 program loewner
+use constants
 implicit none
 
     ! variables
     character (len = 32) :: arg
 
-    integer :: nn = 0
+    integer :: NN = 0
     integer :: j = 0
     integer :: k = 0
     integer :: m = 0
@@ -53,13 +55,12 @@ implicit none
     real(8) :: drive_value = 0
     real(8) :: start_time = 0
     real(8) :: total_change = 0
+    real(8) :: driving_arg = 0
 
     complex(8) :: g_t1 = 0
     complex(8) :: g_t2 = 0
     complex(8) :: b_term = 0
     complex(8) :: c_term = 0
-
-    complex, parameter :: i = complex(0,1)
 
     ! Functions
     complex(8) :: square
@@ -81,7 +82,6 @@ implicit none
     open(unit = 1, file = "result.txt")
 
     total_change = (1.0 * final_time) - start_time
-
     max_t_incr = total_change / M
     delta_t = max_t_incr /  100
     two_delta_t = delta_t * 2
@@ -90,32 +90,26 @@ implicit none
     do j = 1, M
 
         max_t = start_time + (j * max_t_incr)
-        NN = nint(max_t / delta_t) - 2
         g_t1 = complex(driving_function(max_t),0)
-        print *, NN
-        print *, NN * delta_t
+        k = 0
+        driving_arg = max_t
 
-        do k = 0, NN
+        do while (driving_arg > 0)
 
-            t = max_t - (k * delta_t)
-            drive_value = driving_function(t - delta_t)
+            drive_value = driving_function(driving_arg)
             
             b_term = (drive_value + g_t1) * 0.5
             c_term = (drive_value * g_t1) + two_delta_t
             g_t2 = b_term + cdsqrt(c_term - square(b_term)) * i
             g_t1 = g_t2
 
-            if (k >= NN - 3) then
-                print *, "Driving value argument: ", t - delta_t
-                print *, "Driving value: ", drive_value
-                print *, "g_t2: ", g_t2
-            end if
-            
+            k = k + 1
+            driving_arg = (max_t - (k * delta_t)) - delta_t
+
         end do
 
         ! Write the value of g_0 to the file
         write (1,*) real(g_t2), imag(g_t2)
-        print *, ""
 
     end do
 

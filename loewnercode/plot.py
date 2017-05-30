@@ -20,7 +20,7 @@ all_labels = ["$\\xi (t) = 0$",
               "$\\xi (t) = 2 \ \sqrt{4.5 \ (1 - t)}$",
               "$\\xi (t) = 2 \ \sqrt{6 \ (1 - t)}$",
               "$\\xi (t) = 2 \ \sqrt{8 \ (1 - t)}$",
-              "$\\xi (t) = \sqrt{t}"]
+              "$\\xi (t) = \sqrt{t}$"]
 
 all_filenames = ["zero",
                  "t",

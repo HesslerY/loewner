@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Line where drive_func assignment takes place in loewner.F03 file
-drive_line=25
+drive_line=32
 
 # Partial string for drive_func assignment code
 drive_code="    drive ="

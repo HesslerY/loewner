@@ -7,6 +7,13 @@
 !                                                                              !
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+module constants  
+implicit none 
+
+   real, parameter :: pi = 3.1415926536
+ 
+end module constants
+
 pure function square(i) result(j)
 
     complex(8), intent(in) :: i ! Argument
@@ -17,25 +24,25 @@ pure function square(i) result(j)
 end function square
 
 pure function driving_function(t) result(drive)
+use constants
 
-    real(8), parameter :: pi = 4. * atan(1.)
-    real(8), intent(in) :: t ! Argument
-    real(8) :: drive ! Return value
+    real(8), intent(in) :: t ! argument
+    real(8) :: drive ! return value
 
-    drive = t * sin(t * pi)
+    drive = 2 * sqrt(8 * (1 - t))
 
 end function driving_function
 
-program Loewner
+program loewner
 implicit none
 
-    ! Variables
+    ! variables
     character (len = 32) :: arg
 
-    integer :: NN = 0
+    integer :: nn = 0
     integer :: j = 0
     integer :: k = 0
-    integer :: M = 0
+    integer :: m = 0
     integer :: final_time = 0
 
     real(8) :: delta_t = 0

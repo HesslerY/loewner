@@ -19,7 +19,8 @@ all_labels = ["$\\xi (t) = 0$",
               "$\\xi (t) = 2 \ \sqrt{4 \ (1 - t)}$",
               "$\\xi (t) = 2 \ \sqrt{4.5 \ (1 - t)}$",
               "$\\xi (t) = 2 \ \sqrt{6 \ (1 - t)}$",
-              "$\\xi (t) = 2 \ \sqrt{8 \ (1 - t)}$"]
+              "$\\xi (t) = 2 \ \sqrt{8 \ (1 - t)}$",
+              "$\\xi (t) = \sqrt{t}"]
 
 all_filenames = ["zero",
                  "t",
@@ -37,7 +38,8 @@ all_filenames = ["zero",
                  "2 * sqrt(4 * (1 - t))",
                  "2 * sqrt(4.5 * (1 - t))",
                  "2 * sqrt(6 * (1 - t))",
-                 "2 * sqrt(8 * (1 - t))"]
+                 "2 * sqrt(8 * (1 - t))",
+                 "sqrt(t)"]
 
 label_index = int(argv[1])
 remove_last = int(argv[2])
@@ -61,13 +63,17 @@ if remove_last == 1:
 
 partial_filename = "output/" + all_filenames[label_index]
 
-plt.title(all_labels[label_index],fontsize = 18, color='black', y = 1.03)
-plt.plot(real_values,imag_values)
-plt.axis('equal')
-plt.savefig(partial_filename + ".png")
-plt.cla()
+plt.figure(figsize=(4.5, 3))
 
-plt.title(all_labels[label_index],fontsize = 18, color='black', y = 1.03)
+plt.title(all_labels[label_index],fontsize = 12, color='black', y = 1.02)
+plt.plot(real_values,imag_values)
+# plt.axis('equal')
+plt.savefig(partial_filename + ".png")
+
+exit()
+
+plt.cla()
+plt.title(all_labels[label_index],fontsize = 14, color='black', y = 1.03)
 plt.scatter(real_values,imag_values)
 plt.savefig(partial_filename + " [scatter].png")
-plt.axis('equal')
+# plt.axis('equal')

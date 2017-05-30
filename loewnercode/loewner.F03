@@ -29,7 +29,7 @@ use constants
     real(8), intent(in) :: t ! argument
     real(8) :: drive ! return value
 
-    drive = 2 * sqrt(8 * (1 - t))
+    drive = dsqrt(t)
 
 end function driving_function
 
@@ -90,8 +90,10 @@ implicit none
     do j = 1, M
 
         max_t = start_time + (j * max_t_incr)
-        NN = nint(max_t / delta_t)
+        NN = nint(max_t / delta_t) - 2
         g_t1 = complex(driving_function(max_t),0)
+        print *, NN
+        print *, NN * delta_t
 
         do k = 0, NN
 
@@ -102,12 +104,18 @@ implicit none
             c_term = (drive_value * g_t1) + two_delta_t
             g_t2 = b_term + cdsqrt(c_term - square(b_term)) * i
             g_t1 = g_t2
+
+            if (k >= NN - 3) then
+                print *, "Driving value argument: ", t - delta_t
+                print *, "Driving value: ", drive_value
+                print *, "g_t2: ", g_t2
+            end if
             
         end do
 
-        print *, g_t2
         ! Write the value of g_0 to the file
         write (1,*) real(g_t2), imag(g_t2)
+        print *, ""
 
     end do
 

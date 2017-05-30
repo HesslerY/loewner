@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Line where drive_func assignment takes place in loewner.F03 file
-drive_line=32
+drive_line=33
 
 # Partial string for drive_func assignment code
 drive_code="    drive ="
@@ -17,13 +17,13 @@ drive_options=("0.0"
                "sin(t * pi)"
                "t * sin(t)"
                "t * sin(t * pi)"
-               "2 * sqrt(1 * (1 - t))"
-               "2 * sqrt(2.5 * (1 - t))"
-               "2 * sqrt(3.5 * (1 - t))"
-               "2 * sqrt(4 * (1 - t))"
-               "2 * sqrt(4.5 * (1 - t))"
-               "2 * sqrt(6 * (1 - t))"
-               "2 * sqrt(8 * (1 - t))"
+               "2 * dsqrt(1 * (1 - t))"
+               "2 * dsqrt(2.5 * (1 - t))"
+               "2 * dsqrt(3.5 * (1 - t))"
+               "2 * dsqrt(4 * (1 - t))"
+               "2 * dsqrt(4.5 * (1 - t))"
+               "2 * dsqrt(6 * (1 - t))"
+               "2 * dsqrt(8 * (1 - t))"
 	       "dsqrt(t)"
                "MULTIPLE"
                "ALL")
@@ -154,11 +154,9 @@ read drive_selection
 
 # Run for all driving functions in case of ALL
 if [ "${drive_options[$drive_selection]}" == "ALL" ]; then
-    all_drive
-    exit
+    
+    selection_array=$(seq 0 1 $((${#drive_options[@]} - 3)))
 fi
-
-selection_array+=($drive_selection)
 
 if [ "${drive_options[$drive_selection]}" == "MULTIPLE" ]; then
     multiple_input

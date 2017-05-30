@@ -56,7 +56,7 @@ declare -a res_iterations
 
 declare -a selection_array
 
-alpha_value=""
+alpha_value="0.0"
 
 # Copy file just in case
 cp loewner.F03 loewner_backup.F03
@@ -88,7 +88,7 @@ function change_alpha()
 
 function plot_single()
 {
-    python plot.py "$drive_selection" "${remove_last_entry[$drive_selection]}"
+    python plot.py "$drive_selection" "${remove_last_entry[$drive_selection]}" "$alpha_value"
 }
 
 function run_loewner()

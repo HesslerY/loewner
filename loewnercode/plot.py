@@ -5,6 +5,10 @@ from numpy import arctan2
 
 plt.style.use('ggplot')
 
+label_index = int(argv[1])
+remove_last = int(argv[2])
+alpha_value = argv[3]
+
 all_labels = ["$\\xi (t) = 0$",
               "$\\xi (t) = t$",
               "$\\xi (t) = \cos(t)$",
@@ -22,7 +26,7 @@ all_labels = ["$\\xi (t) = 0$",
               "$\\xi (t) = 2 \ \sqrt{4.5 \ (1 - t)}$",
               "$\\xi (t) = 2 \ \sqrt{6 \ (1 - t)}$",
               "$\\xi (t) = 2 \ \sqrt{8 \ (1 - t)}$",
-              "$\\xi (t) = \sqrt{t}$"]
+              "$\\xi (t) = c_{" + alpha_value + "} \sqrt{t}$"]
 
 all_filenames = ["zero",
                  "t",
@@ -41,11 +45,7 @@ all_filenames = ["zero",
                  "2 * sqrt(4.5 * (1 - t))",
                  "2 * sqrt(6 * (1 - t))",
                  "2 * sqrt(8 * (1 - t))",
-                 "sqrt(t)"]
-
-label_index = int(argv[1])
-remove_last = int(argv[2])
-alpha_value = float(argv[3])
+                 "c" + alpha_value + "-sqrt(t)"]
 
 results_file = open('result.txt', 'r')
 
@@ -65,12 +65,15 @@ if remove_last == 1:
     imag_values.pop()
 
 if label_index >= 17:
-    angle = arctan2(imag_values[-1] , real_values[-1]) / pi
-    print(angle)
+    max_x = real_values[-1]
+    max_y = real_values[-1]
+    angle = arctan2(max_y , max_x) / pi
+    alpha_data = [alpha_value, str(angle)]
+    plt.axis((-5,5,0,6))
 
 partial_filename = "output/" + all_filenames[label_index]
 
-plt.figure(figsize=(4.5, 3))
+# plt.figure(figsize=(4.5, 3))
 
 plt.title(all_labels[label_index],fontsize = 12, color='black', y = 1.02)
 plt.plot(real_values,imag_values)

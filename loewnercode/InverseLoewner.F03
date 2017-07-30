@@ -1,108 +1,84 @@
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!                                                                              !
-! Program: InverseLoewner.F03                                                  !
-! Purpose: Read a file that contains a set of points for Loewner's equation    !
-!          and use this to determine the driving function                      !
-! Author:  Dolica Akello-Egwel                                                 !
-!                                                                              !
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+pure function compute_h(z,lower_delta,upper_delta) result(h)
 
-pure function square(i) result(j)
+    complex(8), intent(in) :: z ! Argument
+    real(8), intent(in) :: lower_delta ! Argument
+    real(8), intent(in) :: upper_delta ! Argument
+    complex(8) :: h ! Return value
 
-    complex(8), intent(in) :: i ! Argument
-    complex(8) :: j ! Return value
+    h = cdsqrt((z - lower_delta) ** 2 + (4 * upper_delta))
 
-    j = i ** 2
-
-end function square
-
-pure function driving_function(t) result(drive)
-
-    real(8), parameter :: pi = 4. * atan(1.)
-    real(8), intent(in) :: t ! Argument
-    real(8) :: drive ! Return value
-
-    drive = 2 * sqrt(3.5 * (1 - t))
-
-end function driving_function
-
-pure function g_bar(z, prev_drive, delta_t) result(val)
-
-    complex(8), intent(in) :: z
-    real(8), intent(in) :: prev_drive
-    real(8), intent(in) :: delta_t
-    complex(8) :: val
-    complex(8) :: diff
-    complex, parameter :: i = complex(0,1)
-    
-    diff = z - prev_drive
-    val = (cdsqrt(4 * delta_t - (diff ** 2)) * i) + prev_drive
-  
-end function g_bar
+end function compute_h
 
 program InverseLoewner
-implicit none
 
-    ! Variables
-    character (len = 32) :: arg
+    real(8) :: real_part = 0
+    real(8) :: imag_part = 0
 
-    integer :: NN = 0
-    integer :: j = 0
-    integer :: k = 0
-    integer :: M = 0
-    integer :: final_time = 0
+    integer :: line_no = 0
+    integer :: max_lines = 100
+    integer :: n = 0
 
-    real(8) :: delta_t = 0
-    real(8) :: two_delta_t = 0
-    real(8) :: t = 0
-    real(8) :: max_t = 0
-    real(8) :: max_t_incr = 0
-    real(8) :: drive_value = 0
-    real(8) :: prev_drive_value = 0
-    real(8) :: start_time = 0
-    real(8) :: total_change = 0
-    real(8) :: prev_drive = 0
+    ! complex(8) :: h = 0
 
-    complex(8) :: g_t1 = 0
-    complex(8) :: g_t2 = 0
+    complex(8), dimension(100) :: points
+    complex(8), dimension(100) :: h_values
+    real(8), dimension(100) :: lower_delta
+    real(8), dimension(100) :: upper_delta
 
-    complex, parameter :: i = complex(0,1)
+    real(8) :: lower_delta_sum = 0
+    real(8) :: upper_delta_sum = 0
 
-    ! Functions
-    complex(8) :: square
-    real(8) :: driving_function
-    complex(8) :: g_bar
+    complex(8) :: compute_h
 
-    ! Find the value for the final value of max_t
-    call get_command_argument(1, arg)
-    read(arg,*) max_t
+    open(unit = 1, file = "result.txt")
+    open(unit = 2, file = "output.txt")
 
-    ! Find the value for the the number of g_0 values
-    call get_command_argument(2, arg)
-    read(arg,*) M
+    do line_no = 1, max_lines
 
-    ! Open the output file
-    open(unit = 1, file = "exact_result.txt")
-    
-    delta_t = max_t / (M * 1.0)
+        read(1, *) real_part, imag_part
 
-    g_t1 = driving_function(max_t)
+        points(line_no) = complex(real_part, imag_part)
+        ! print *, points(line_no)
 
-    ! Compute g_0 M times
-    do j = 0, M
+    enddo
 
-        t = max_t - (j * delta_t)
-        drive_value = driving_function(t)
-        prev_drive = driving_function(t - delta_t)
+    lower_delta(1) = realpart(points(1))
+    upper_delta(1) = (imagpart(points(1)) ** 2) * 0.25
+    h_values(1) = compute_h(points(n + 1),lower_delta(1),upper_delta(1))
 
-        g_t1 = g_bar(g_t1,prev_drive,delta_t)
+    do line_no = 2, max_lines
 
-        
-        ! Write the value of g_0 to the file
-        write (1,*) real(g_t1), imag(g_t1)
+        lower_delta(line_no) = realpart(h_values(line_no - 1))
+        upper_delta(line_no) = (realpart(h_values(line_no - 1)) ** 2) * 0.25
 
-    end do
+        h_values(line_no) = compute_h(points(line_no),lower_delta(1),upper_delta(1))
+
+        do n = 2, line_no
+
+            h_values(line_no) = compute_h(h_values(line_no),lower_delta(n),upper_delta(n))
+            ! print *, line_no
+
+        enddo
+
+        print *, h_values(line_no)
+
+    enddo
+
+    lower_delta(max_lines) = realpart(h_values(max_lines - 1))
+    upper_delta(max_lines) = (realpart(h_values(max_lines - 1)) ** 2) * 0.25
+
+    do n = 1, max_lines
+
+        lower_delta_sum = lower_delta_sum + lower_delta(n)
+        upper_delta_sum = upper_delta_sum + upper_delta(n)
+
+        write (2,*) lower_delta_sum, upper_delta_sum
+
+    enddo
+
+    print *, "Finished iteration."
 
     close(1)
+    close(2)
 
 end program InverseLoewner

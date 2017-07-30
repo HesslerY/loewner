@@ -1,8 +1,8 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !                                                                              !
-! Program: approx_loewner.f03                                                  !
-! Purpose: Obtain exact solutions for Loewner's equation with a                !
-!          variety of driving functions.                                       !
+! Program: InverseLoewner.F03                                                  !
+! Purpose: Read a file that contains a set of points for Loewner's equation    !
+!          and use this to determine the driving function                      !
 ! Author:  Dolica Akello-Egwel                                                 !
 !                                                                              !
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -40,7 +40,7 @@ pure function g_bar(z, prev_drive, delta_t) result(val)
   
 end function g_bar
 
-program Loewner
+program InverseLoewner
 implicit none
 
     ! Variables
@@ -105,4 +105,4 @@ implicit none
 
     close(1)
 
-end program Loewner
+end program InverseLoewner

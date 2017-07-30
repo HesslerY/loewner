@@ -1,6 +1,6 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !                                                                              !
-! Program: Loewner Equation                                                    !
+! Program: NumericalLoewner.F03                                                !
 ! Purpose: Obtain exact solutions for Loewner's equation with a                !
 !          variety of driving functions.                                       !
 ! Author:  Dolica Akello-Egwel                                                 !
@@ -29,8 +29,10 @@ use constants
 
     real(8), intent(in) :: t ! argument
     real(8) :: drive ! return value
-
-    drive = 0.0
+    real(8) :: c_alpha
+   
+    c_alpha = 0
+    drive = t
 
 end function driving_function
 

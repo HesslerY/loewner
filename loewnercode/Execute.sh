@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # Line where drive_func assignment takes place in loewner.F03 file
-drive_line=38
+drive_line=35
 
 # Partial string for drive_func assignment code
 drive_code="    drive ="
 
-alpha_line=35
+alpha_line=34
 
 alpha_code="    alpha ="
 
@@ -59,7 +59,7 @@ declare -a selection_array
 alpha_value="0.0"
 
 # Copy file just in case
-cp loewner.F03 loewner_backup.F03
+cp NumericalLoewner.F03 BackupNumericalLoewner.F03
 
 rm -r output/*
 
@@ -78,17 +78,17 @@ function all_drive()
 function change_drive()
 {
     # Change Loewner file in light of user selection
-    sed -i "$drive_line s/.*/$drive_code ${drive_options[$drive_selection]}/" loewner.F03  
+    sed -i "$drive_line s/.*/$drive_code ${drive_options[$drive_selection]}/" NumericalLoewner.F03  
 }
 
 function change_alpha()
 {
-    sed -i "$alpha_line s/.*/$alpha_code $alpha_value/" loewner.F03  
+    sed -i "$alpha_line s/.*/$alpha_code $alpha_value/" NumericalLoewner.F03  
 }
 
 function plot_single()
 {
-    python plot.py "$drive_selection" "${remove_last_entry[$drive_selection]}" "$alpha_value"
+    python Plot.py "$drive_selection" "${remove_last_entry[$drive_selection]}" "$alpha_value"
 }
 
 function run_loewner()
@@ -105,8 +105,8 @@ function run_loewner()
     fi
 
     # Compile and execute Loewner code
-    gfortran loewner.F03 -o loewner.out
-    ./loewner.out "$start_time" "$n_iterations" "$max_t"
+    gfortran NumericalLoewner.F03 -o NumericalLoewner.out
+    ./NumericalLoewner.out "$start_time" "$n_iterations" "$max_t"
 
     echo "Completed execution for ${drive_options[$drive_selection]}"
 }

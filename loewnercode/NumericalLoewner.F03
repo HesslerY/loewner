@@ -31,63 +31,52 @@ use constants
     real(8) :: driving_value ! return value
  
 #if CASE == 1
-
-     driving_value = 0.0
+    driving_value = 0.0
 
 #elif CASE == 2 
-
-     driving_value = t
+    driving_value = t
 
 #elif CASE == 3
-
-     driving_value = cos(t)    
+    driving_value = cos(t)    
 
 #elif CASE == 4
-
-     drive = t * cos(t)
+    driving_value = t * cos(t)
 
 #elif CASE == 5
-
-    drive = cos(t * pi) 
+    driving_value = cos(t * pi) 
 
 #elif CASE == 6
-
-    drive = t * cos(t * pi)
+    driving_value = t * cos(t * pi)
 
 #elif CASE == 7
-
-    drive = sin(t)
+    driving_value = sin(t)
 
 #elif CASE == 8
-
-    drive = t * sin(t)
+    driving_value = t * sin(t)
 
 #elif CASE == 9
-
-    drive = sin(t * pi)
+    driving_value = sin(t * pi)
 
 #elif CASE == 10
-
-    drive = t * sin(t * pi)
+    driving_value = t * sin(t * pi)
 
 #elif CASE == 11
-
 #ifdef KAPPA
-    drive = 2 * dsqrt(KAPPA * (1 - t))
+    driving_value = 2 * dsqrt(KAPPA * (1 - t))
 #else
     stop "Error: Square-root driving selected but KAPPA is undefined."
 #endif
 
 #elif CASE == 12
-
 #ifdef C_ALPHA
-    drive = dsqrt(t) * C_ALPHA
+    driving_value = dsqrt(t) * C_ALPHA
 #else
     stop "Error: Square-root driving selected but C_ALPHA is undefined."
 #endif
 
 #else
     stop "Error: Driving function selection not recognised."
+
 #endif
 
 end function driving_function

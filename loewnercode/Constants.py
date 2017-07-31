@@ -1,3 +1,5 @@
+COMPILER = "gfortran"
+
 # Declare a list of all the avaliable driving functions
 DRIVING_OPTIONS = ["0.0",
                    "t",
@@ -21,3 +23,7 @@ KAPPA_IDX = 10
 C_ALPHA_IDX = 11
 MULTIPLE_IDX = 12
 ALL_IDX = 13
+
+COMPILE_STRING = [COMPILER + "-D CASE="," NumericalLoewner.F03 -o NumericalLoewner.out"]
+
+

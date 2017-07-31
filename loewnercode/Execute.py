@@ -128,5 +128,35 @@ def obtain_plot_parameters():
 
         return plot_parameters
 
+def run_loewner(driving_selection, plot_parameters):
+
+    compile_string = Constants.COMPILE_STRING[:]
+
+    for driving_function in driving_selection:
+
+        if type(driving_function) is int:
+            compile_string[0] += str(driving_function)
+            
+        elif type(driving_function) is tuple:
+            compile_string[0] += str(driving_function[0])
+
+            if driving_function[0] == Constants.KAPPA_IDX:
+                compile_string[0] += " -D KAPPA="
+            elif driving_function[0] == Constants.C_ALPHA_IDX:
+                compile_string[0] += " -D C_ALPHA="
+            else:
+                print("Error?")
+
+            compile_string[0] += str(driving_function[1])
+
+        else:
+            print("Error?")
+            
+        compile_string = "".join(compile_string)
+        call(compile_string, shell=True)
+        print(compile_string)
+
 driving_selection = obtain_driving_selection()
 plot_parameters = obtain_plot_parameters()
+
+run_loewner(driving_selection,plot_parameters)

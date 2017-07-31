@@ -24,6 +24,6 @@ C_ALPHA_IDX = 11
 MULTIPLE_IDX = 12
 ALL_IDX = 13
 
-COMPILE_STRING = [COMPILER + "-D CASE="," NumericalLoewner.F03 -o NumericalLoewner.out"]
+COMPILE_STRING = [COMPILER + " -D CASE=","NumericalLoewner.F03 -o NumericalLoewner.out"]
 
 

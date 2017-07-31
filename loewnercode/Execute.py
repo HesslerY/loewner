@@ -4,50 +4,56 @@ import Constants
 def obtain_squareroot_parameter(index):
 
     if index == Constants.KAPPA_IDX:
-        query = "Select the desired value for kappa: "
+        query = "Enter the desired value for kappa: "
     if index == Constants.C_ALPHA_IDX:
-        query = "Select the desired value for c_alpha: "
+        query = "Enter the desired value for c_alpha: "
 
     while(True):
 
-        paramater = input(query)
+        parameter = input(query)
 
         try:
 
             # Convert the answer to a float
             parameter = float(parameter)
 
-            # Return if kappa is positive
+            # Return if parameter is positive
             if parameter > 0:
-                return [(index, parameter)]
+                return (index, parameter)
 
-        except:
-            pass
+        except ValueError:
+            # Repeat if input could not be converted to float
+            continue
 
 def select_multiple():
 
     while(True):
 
+        # Ask for the user input
         indices = input("Enter the indices of the driving functions you wish to use seperated by a space: ")
         
         try:
 
+            # Convert the indices to integer list
             indices = [int(x) for x in indices.split()]
-            
-            for index in indices:
 
-                # Check that the indices have appropriate values
-                if index > Constants.C_ALPHA_IDX or index < 0:
-                    continue
-    
-                if index == Constants.C_ALPHA_IDX
+            # Check that all the indices are greater greater than or equal to zero
+            if all(index >= 0 for index in indices):
 
-            return indices
+                # Return if square-root driving was not selected
+                if all(index < Constants.KAPPA_IDX for index in indices):
+                    return indices
 
-        except:
-            pass
+                else:
+                    return [index if index < Constants.KAPPA_IDX else obtain_squareroot_parameter(index) for index in indices]
 
-        print("Hello.")
+            else:
+                # Repeat if list contained some negative values
+                continue
+
+        except ValueError:
+            # Repeat if input could not be converted to integer list
+            continue
 
 def obtain_driving_selection():
 
@@ -71,13 +77,9 @@ def obtain_driving_selection():
             if answer < Constants.KAPPA_IDX:
                 return [answer]
 
-            # Obtain a kappa value
-            elif answer == Constants.KAPPA_IDX:
-                return obtain_kappa()
-
-            # Obtain a c_alpha value
-            elif answer == Constants.C_ALPHA_IDX:
-                return obtain_c_alpha()
+            # Obtain a kappa or c_alpha value
+            elif answer in [Constants.KAPPA_IDX, Constants.C_ALPHA_IDX]:
+                return [obtain_squareroot_parameter(answer)]
 
             # Create a list for multiple driving functions
             elif answer == Constants.MULTIPLE_IDX:
@@ -91,7 +93,8 @@ def obtain_driving_selection():
             else:
                 print("Error: Driving function selection is not recognised.")
 
-        except:
-            pass
+        except ValueError:
+            # Repeat until if driving selection was not an integer
+            continue
 
 print(obtain_driving_selection())

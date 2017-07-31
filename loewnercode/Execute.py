@@ -99,8 +99,6 @@ def obtain_driving_selection():
 
 def obtain_plot_parameters():
 
-    plot_parameters = []
-
     while True:
 
         values = input("Enter the start time, end time, and number of points seperated by a space: ")
@@ -123,12 +121,12 @@ def obtain_plot_parameters():
             if values[2] < 1:
                 continue
 
+            return values
+
         except ValueError:
             continue
 
-        return plot_parameters
-
-def run_loewner(driving_selection, plot_parameters):
+def compile_loewner(driving_selection, plot_parameters):
 
     compile_string = Constants.COMPILE_STRING[:]
 
@@ -151,12 +149,28 @@ def run_loewner(driving_selection, plot_parameters):
 
         else:
             print("Error?")
-            
-        compile_string = "".join(compile_string)
-        call(compile_string, shell=True)
-        print(compile_string)
+
+        compile_string = " ".join(compile_string)
+        call(compile_string, shell = True)
+
+def execute_loewner(plot_parameters):
+
+    execute_string = ["./NumericalLoewner.out"] + [str(param) for param in plot_parameters]
+    execute_string = " ".join(execute_string)
+    print(execute_string)
+    call(execute_string, shell = True)
+    call("tail result.txt", shell = True)
+
+def plot_loewner():
+    pass
+        
 
 driving_selection = obtain_driving_selection()
 plot_parameters = obtain_plot_parameters()
 
-run_loewner(driving_selection,plot_parameters)
+print(plot_parameters)
+test = input("Let's look")
+
+compile_loewner(driving_selection,plot_parameters)
+execute_loewner(plot_parameters)
+plot_loewner()

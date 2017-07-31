@@ -52,7 +52,7 @@ use constants
 
 #elif CASE == 6
 
-    drive = t * cost(t * pi)
+    drive = t * cos(t * pi)
 
 #elif CASE == 7
 
@@ -103,7 +103,6 @@ implicit none
     integer :: j = 0
     integer :: k = 0
     integer :: m = 0
-    integer :: final_time = 0
 
     real(8) :: delta_t = 0
     real(8) :: two_delta_t = 0
@@ -112,6 +111,7 @@ implicit none
     real(8) :: max_t_incr = 0
     real(8) :: driving_value = 0
     real(8) :: start_time = 0
+    real(8) :: final_time = 0
     real(8) :: total_change = 0
     real(8) :: driving_arg = 0
 
@@ -128,18 +128,18 @@ implicit none
     call get_command_argument(1, arg)
     read(arg,*) start_time
 
-    ! Find the value for the the number of g_0 values
-    call get_command_argument(2, arg)
-    read(arg,*) M
-
     ! Find the value for max_t
-    call get_command_argument(3, arg)
+    call get_command_argument(2, arg)
     read(arg,*) final_time
+
+    ! Find the value for the the number of g_0 values
+    call get_command_argument(3, arg)
+    read(arg,*) M
 
     ! Open the output file
     open(unit = 1, file = "result.txt")
 
-    total_change = (1.0 * final_time) - start_time
+    total_change = final_time - start_time
     max_t_incr = total_change / M
     delta_t = max_t_incr /  100
     two_delta_t = delta_t * 2

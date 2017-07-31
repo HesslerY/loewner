@@ -137,7 +137,7 @@ implicit none
     do j = 1, M
 
         max_t = start_time + (j * max_t_incr)
-        g_t1 = complex(driving_value,0)
+        g_t1 = complex(driving_function(max_t),0)
         k = 0
         driving_arg = max_t
 

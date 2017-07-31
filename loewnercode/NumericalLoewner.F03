@@ -1,8 +1,8 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !                                                                              !
 ! Program: NumericalLoewner.F03                                                !
-! Purpose: Obtain exact solutions for Loewner's equation with a                !
-!          variety of driving functions.                                       !
+! Purpose: Obtain numerlical solutions for Loewner's equation with a variety   !
+!          of driving functions.                                               !
 ! Author:  Dolica Akello-Egwel                                                 !
 !                                                                              !
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -24,15 +24,59 @@ pure function square(x) result(j)
 
 end function square
 
-pure function driving_function(t) result(drive)
+pure function driving_function(t) result(driving_value)
 use constants
 
     real(8), intent(in) :: t ! argument
-    real(8) :: drive ! return value
-    real(8) :: c_alpha
-   
-    c_alpha = 0
-    drive = t
+    real(8) :: driving_value ! return value
+ 
+#if CASE == 1
+     driving_value = 0.0
+
+#elif CASE == 2 
+     driving_value = t
+
+#elif CASE == 3
+     driving_value = cos(t)    
+
+#elif CASE == 4
+     drive = t * cos(t)
+
+#elif CASE == 5
+    drive = cos(t * pi) 
+
+#elif CASE == 6
+    drive = t * cost(t * pi)
+
+#elif CASE == 7
+    drive = sin(t)
+
+#elif CASE == 8
+    drive = t * sin(t)
+
+#elif CASE == 9
+    drive = sin(t * pi)
+
+#elif CASE == 10
+    drive = t * sin(t * pi)
+
+#elif CASE == 11
+#ifdef KAPPA
+    drive = 2 * dsqrt(KAPPA * (1 - t))
+#else
+    stop "Error: Square-root driving selected but KAPPA is undefined."
+#endif
+
+#elif CASE == 12
+#ifdef C_ALPHA
+    drive = dsqrt(t) * C_ALPHA
+#else
+    stop "Error: Square-root driving selected but C_ALPHA is undefined."
+#endif
+
+#else
+    stop "Error: Driving function selection not recognised."
+#endif
 
 end function driving_function
 
@@ -54,7 +98,7 @@ implicit none
     real(8) :: t = 0
     real(8) :: max_t = 0
     real(8) :: max_t_incr = 0
-    real(8) :: drive_value = 0
+    real(8) :: driving_value = 0
     real(8) :: start_time = 0
     real(8) :: total_change = 0
     real(8) :: driving_arg = 0
@@ -92,16 +136,16 @@ implicit none
     do j = 1, M
 
         max_t = start_time + (j * max_t_incr)
-        g_t1 = complex(driving_function(max_t),0)
+        g_t1 = complex(driving_value,0)
         k = 0
         driving_arg = max_t
 
         do while (driving_arg > 0)
 
-            drive_value = driving_function(driving_arg)
+            driving_value = driving_function(driving_arg)
             
-            b_term = (drive_value + g_t1) * 0.5
-            c_term = (drive_value * g_t1) + two_delta_t
+            b_term = (driving_value + g_t1) * 0.5
+            c_term = (driving_value * g_t1) + two_delta_t
             g_t2 = b_term + cdsqrt(c_term - square(b_term)) * i
             g_t1 = g_t2
 

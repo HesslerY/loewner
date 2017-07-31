@@ -24,43 +24,54 @@ pure function square(x) result(j)
 
 end function square
 
-pure function driving_function(t) result(driving_value)
+function driving_function(t) result(driving_value)
 use constants
 
     real(8), intent(in) :: t ! argument
     real(8) :: driving_value ! return value
  
 #if CASE == 1
+
      driving_value = 0.0
 
 #elif CASE == 2 
+
      driving_value = t
 
 #elif CASE == 3
+
      driving_value = cos(t)    
 
 #elif CASE == 4
+
      drive = t * cos(t)
 
 #elif CASE == 5
+
     drive = cos(t * pi) 
 
 #elif CASE == 6
+
     drive = t * cost(t * pi)
 
 #elif CASE == 7
+
     drive = sin(t)
 
 #elif CASE == 8
+
     drive = t * sin(t)
 
 #elif CASE == 9
+
     drive = sin(t * pi)
 
 #elif CASE == 10
+
     drive = t * sin(t * pi)
 
 #elif CASE == 11
+
 #ifdef KAPPA
     drive = 2 * dsqrt(KAPPA * (1 - t))
 #else
@@ -68,6 +79,7 @@ use constants
 #endif
 
 #elif CASE == 12
+
 #ifdef C_ALPHA
     drive = dsqrt(t) * C_ALPHA
 #else

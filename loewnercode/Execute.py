@@ -1,4 +1,4 @@
-from subprocess import call
+from subprocess import check_output
 import Constants
 
 def obtain_squareroot_parameter(index):
@@ -126,51 +126,58 @@ def obtain_plot_parameters():
         except ValueError:
             continue
 
-def compile_loewner(driving_selection, plot_parameters):
+def compile_loewner(driving_selection):
 
     compile_string = Constants.COMPILE_STRING[:]
 
-    for driving_function in driving_selection:
-
-        if type(driving_function) is int:
-            compile_string[0] += str(driving_function)
+    if type(driving_function) is int:
+        compile_string[0] += str(driving_function)
             
-        elif type(driving_function) is tuple:
-            compile_string[0] += str(driving_function[0])
+    elif type(driving_function) is tuple:
+        compile_string[0] += str(driving_function[0])
 
-            if driving_function[0] == Constants.KAPPA_IDX:
-                compile_string[0] += " -D KAPPA="
-            elif driving_function[0] == Constants.C_ALPHA_IDX:
-                compile_string[0] += " -D C_ALPHA="
-            else:
-                print("Error?")
-
-            compile_string[0] += str(driving_function[1])
-
+        if driving_function[0] == Constants.KAPPA_IDX:
+            compile_string[0] += " -D KAPPA="
+        elif driving_function[0] == Constants.C_ALPHA_IDX:
+            compile_string[0] += " -D C_ALPHA="
         else:
-            print("Error?")
+            # This is an error
+            pass
 
-        compile_string = " ".join(compile_string)
-        call(compile_string, shell = True)
+        compile_string[0] += str(driving_function[1])
+
+    else:
+        # This is an error
+        pass
+
+    compile_string = " ".join(compile_string)
+    check_output(compile_string, shell = True)
 
 def execute_loewner(plot_parameters):
 
     execute_string = ["./NumericalLoewner.out"] + [str(param) for param in plot_parameters]
     execute_string = " ".join(execute_string)
-    print(execute_string)
-    call(execute_string, shell = True)
-    call("tail result.txt", shell = True)
 
-def plot_loewner():
-    pass
-        
+    check_output(execute_string, shell = True)
+    # check_output("tail result.txt", shell = True)
+
+def plot_loewner(driving_function):
+    
+    plot_string = ["python Plot.py"]
+
+    if type(driving_function) is int:
+        plot_string += [str(driving_function),"1","0"]
+    elif type(driving_function) is tuple:
+        plot_string += [str(driving_function[0]),"1",str(driving_function[1])]
+
+    plot_string = " ".join(plot_string)
+    check_output(plot_string, shell = True)
 
 driving_selection = obtain_driving_selection()
 plot_parameters = obtain_plot_parameters()
 
-print(plot_parameters)
-test = input("Let's look")
+for driving_function in driving_selection:
 
-compile_loewner(driving_selection,plot_parameters)
-execute_loewner(plot_parameters)
-plot_loewner()
+    compile_loewner(driving_function)
+    execute_loewner(plot_parameters)
+    plot_loewner(driving_function)

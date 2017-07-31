@@ -30,44 +30,44 @@ use constants
     real(8), intent(in) :: t ! argument
     real(8) :: driving_value ! return value
  
-#if CASE == 1
+#if CASE == 0
     driving_value = 0.0
 
-#elif CASE == 2 
+#elif CASE == 1 
     driving_value = t
 
-#elif CASE == 3
+#elif CASE == 2
     driving_value = cos(t)    
 
-#elif CASE == 4
+#elif CASE == 3
     driving_value = t * cos(t)
 
-#elif CASE == 5
+#elif CASE == 4
     driving_value = cos(t * pi) 
 
-#elif CASE == 6
+#elif CASE == 5
     driving_value = t * cos(t * pi)
 
-#elif CASE == 7
+#elif CASE == 6
     driving_value = sin(t)
 
-#elif CASE == 8
+#elif CASE == 7
     driving_value = t * sin(t)
 
-#elif CASE == 9
+#elif CASE == 8
     driving_value = sin(t * pi)
 
-#elif CASE == 10
+#elif CASE == 9
     driving_value = t * sin(t * pi)
 
-#elif CASE == 11
+#elif CASE == 10
 #ifdef KAPPA
     driving_value = 2 * dsqrt(KAPPA * (1 - t))
 #else
     stop "Error: Square-root driving selected but KAPPA is undefined."
 #endif
 
-#elif CASE == 12
+#elif CASE == 11
 #ifdef C_ALPHA
     driving_value = dsqrt(t) * C_ALPHA
 #else

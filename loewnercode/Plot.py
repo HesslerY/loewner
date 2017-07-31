@@ -7,45 +7,33 @@ plt.style.use('ggplot')
 
 label_index = int(argv[1])
 remove_last = int(argv[2])
-alpha_value = argv[3]
+square_root_value = argv[3]
 
 all_labels = ["$\\xi (t) = 0$",
               "$\\xi (t) = t$",
               "$\\xi (t) = \cos(t)$",
-              "$\\xi (t) = \cos(\pi t)$",
               "$\\xi (t) = t \ \cos(t)$",
+              "$\\xi (t) = \cos(\pi t)$",
               "$\\xi (t) = t \ \cos(\pi t)$",
               "$\\xi (t) = \sin(t)$",
-              "$\\xi (t) = \sin(\pi t)$",
               "$\\xi (t) = t \ \sin(t)$",
+              "$\\xi (t) = \sin(\pi t)$",
               "$\\xi (t) = t \ \sin(\pi t)$",
-              "$\\xi (t) = 2 \ \sqrt{1 \ (1 - t)}$",
-              "$\\xi (t) = 2 \ \sqrt{2.5 \ (1 - t)}$",
-              "$\\xi (t) = 2 \ \sqrt{3.5 \ (1 - t)}$",
-              "$\\xi (t) = 2 \ \sqrt{4 \ (1 - t)}$",
-              "$\\xi (t) = 2 \ \sqrt{4.5 \ (1 - t)}$",
-              "$\\xi (t) = 2 \ \sqrt{6 \ (1 - t)}$",
-              "$\\xi (t) = 2 \ \sqrt{8 \ (1 - t)}$",
-              "$\\xi (t) = c_{" + alpha_value + "} \sqrt{t}$"]
+              "$\\xi (t) = 2 \ \sqrt{" + square_root_value + " \ (1 - t)}$",
+              "$\\xi (t) = c_{" + square_root_value + "} \sqrt{t}$"]
 
 all_filenames = ["zero",
                  "t",
                  "cos(t)",
-                 "cos(pi * t)",
                  "t * cos(t)",
+                 "cos(pi * t)",
                  "t * cos(pi * t)",
                  "sin(t)",
-                 "sin(pi * t)",
                  "t * sin(t)",
+                 "sin(pi * t)",
                  "t * sin(pi * t)",
-                 "2 * sqrt(1 * (1 - t))",
-                 "2 * sqrt(2.5 * (1 - t))",
-                 "2 * sqrt(3.5 * (1 - t))",
-                 "2 * sqrt(4 * (1 - t))",
-                 "2 * sqrt(4.5 * (1 - t))",
-                 "2 * sqrt(6 * (1 - t))",
-                 "2 * sqrt(8 * (1 - t))",
-                 "c" + alpha_value + "-sqrt(t)"]
+                 "2 * sqrt(" + square_root_value + " * (1 - t))",
+                 "c" + square_root_value + "-sqrt(t)"]
 
 results_file = open('result.txt', 'r')
 

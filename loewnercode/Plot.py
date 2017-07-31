@@ -49,14 +49,16 @@ for line in results_file:
 
 if remove_last == 1:
 
-    real_values.pop()
-    imag_values.pop()
+    real_values = real_values[1:-1]
+    imag_values = imag_values[1:-1]
 
-if label_index >= 17:
+if label_index == 11:
+
     max_x = real_values[-1]
     max_y = real_values[-1]
     angle = arctan2(max_y , max_x) / pi
-    alpha_data = [alpha_value, str(angle)]
+    alpha_data = [square_root_value, str(angle)]
+    print(alpha_data)
     plt.axis((-5,5,0,6))
 
 partial_filename = "output/" + all_filenames[label_index]

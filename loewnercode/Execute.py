@@ -8,7 +8,7 @@ def obtain_squareroot_parameter(index):
     if index == Constants.C_ALPHA_IDX:
         query = "Enter the desired value for c_alpha: "
 
-    while(True):
+    while True:
 
         parameter = input(query)
 
@@ -27,7 +27,7 @@ def obtain_squareroot_parameter(index):
 
 def select_multiple():
 
-    while(True):
+    while True:
 
         # Ask for the user input
         indices = input("Enter the indices of the driving functions you wish to use seperated by a space: ")
@@ -57,7 +57,7 @@ def select_multiple():
 
 def obtain_driving_selection():
 
-    while (True):
+    while True:
 
         print("AVALIABLE DRIVING FUNCTIONS")
 
@@ -166,9 +166,9 @@ def plot_loewner(driving_function):
     plot_string = ["python Plot.py"]
 
     if type(driving_function) is int:
-        plot_string += [str(driving_function),"1","0"]
+        plot_string += [str(driving_function), "1", "0"]
     elif type(driving_function) is tuple:
-        plot_string += [str(driving_function[0]),"1",str(driving_function[1])]
+        plot_string += [str(driving_function[0]), "1", str(driving_function[1])]
 
     plot_string = " ".join(plot_string)
     check_output(plot_string, shell = True)

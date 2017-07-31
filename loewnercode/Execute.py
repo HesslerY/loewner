@@ -97,4 +97,36 @@ def obtain_driving_selection():
             # Repeat until if driving selection was not an integer
             continue
 
-print(obtain_driving_selection())
+def obtain_plot_parameters():
+
+    plot_parameters = []
+
+    while True:
+
+        values = input("Enter the start time, end time, and number of points seperated by a space: ")
+        
+        try:
+
+            values = values.split()
+
+            if len(values) != 3:
+                continue
+
+            values[0] = float(values[0])
+            values[1] = float(values[1])
+            values[2] = int(values[2])
+
+            if values[0] < 0:
+                continue
+            if values[1] < 0:
+                continue
+            if values[2] < 1:
+                continue
+
+        except ValueError:
+            continue
+
+        return plot_parameters
+
+driving_selection = obtain_driving_selection()
+plot_parameters = obtain_plot_parameters()

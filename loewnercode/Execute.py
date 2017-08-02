@@ -1,12 +1,8 @@
 from subprocess import check_output
 import Constants
+from LoewnerRun import LoewnerRun
 
 def obtain_squareroot_parameter(index):
-
-    if index == Constants.KAPPA_IDX:
-        query = "Enter the desired value for kappa: "
-    if index == Constants.C_ALPHA_IDX:
-        query = "Enter the desired value for c_alpha: "
 
     while True:
 
@@ -62,8 +58,11 @@ def obtain_driving_selection():
         print("AVALIABLE DRIVING FUNCTIONS")
 
         # Print all of the possible driving functions
-        for i in range(Constants.NUM_OPTIONS):
-            print("[" + str(i) + "] " + Constants.DRIVING_OPTIONS[i])
+        for i in range(Constants.TOTAL_DRIVING_FUNCTIONS):
+            print("[" + str(i) + "] " + Constants.DRIVING_INFO[i][0])
+
+        print("[12] MULTIPLE")
+        print("[13] ALL")
 
         # Ask for the user selection
         answer = input("Select a driving function: ")
@@ -75,26 +74,26 @@ def obtain_driving_selection():
 
             # Return if one of the first nine driving functions is selected
             if answer < Constants.KAPPA_IDX:
-                return [answer]
+                return [LoewnerRun(answer)]
 
             # Obtain a kappa or c_alpha value
             elif answer in [Constants.KAPPA_IDX, Constants.C_ALPHA_IDX]:
-                return [obtain_squareroot_parameter(answer)]
+                return [LoewnerRun(obtain_squareroot_parameter(answer))]
 
             # Create a list for multiple driving functions
             elif answer == Constants.MULTIPLE_IDX:
-                return select_multiple()
+                return [LoewnerRun(mult) for mult in select_multiple()]
 
             # Create a list containing all driving functions
             elif answer == Constants.ALL_IDX:
-                return [i for i in range(Constants.TOTAL_DRIVING_FUNCTIONS)]
+                return [LoewnerRun(i) for i in range(Constants.TOTAL_DRIVING_FUNCTIONS)]
 
             # Print message in case of invalid choice
             else:
                 print("Error: Driving function selection is not recognised.")
 
         except ValueError:
-            # Repeat until if driving selection was not an integer
+            # Repeat if driving selection was not an integer
             continue
 
 def obtain_plot_parameters():
@@ -116,7 +115,7 @@ def obtain_plot_parameters():
 
             if values[0] < 0:
                 continue
-            if values[1] < 0:
+            if values[1] <= values[0]:
                 continue
             if values[2] < 1:
                 continue
@@ -169,15 +168,18 @@ def plot_loewner(driving_function):
         plot_string += [str(driving_function), "1", "0"]
     elif type(driving_function) is tuple:
         plot_string += [str(driving_function[0]), "1", str(driving_function[1])]
+    else:
+        # Error
+        pass
 
     plot_string = " ".join(plot_string)
     check_output(plot_string, shell = True)
 
-driving_selection = obtain_driving_selection()
-plot_parameters = obtain_plot_parameters()
+driving_functions = obtain_driving_selection()
+# plot_parameters = obtain_plot_parameters()
 
-for driving_function in driving_selection:
+# for driving_function in driving_functions:
 
-    compile_loewner(driving_function)
-    execute_loewner(plot_parameters)
-    plot_loewner(driving_function)
+#    compile_loewner(driving_function)
+#    execute_loewner(plot_parameters)
+#    plot_loewner(driving_function)

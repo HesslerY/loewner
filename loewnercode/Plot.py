@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 from math import pi, degrees
 from numpy import arctan2
-from time import gmtime, strftime
 from os.path import dirname, exists
 from os import mkdir
 import Constants
@@ -10,7 +9,7 @@ plt.style.use('ggplot')
 
 class Plot:
 
-    def __init__(self, driving_func_index, remove_last_point = True, input_filename = "result.txt"):
+    def __init__(self, driving_func_index, run_params, sqrt_param = None, remove_last_point = True, input_filename = "result.txt"):
 
         # Create empty lists for plot points
         self.real_values = []
@@ -23,19 +22,32 @@ class Plot:
         # self.fig_size = fig_size
         
         # Assign the plot title
-        self.output_plot_title = Constants.DRIVING_INFO[driving_func_index][1]
+        self.output_plot_title = self.generate_plot_title(driving_func_index, sqrt_param)
     
         # Determine the output directory for the plot images
-        self.output_plot_directory = "output/" + strftime("%m-%d-%y", gmtime())
+        self.output_plot_directory = "output/" + str(driving_func_index) + "/"
         
         # Determine the partial filename for the plot images
-        self.partial_output_filename = str(driving_func_index)
+        self.partial_output_filename = str(driving_func_index) + " " + "-".join(run_params)
         
-        # Save rather than display plot
-        self.display = True
+        # Display or save plot
+        self.display = False
         
         # Remove last point before plotting
         self.remove_last_point = True
+        
+        # Assign the run paramters
+        self.run_params = run_params
+        
+        # Read the input file
+        self.read_file()
+        
+    def generate_plot_title(self, driving_func_index, sqrt_param):
+    
+        if driving_func_index not in [Constants.KAPPA_IDX, Constants.C_ALPHA_IDX]:
+            return Constants.DRIVING_INFO[driving_func_index][1]
+            
+        return Constants.DRIVING_INFO[driving_func_index][1].replace("SQRT_PARAM", sqrt_param)
 
     def read_file(self):
 
@@ -61,7 +73,7 @@ class Plot:
         image_directory = dirname(self.output_plot_directory)
         
         if not exists(image_directory):
-            mkdr(image_directory)
+            mkdir(image_directory)
         
     def generate_plot(self):
     

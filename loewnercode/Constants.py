@@ -9,8 +9,8 @@ DRIVING_INFO = [["0.0","$\\xi (t) = 0$"],
                 ["t * sin(t)","$\\xi (t) = t \ \sin(t)$"],
                 ["sin(t * pi)", "$\\xi (t) = \sin(\pi t)$"],
                 ["t * sin(t * pi)","$\\xi (t) = t \ \sin(\pi t)$"],
-                ["2 * dsqrt(kappa * (1 - t))", "$\\xi (t) = 2 \ \sqrt{ SQUARE_ROOT_VALUE \ (1 - t)}$"],
-	            ["dsqrt(t) * c_alpha","$\\xi (t) = c_{SQUARE_ROOT_VALUE} \sqrt{t}$"]]
+                ["2 * dsqrt(kappa * (1 - t))", "$\\xi (t) = 2 \ \sqrt{ SQRT_PARAM \ (1 - t)}$"],
+	            ["dsqrt(t) * c_alpha","$\\xi (t) = c_{SQRT_PARAM} \sqrt{t}$"]]
 
 TOTAL_DRIVING_FUNCTIONS = len(DRIVING_INFO)
 

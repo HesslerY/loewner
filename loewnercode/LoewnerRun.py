@@ -21,34 +21,31 @@ class LoewnerRun:
             return "gfortran -D CASE=" + str(self.driving_func_index) + " NumericalLoewner.F03 -o NumericalLoewner.out"
 
         elif self.driving_func_index == Constants.KAPPA_IDX:
-            self.square_root_param = self.obtain_square_root_parameter("Please enter the desired kappa value: ")
+            self.sqrt_param = self.obtain_sqrt_parameter("Please enter the desired kappa value: ")
             incomp_compile_command = "gfortran -D CASE=" + str(self.driving_func_index) + " -D KAPPA="
 
         elif self.driving_func_index == Constants.C_ALPHA_IDX:
-            self.square_root_param = self.obtain_square_root_parameter("Please enter the desired c_alpha value: ")
+            self.sqrt_param = self.obtain_sqrt_parameter("Please enter the desired c_alpha value: ")
             incomp_compile_command = "gfortran -D CASE=" + str(self.driving_func_index) + " -D C_ALPHA="
 
         else:
             # Error
             pass
 
-        return incomp_compile_command + str(self.square_root_param) + " NumericalLoewner.F03 -o NumericalLoewner.out"
+        return incomp_compile_command + str(self.sqrt_param) + " NumericalLoewner.F03 -o NumericalLoewner.out"
 
-    def obtain_square_root_parameter(self, query):
+    def obtain_sqrt_parameter(self, query):
 
         while True:
 
             # Ask for the square root parameter
-            square_root_parameter = input(query)
+            sqrt_parameter = input(query)
     
             try:
 
-                # Convert the input to a float
-                square_root_parameter = float(square_root_parameter)
-
                 # Return if parameter is positive
-                if square_root_parameter > 0:
-                    return square_root_parameter
+                if float(sqrt_parameter) > 0:
+                    return sqrt_parameter
 
             except ValueError:
                 # Repeat if input could not be converted to float
@@ -90,6 +87,7 @@ class LoewnerRun:
                 # self.num_points = values[2]
                 
                 # Create the execution command
+                self.run_params = values
                 return "./NumericalLoewner.out " + " ".join(values)
 
             except ValueError:
@@ -109,12 +107,11 @@ class LoewnerRun:
     def plot_loewner(self):
 
         # Create a Plot object
-        self.loewner_plot = Plot(self.driving_func_index)
-        
-        # Read results data to plot object
-        self.loewner_plot.read_file()
-        
-        self.loewner_plot.create_output_folder()
+        if self.driving_func_index not in [Constants.KAPPA_IDX, Constants.C_ALPHA_IDX]:
+            self.loewner_plot = Plot(self.driving_func_index, self.run_params)
+            
+        else: 
+            self.loewner_plot = Plot(self.driving_func_index, self.run_params, self.sqrt_param)
         
         self.loewner_plot.generate_plot()
         

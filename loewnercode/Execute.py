@@ -2,25 +2,6 @@ from subprocess import check_output
 import Constants
 from LoewnerRun import LoewnerRun
 
-def obtain_squareroot_parameter(index):
-
-    while True:
-
-        parameter = input(query)
-
-        try:
-
-            # Convert the answer to a float
-            parameter = float(parameter)
-
-            # Return if parameter is positive
-            if parameter > 0:
-                return (index, parameter)
-
-        except ValueError:
-            # Repeat if input could not be converted to float
-            continue
-
 def select_multiple():
 
     while True:
@@ -34,14 +15,8 @@ def select_multiple():
             indices = [int(x) for x in indices.split()]
 
             # Check that all the indices are greater greater than or equal to zero
-            if all(index >= 0 for index in indices):
-
-                # Return if square-root driving was not selected
-                if all(index < Constants.KAPPA_IDX for index in indices):
-                    return indices
-
-                else:
-                    return [index if index < Constants.KAPPA_IDX else obtain_squareroot_parameter(index) for index in indices]
+            if all(index >= 0 and index <= Constants.TOTAL_DRIVING_FUNCTIONS for index in indices):
+                return indices
 
             else:
                 # Repeat if list contained some negative values
@@ -73,12 +48,8 @@ def obtain_driving_selection():
             answer = int(answer)
 
             # Return if one of the first nine driving functions is selected
-            if answer < Constants.KAPPA_IDX:
+            if answer < Constants.MULTIPLE_IDX:
                 return [LoewnerRun(answer)]
-
-            # Obtain a kappa or c_alpha value
-            elif answer in [Constants.KAPPA_IDX, Constants.C_ALPHA_IDX]:
-                return [LoewnerRun(obtain_squareroot_parameter(answer))]
 
             # Create a list for multiple driving functions
             elif answer == Constants.MULTIPLE_IDX:
@@ -176,6 +147,10 @@ def plot_loewner(driving_function):
     check_output(plot_string, shell = True)
 
 driving_functions = obtain_driving_selection()
+
+for driving_function in driving_functions:
+    print(driving_function.compile_command)
+
 # plot_parameters = obtain_plot_parameters()
 
 # for driving_function in driving_functions:

@@ -7,19 +7,19 @@ def select_multiple():
     while True:
 
         # Ask for the user input
-        indices = input("Enter the indices of the driving functions you wish to use seperated by a space: ")
+        indices = input("Plase enter the indices of the driving functions you wish to use seperated by a space: ")
         
         try:
 
             # Convert the indices to integer list
             indices = [int(x) for x in indices.split()]
 
-            # Check that all the indices are greater greater than or equal to zero
-            if all(index >= 0 and index <= Constants.TOTAL_DRIVING_FUNCTIONS for index in indices):
+            # Check that all the indices are in an acceptable range
+            if all(index >= 0 and index < Constants.TOTAL_DRIVING_FUNCTIONS for index in indices):
                 return indices
 
             else:
-                # Repeat if list contained some negative values
+                # Repeat if list contained invalid values
                 continue
 
         except ValueError:
@@ -40,7 +40,7 @@ def obtain_driving_selection():
         print("[13] ALL")
 
         # Ask for the user selection
-        answer = input("Select a driving function: ")
+        answer = input("Please select a driving function: ")
 
         try:
 
@@ -65,35 +65,6 @@ def obtain_driving_selection():
 
         except ValueError:
             # Repeat if driving selection was not an integer
-            continue
-
-def obtain_plot_parameters():
-
-    while True:
-
-        values = input("Enter the start time, end time, and number of points seperated by a space: ")
-        
-        try:
-
-            values = values.split()
-
-            if len(values) != 3:
-                continue
-
-            values[0] = float(values[0])
-            values[1] = float(values[1])
-            values[2] = int(values[2])
-
-            if values[0] < 0:
-                continue
-            if values[1] <= values[0]:
-                continue
-            if values[2] < 1:
-                continue
-
-            return values
-
-        except ValueError:
             continue
 
 def compile_loewner(driving_selection):
@@ -150,6 +121,8 @@ driving_functions = obtain_driving_selection()
 
 for driving_function in driving_functions:
     print(driving_function.compile_command)
+    print([driving_function.start_time, driving_function.final_time, driving_function.num_points])
+
 
 # plot_parameters = obtain_plot_parameters()
 

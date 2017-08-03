@@ -1,4 +1,6 @@
 import Constants
+from Plot import Plot
+from subprocess import check_output
 
 class LoewnerRun:
 
@@ -7,14 +9,11 @@ class LoewnerRun:
         # Assign the driving function index
         self.driving_func_index = driving_func_index
 
-        # Set square root parameter to None by default
-        self.square_root_param = None
-
         # Assign the corresponding compilation command
         self.compile_command = self.generate_compile_command()
 
-        # Determine the start time, end time, and number of points
-        self.obtain_run_parameters()
+        # Determine the execute command
+        self.execute_command = self.obtain_execute_command()
 
     def generate_compile_command(self):
 
@@ -55,7 +54,7 @@ class LoewnerRun:
                 # Repeat if input could not be converted to float
                 continue
 
-    def obtain_run_parameters(self):
+    def obtain_execute_command(self):
 
         while True:
 
@@ -70,31 +69,62 @@ class LoewnerRun:
                 # Ensure that three values were entered
                 if len(values) != 3:
                     continue
-
-                # Ensure that the start time and end time can be converted to float
-                # Ensure that the number of points can be converted to int
-                values[0] = float(values[0])
-                values[1] = float(values[1])
-                values[2] = int(values[2])
+                    
+                start_time = float(values[0])
 
                 # Check that the start time >= 0
-                if values[0] < 0:
+                if start_time < 0:
                     continue
                 
                 # Check that final time is greater than the start time
-                if values[1] <= values[0]:
+                if float(values[1]) <= start_time:
                     continue
 
                 # Check that the number of points is >= 1
-                if values[2] < 1:
+                if int(values[2]) < 1:
                     continue
 
                 # Assign run parameters
-                self.start_time = values[0]
-                self.final_time = values[1]
-                self.num_points = values[2]
-                return
+                # self.start_time = values[0]
+                # self.final_time = values[1]
+                # self.num_points = values[2]
+                
+                # Create the execution command
+                return "./NumericalLoewner.out " + " ".join(values)
 
             except ValueError:
-                # Repeat if input had improper format
+                # Repeat if input had incorrect format
                 continue
+                
+    def compile_loewner(self):
+        
+        # Compile the Fortran file with the desired parameters
+        check_output(self.compile_command, shell = True)
+        
+    def execute_loewner(self):
+    
+        # Execute the compiled file
+        check_output(self.execute_command, shell = True)
+        
+    def plot_loewner(self):
+
+        # Create a Plot object
+        self.loewner_plot = Plot(self.driving_func_index)
+        
+        # Read results data to plot object
+        self.loewner_plot.read_file()
+        
+        self.loewner_plot.create_output_folder()
+        
+        self.loewner_plot.generate_plot()
+        
+    def run(self):
+
+        # Compile the Fortran file
+        self.compile_loewner()
+        
+        # Run for Fortran file
+        self.execute_loewner()        
+
+        # Plot the result
+        self.plot_loewner()

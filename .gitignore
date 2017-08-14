@@ -4,3 +4,5 @@ BackupNumericalLoewner.F03
 *.txt
 output/
 *pycache*
+outputimages/*
+outputimages/

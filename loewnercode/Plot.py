@@ -81,7 +81,7 @@ class Plot:
         plt.cla()
 
         # Set the plot title
-        plt.title(self.output_plot_title, fontsize = 12, color="black", y = 1.02)
+        plt.title(self.output_plot_title, fontsize = 14, color="black", y = 1.02, usetex=True)
         
         # Plot the values
         plt.plot(self.real_values, self.imag_values)

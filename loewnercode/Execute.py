@@ -30,7 +30,7 @@ def select_multiple():
         try:
 
             # Convert the indices to integer list
-            indices = [int(x) for x in indices.split()]
+            indices = list(set([int(x) for x in indices.split()]))
 
             if all(index >= 0 and index < Constants.TOTAL_DRIVING_FUNCTIONS for index in indices):
 

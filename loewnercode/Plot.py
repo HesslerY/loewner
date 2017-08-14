@@ -25,7 +25,7 @@ class Plot:
         self.output_plot_title = self.generate_plot_title(driving_func_index, sqrt_param)
     
         # Determine the output directory for the plot images
-        self.output_plot_directory = "output/" + str(driving_func_index) + "/"
+        self.output_plot_directory = "outputimages/" + str(driving_func_index) + "/"
         
         # Determine the partial filename for the plot images
         self.partial_output_filename = str(driving_func_index) + " " + "-".join(run_params)

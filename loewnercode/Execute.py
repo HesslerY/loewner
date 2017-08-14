@@ -2,6 +2,24 @@ from subprocess import check_output
 import Constants
 from LoewnerRun import LoewnerRun
 
+def multiple_square_root(index, driving_text):
+
+    while True:
+    
+        num_runs = input("Please enter the number of times you wish to run " + driving_text + ": ")
+        
+        try:
+        
+            num_runs = int(num_runs)
+            
+            if num_runs <= 0:
+                continue
+                
+            return [index for _ in range(num_runs - 1)]
+            
+        except ValueError:
+            continue
+
 def select_multiple():
 
     while True:
@@ -15,8 +33,15 @@ def select_multiple():
             indices = [int(x) for x in indices.split()]
 
             if all(index >= 0 and index < Constants.TOTAL_DRIVING_FUNCTIONS for index in indices):
+
+                if Constants.KAPPA_IDX in indices:
+                    indices = indices + multiple_square_root(Constants.KAPPA_IDX, "KAPPA")
+                    
+                if Constants.C_ALPHA_IDX in indices:
+                    indices = indices + multiple_square_root(Constants.C_ALPHA_IDX, "C_ALPHA")
+                
                 # Return if all indices are in an acceptable range
-                return indices
+                return sorted(indices)
 
             else:
                 # Repeat if list contained invalid values
@@ -70,10 +95,4 @@ def obtain_driving_selection():
 driving_functions = obtain_driving_selection()
 
 for driving_function in driving_functions:
-    # print(driving_function.compile_command)
-    # print(driving_function.execute_command)
     driving_function.run()
-
-# for driving_function in driving_functions:
-
-#    plot_loewner(driving_function)

@@ -6,18 +6,23 @@ def multiple_square_root(index, driving_text):
 
     while True:
     
+        # Ask for user input
         num_runs = input("Please enter the number of times you wish to run " + driving_text + ": ")
         
         try:
         
+            # Concert the value to an integer
             num_runs = int(num_runs)
             
+            # Repeat if this value is less than or equal to zero
             if num_runs <= 0:
                 continue
-                
+            
+            # Return the list with the square root driving function num_runs many times    
             return [index for _ in range(num_runs - 1)]
             
         except ValueError:
+            # Repeat if input could not be converted to an integer
             continue
 
 def select_multiple():
@@ -32,11 +37,14 @@ def select_multiple():
             # Convert the indices to integer list
             indices = list(set([int(x) for x in indices.split()]))
 
+            # Check that all the indices correspond to existing driving functions
             if all(index >= 0 and index < Constants.TOTAL_DRIVING_FUNCTIONS for index in indices):
 
+                # Determine the kappa value
                 if Constants.KAPPA_IDX in indices:
                     indices = indices + multiple_square_root(Constants.KAPPA_IDX, "KAPPA")
                     
+                # Determine the c_alpha value
                 if Constants.C_ALPHA_IDX in indices:
                     indices = indices + multiple_square_root(Constants.C_ALPHA_IDX, "C_ALPHA")
                 

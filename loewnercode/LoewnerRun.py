@@ -14,6 +14,10 @@ class LoewnerRun:
 
         # Determine the execute command
         self.execute_command = self.obtain_execute_command()
+        
+    def driving_string(self):
+
+        return "[" + Constants.DRIVING_INFO[self.driving_func_index][0] + "] "
 
     def generate_compile_command(self):
 
@@ -56,7 +60,7 @@ class LoewnerRun:
         while True:
 
             # Ask for the run parameters
-            values = input("Please enter the start time, end time, and number of points seperated by a space: ")
+            values = input(self.driving_string() + "Please enter the start time, end time, and number of points seperated by a space: ")
         
             try:
 

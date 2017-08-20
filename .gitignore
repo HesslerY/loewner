@@ -6,3 +6,4 @@ output/
 *pycache*
 outputimages/*
 outputimages/
+*.so

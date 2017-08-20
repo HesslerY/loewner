@@ -104,3 +104,5 @@ driving_functions = obtain_driving_selection()
 
 for driving_function in driving_functions:
     driving_function.run()
+    
+print("Done!")

@@ -17,17 +17,21 @@ class LoewnerRun:
         
     def driving_string(self):
 
+        # Return a string containing the name of the driving function in square brackets
         return "[" + Constants.DRIVING_INFO[self.driving_func_index][0] + "] "
 
     def generate_compile_command(self):
 
+        # Compile string for a driving function that does not require any additional parameters
         if self.driving_func_index not in [Constants.KAPPA_IDX, Constants.C_ALPHA_IDX]:
             return "gfortran -D CASE=" + str(self.driving_func_index) + " NumericalLoewner.F03 -o NumericalLoewner.out"
 
+        # Compile string for kappa driving function
         elif self.driving_func_index == Constants.KAPPA_IDX:
             self.sqrt_param = self.obtain_sqrt_parameter("Please enter the desired kappa value: ")
             incomp_compile_command = "gfortran -D CASE=" + str(self.driving_func_index) + " -D KAPPA="
 
+        # Compile string for c_alpha driving function
         elif self.driving_func_index == Constants.C_ALPHA_IDX:
             self.sqrt_param = self.obtain_sqrt_parameter("Please enter the desired c_alpha value: ")
             incomp_compile_command = "gfortran -D CASE=" + str(self.driving_func_index) + " -D C_ALPHA="
@@ -110,13 +114,15 @@ class LoewnerRun:
         
     def plot_loewner(self):
 
-        # Create a Plot object
+        # Create a Plot object for a driving function without any additonal parameters
         if self.driving_func_index not in [Constants.KAPPA_IDX, Constants.C_ALPHA_IDX]:
             self.loewner_plot = Plot(self.driving_func_index, self.run_params)
             
+        # Create a Plot object for square-root driving
         else: 
             self.loewner_plot = Plot(self.driving_func_index, self.run_params, self.sqrt_param)
         
+        # Generate the plot
         self.loewner_plot.generate_plot()
         
     def run(self):

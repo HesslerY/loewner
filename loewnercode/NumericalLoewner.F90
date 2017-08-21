@@ -81,26 +81,24 @@ use constants
 
 end function driving_function
 
-program loewner
+subroutine loewners_equation(start_time, final_time, n_points, g_arr)
 use constants
 implicit none
 
-    ! variables
-    character (len = 32) :: arg
+    ! Argument declerations
+    real(8) :: start_time
+    real(8) :: final_time
+    integer :: n_points 
 
-    integer :: NN = 0
+    ! Local variable declerations
     integer :: j = 0
     integer :: k = 0
-    integer :: m = 0
 
     real(8) :: delta_t = 0
     real(8) :: two_delta_t = 0
-    real(8) :: t = 0
     real(8) :: max_t = 0
     real(8) :: max_t_incr = 0
     real(8) :: driving_value = 0
-    real(8) :: start_time = 0
-    real(8) :: final_time = 0
     real(8) :: total_change = 0
     real(8) :: driving_arg = 0
 
@@ -113,28 +111,16 @@ implicit none
     complex(8) :: square
     real(8) :: driving_function
 
-    ! Find the value for the starting time
-    call get_command_argument(1, arg)
-    read(arg,*) start_time
-
-    ! Find the value for max_t
-    call get_command_argument(2, arg)
-    read(arg,*) final_time
-
-    ! Find the value for the the number of g_0 values
-    call get_command_argument(3, arg)
-    read(arg,*) M
-
-    ! Open the output file
-    open(unit = 1, file = "result.txt")
-
+    ! Return value decleration
+    complex(8) :: g_arr(n_points)
+    
     total_change = final_time - start_time
-    max_t_incr = total_change / M
+    max_t_incr = total_change / n_points
     delta_t = max_t_incr /  100
     two_delta_t = delta_t * 2
 
-    ! Compute g_0 M times
-    do j = 1, M
+    ! Compute g_0 n_points times
+    do j = 1, n_points
 
         max_t = start_time + (j * max_t_incr)
         g_t1 = complex(driving_function(max_t),0)
@@ -155,11 +141,8 @@ implicit none
 
         end do
 
-        ! Write the value of g_0 to the file
-        write (1,*) real(g_t2), imag(g_t2)
+        g_arr(j) = g_t1
 
     end do
 
-    close(1)
-
-end program Loewner
+end subroutine loewners_equation

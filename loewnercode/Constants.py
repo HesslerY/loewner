@@ -18,3 +18,7 @@ KAPPA_IDX = 10
 C_ALPHA_IDX = 11
 MULTIPLE_IDX = 12
 ALL_IDX = 13
+
+# Compilation-related strings
+f2py_start = "f2py -c -DCASE="
+f2py_end = " NumericalLoewner.F90 -m NumericalLoewner"

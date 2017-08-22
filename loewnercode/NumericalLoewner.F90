@@ -1,6 +1,6 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !                                                                              !
-! Program: NumericalLoewner.F03                                                !
+! Program: NumericalLoewner.F90                                                !
 ! Purpose: Obtain numerlical solutions for Loewner's equation with a variety   !
 !          of driving functions.                                               !
 ! Author:  Dolica Akello-Egwel                                                 !

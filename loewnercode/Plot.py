@@ -9,14 +9,11 @@ plt.style.use('ggplot')
 
 class Plot:
 
-    def __init__(self, driving_func_index, run_params, sqrt_param = None, remove_last_point = True, input_filename = "result.txt"):
+    def __init__(self, driving_func_index, run_params, results, sqrt_param = None, remove_last_point = True):
 
         # Create empty lists for plot points
-        self.real_values = []
-        self.imag_values = []
-        
-        # Assign the results data filename
-        self.input_filename = input_filename
+        self.real_values = [result.real for result in results]
+        self.imag_values = [result.imag for result in results]
         
         # Assign figsize
         # self.fig_size = fig_size
@@ -28,19 +25,16 @@ class Plot:
         self.output_plot_directory = "outputimages/" + str(driving_func_index) + "/"
         
         # Determine the partial filename for the plot images
-        self.partial_output_filename = str(driving_func_index) + " " + "-".join(run_params)
+        self.partial_output_filename = str(driving_func_index) + " " + "-".join([str(x) for x in run_params])
         
         # Display or save plot
-        self.display = False
+        self.display = True
         
         # Remove last point before plotting
         self.remove_last_point = True
         
         # Assign the run paramters
         self.run_params = run_params
-        
-        # Read the input file
-        self.read_file()
         
     def generate_plot_title(self, driving_func_index, sqrt_param):
     
@@ -49,25 +43,6 @@ class Plot:
             
         return Constants.DRIVING_INFO[driving_func_index][1].replace("SQRT_PARAM", sqrt_param)
 
-    def read_file(self):
-
-        # Open the data file
-        data_file = open(self.input_filename, 'r')
-
-        # Convert the values to float
-        for line in data_file:
-
-            values = line.split()
-
-            self.real_values.append(float(values[0]))
-            self.imag_values.append(float(values[1]))
-
-        # Deletes last point from the results
-        if self.remove_last_point:
-
-            self.real_values.pop()
-            self.imag_values.pop()
-            
     def create_output_folder(self):
         
         image_directory = dirname(self.output_plot_directory)

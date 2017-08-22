@@ -1,6 +1,7 @@
 import Constants
 from Plot import Plot
 from subprocess import check_output
+import f2pytest
 
 class LoewnerRun:
 
@@ -24,23 +25,23 @@ class LoewnerRun:
 
         # Compile string for a driving function that does not require any additional parameters
         if self.driving_func_index not in [Constants.KAPPA_IDX, Constants.C_ALPHA_IDX]:
-            return "gfortran -D CASE=" + str(self.driving_func_index) + " NumericalLoewner.F03 -o NumericalLoewner.out"
+            return Constants.f2py_start + str(self.driving_func_index) + Constants.f2py_end
 
         # Compile string for kappa driving function
         elif self.driving_func_index == Constants.KAPPA_IDX:
             self.sqrt_param = self.obtain_sqrt_parameter("Please enter the desired kappa value: ")
-            incomp_compile_command = "gfortran -D CASE=" + str(self.driving_func_index) + " -D KAPPA="
+            incomp_compile_command = Constants.f2py_start + str(self.driving_func_index) + " -DKAPPA="
 
         # Compile string for c_alpha driving function
         elif self.driving_func_index == Constants.C_ALPHA_IDX:
             self.sqrt_param = self.obtain_sqrt_parameter("Please enter the desired c_alpha value: ")
-            incomp_compile_command = "gfortran -D CASE=" + str(self.driving_func_index) + " -D C_ALPHA="
+            incomp_compile_command = Constants.f2py_start + str(self.driving_func_index) + " -DC_ALPHA="
 
         else:
             # Error
             pass
 
-        return incomp_compile_command + str(self.sqrt_param) + " NumericalLoewner.F03 -o NumericalLoewner.out"
+        return incomp_compile_command + str(self.sqrt_param) + Constants.f2py_end
 
     def obtain_sqrt_parameter(self, query):
 
@@ -88,47 +89,36 @@ class LoewnerRun:
                 # Check that the number of points is >= 1
                 if int(values[2]) < 1:
                     continue
-
-                # Assign run parameters
-                # self.start_time = values[0]
-                # self.final_time = values[1]
-                # self.num_points = values[2]
                 
                 # Create the execution command
-                self.run_params = values
-                return "./NumericalLoewner.out " + " ".join(values)
+                self.run_params = [start_time, float(values[1]), int(values[2])]
+                return
 
             except ValueError:
                 # Repeat if input had incorrect format
                 continue
                 
-    def compile_loewner(self):
-        
+    def execute_loewner(self):
+
         # Compile the Fortran file with the desired parameters
         check_output(self.compile_command, shell = True)
-        
-    def execute_loewner(self):
-    
-        # Execute the compiled file
-        check_output(self.execute_command, shell = True)
+
+        self.result = f2pytest.peform_loewner(*self.run_params)
         
     def plot_loewner(self):
 
         # Create a Plot object for a driving function without any additonal parameters
         if self.driving_func_index not in [Constants.KAPPA_IDX, Constants.C_ALPHA_IDX]:
-            self.loewner_plot = Plot(self.driving_func_index, self.run_params)
+            self.loewner_plot = Plot(self.driving_func_index, self.result, self.run_params)
             
         # Create a Plot object for square-root driving
         else: 
-            self.loewner_plot = Plot(self.driving_func_index, self.run_params, self.sqrt_param)
+            self.loewner_plot = Plot(self.driving_func_index, self.result, self.run_params, self.sqrt_param)
         
         # Generate the plot
         self.loewner_plot.generate_plot()
         
     def run(self):
-
-        # Compile the Fortran file
-        self.compile_loewner()
         
         # Run for Fortran file
         self.execute_loewner()        

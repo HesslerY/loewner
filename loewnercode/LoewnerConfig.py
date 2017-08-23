@@ -9,6 +9,9 @@ class LoewnerConfig:
 
         # Assign the driving function index
         self.driving_func_index = driving_func_index
+        
+        # Set squareroot parameter to None
+        self.sqrt_param = None
 
         # Assign the corresponding compilation command
         self.compile_command = Constants.f2py_start + self.generate_compile_command() + Constants.f2py_end
@@ -21,8 +24,8 @@ class LoewnerConfig:
         # Return a string containing the name of the driving function in square brackets
         return "[" + Constants.DRIVING_INFO[self.driving_func_index][0] + "] "
         
-    def case_string(self):
-    
+    def case_string(self):   
+     
         return ["-DCASE=" + str(self.driving_func_index)]
         
     def sqrt_param_string(self, param_name, param_val):
@@ -43,7 +46,7 @@ class LoewnerConfig:
         # Compile string for c_alpha driving function
         elif self.driving_func_index == Constants.C_ALPHA_IDX:
             self.sqrt_param = self.obtain_sqrt_parameter("Please enter the desired c_alpha value: ")
-            return elf.case_string() + self.sqrt_param_string("-DC_ALPHA=", self.sqrt_param)
+            return self.case_string() + self.sqrt_param_string("-DC_ALPHA=", self.sqrt_param)
 
         else:
             # Error

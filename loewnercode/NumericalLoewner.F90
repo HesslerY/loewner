@@ -7,8 +7,8 @@
 !                                                                              !
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-module constants  
-implicit none 
+module constants
+implicit none
 
    real, parameter :: pi = 3.1415926536
    complex, parameter :: i = complex(0,1)

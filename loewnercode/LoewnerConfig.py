@@ -1,9 +1,9 @@
 import Constants
 from Plot import Plot
-from subprocess import check_output
-import f2pytest
+from subprocess import call
+from numpy import f2py
 
-class LoewnerRun:
+class LoewnerConfig:
 
     def __init__(self, driving_func_index):
 
@@ -11,7 +11,7 @@ class LoewnerRun:
         self.driving_func_index = driving_func_index
 
         # Assign the corresponding compilation command
-        self.compile_command = self.generate_compile_command()
+        self.compile_command = Constants.f2py_start + self.generate_compile_command() + Constants.f2py_end
 
         # Determine the execute command
         self.execute_command = self.obtain_execute_command()
@@ -20,28 +20,34 @@ class LoewnerRun:
 
         # Return a string containing the name of the driving function in square brackets
         return "[" + Constants.DRIVING_INFO[self.driving_func_index][0] + "] "
+        
+    def case_string(self):
+    
+        return ["-DCASE=" + str(self.driving_func_index)]
+        
+    def sqrt_param_string(self, param_name, param_val):
+    
+        return [param_name + str(param_val)]
 
     def generate_compile_command(self):
 
         # Compile string for a driving function that does not require any additional parameters
         if self.driving_func_index not in [Constants.KAPPA_IDX, Constants.C_ALPHA_IDX]:
-            return Constants.f2py_start + str(self.driving_func_index) + Constants.f2py_end
+            return self.case_string()
 
         # Compile string for kappa driving function
         elif self.driving_func_index == Constants.KAPPA_IDX:
             self.sqrt_param = self.obtain_sqrt_parameter("Please enter the desired kappa value: ")
-            incomp_compile_command = Constants.f2py_start + str(self.driving_func_index) + " -DKAPPA="
+            return self.case_string() + self.sqrt_param_string("-DKAPPA=", self.sqrt_param)
 
         # Compile string for c_alpha driving function
         elif self.driving_func_index == Constants.C_ALPHA_IDX:
             self.sqrt_param = self.obtain_sqrt_parameter("Please enter the desired c_alpha value: ")
-            incomp_compile_command = Constants.f2py_start + str(self.driving_func_index) + " -DC_ALPHA="
+            return elf.case_string() + self.sqrt_param_string("-DC_ALPHA=", self.sqrt_param)
 
         else:
             # Error
             pass
-
-        return incomp_compile_command + str(self.sqrt_param) + Constants.f2py_end
 
     def obtain_sqrt_parameter(self, query):
 
@@ -98,30 +104,6 @@ class LoewnerRun:
                 # Repeat if input had incorrect format
                 continue
                 
-    def execute_loewner(self):
-
-        # Compile the Fortran file with the desired parameters
-        check_output(self.compile_command, shell = True)
-
-        self.result = f2pytest.peform_loewner(*self.run_params)
-        
-    def plot_loewner(self):
-
-        # Create a Plot object for a driving function without any additonal parameters
-        if self.driving_func_index not in [Constants.KAPPA_IDX, Constants.C_ALPHA_IDX]:
-            self.loewner_plot = Plot(self.driving_func_index, self.result, self.run_params)
-            
-        # Create a Plot object for square-root driving
-        else: 
-            self.loewner_plot = Plot(self.driving_func_index, self.result, self.run_params, self.sqrt_param)
-        
-        # Generate the plot
-        self.loewner_plot.generate_plot()
-        
-    def run(self):
-        
-        # Run for Fortran file
-        self.execute_loewner()        
-
-        # Plot the result
-        self.plot_loewner()
+    def compile_loewner(self):
+    
+         call(self.compile_command)

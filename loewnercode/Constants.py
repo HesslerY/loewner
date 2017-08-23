@@ -12,13 +12,15 @@ DRIVING_INFO = [["0.0","$\\xi (t) = 0$"],
                 ["2 * dsqrt(kappa * (1 - t))", "$\\xi (t) = 2 \ \sqrt{ SQRT_PARAM \ (1 - t)}$"],
 	            ["dsqrt(t) * c_alpha","$\\xi (t) = c_{SQRT_PARAM} \sqrt{t}$"]]
 
+# Obtain the total number of driving functions
 TOTAL_DRIVING_FUNCTIONS = len(DRIVING_INFO)
 
+# Indices for "special" driving functions
 KAPPA_IDX = 10
 C_ALPHA_IDX = 11
 MULTIPLE_IDX = 12
 ALL_IDX = 13
 
-# Compilation-related strings
-f2py_start = "f2py -c -DCASE="
-f2py_end = " NumericalLoewner.F90 -m NumericalLoewner"
+# Compilation-related lists
+f2py_start = ["f2py", "-c"]
+f2py_end = ["NumericalLoewner.F90", "-m", "NumericalLoewner"]

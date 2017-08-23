@@ -15,9 +15,6 @@ class Plot:
         self.real_values = [result.real for result in results]
         self.imag_values = [result.imag for result in results]
         
-        # Assign figsize
-        # self.fig_size = fig_size
-        
         # Assign the plot title
         self.output_plot_title = self.generate_plot_title(driving_func_index, sqrt_param)
     
@@ -51,21 +48,12 @@ class Plot:
             mkdir(image_directory)
         
     def generate_plot(self):
-    
-        # Clear the plot
-        plt.cla()
 
         # Set the plot title
-        plt.title(self.output_plot_title, fontsize = 14, color="black", y = 1.02, usetex=True)
+        plt.title(self.output_plot_title, fontsize = 14, color = "black", y = 1.02, usetex = True)
         
         # Plot the values
         plt.plot(self.real_values, self.imag_values)
-        
-        # if self.equal_axes:
-            # plt.axis("equal")
-            
-        # elif fig_size is not None:
-            # plt.figsize(self.fig_size)
 
         if self.display:
             plt.show()
@@ -76,10 +64,3 @@ class Plot:
 
     def generate_scatter_plot(self):
         pass
-        
-        # Clear the plot
-        # plt.cla()
-        # plt.title(all_labels[label_index],fontsize = 14, color='black', y = 1.03)
-        # plt.scatter(real_values,imag_values)
-        # plt.savefig(partial_filename + " [scatter].png")
-        # plt.axis('equal')

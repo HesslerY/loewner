@@ -1,5 +1,6 @@
-from subprocess import check_output
 import Constants
+
+from LoewnerConfig import LoewnerConfig
 from LoewnerRun import LoewnerRun
 
 def multiple_square_root(index, driving_text):
@@ -10,7 +11,7 @@ def multiple_square_root(index, driving_text):
         num_runs = input("Please enter the number of times you wish to run " + driving_text + ": ")
         
         try:
-        
+
             # Concert the value to an integer
             num_runs = int(num_runs)
             
@@ -82,15 +83,15 @@ def obtain_driving_selection():
 
             # Return if one of the first nine driving functions is selected
             if answer < Constants.MULTIPLE_IDX:
-                return [LoewnerRun(answer)]
+                return [LoewnerConfig(answer)]
 
             # Create a list for multiple driving functions
             elif answer == Constants.MULTIPLE_IDX:
-                return [LoewnerRun(index) for index in select_multiple()]
+                return [LoewnerConfig(index) for index in select_multiple()]
 
             # Create a list containing all driving functions
             elif answer == Constants.ALL_IDX:
-                return [LoewnerRun(i) for i in range(Constants.TOTAL_DRIVING_FUNCTIONS)]
+                return [LoewnerConfig(i) for i in range(Constants.TOTAL_DRIVING_FUNCTIONS)]
 
             # Print message in case of invalid choice
             else:
@@ -103,6 +104,6 @@ def obtain_driving_selection():
 driving_functions = obtain_driving_selection()
 
 for driving_function in driving_functions:
-    driving_function.run()
+    loewner_run = LoewnerRun(driving_function)
     
 print("Done!")

@@ -1,6 +1,6 @@
 from numpy import empty
 from Plot import Plot
-import importlib
+from importlib import import_module
 
 class LoewnerRun:
 
@@ -18,9 +18,8 @@ class LoewnerRun:
         self.create_plot()
         
     def perform_loewner(self, start_point, end_point, n_points):
-    
-        import NumericalLoewner
-        NumericalLoewner = importlib.reload(NumericalLoewner)
+
+        NumericalLoewner = import_module("modules.NumericalLoewner_" + str(self.driving_func_index))
     
         g_arr = empty(n_points, dtype=complex)
         NumericalLoewner.loewners_equation(start_point, end_point, g_arr)

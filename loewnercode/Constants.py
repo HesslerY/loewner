@@ -22,5 +22,5 @@ MULTIPLE_IDX = 12
 ALL_IDX = 13
 
 # Compilation-related lists
-f2py_start = ["f2py", "-c"]
-f2py_end = ["NumericalLoewner.F90", "-m", "NumericalLoewner"]
+f2py_first = ["f2py", "-c"]
+f2py_second = ["NumericalLoewner.F90", "-m"]

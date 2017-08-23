@@ -14,7 +14,7 @@ class LoewnerConfig:
         self.sqrt_param = None
 
         # Assign the corresponding compilation command
-        self.compile_command = Constants.f2py_start + self.generate_compile_command() + Constants.f2py_end
+        self.compile_command = Constants.f2py_first + self.generate_compile_command() + Constants.f2py_second + self.generate_f2p_last()
 
         # Determine the execute command
         self.execute_command = self.obtain_execute_command()
@@ -51,6 +51,10 @@ class LoewnerConfig:
         else:
             # Error
             pass
+
+    def generate_f2p_last(self):
+    
+        return ["modules.NumericalLoewner_" + str(self.driving_func_index)]
 
     def obtain_sqrt_parameter(self, query):
 

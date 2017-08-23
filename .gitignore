@@ -7,3 +7,4 @@ output/
 outputimages/*
 outputimages/
 *.so
+f2pytest.py

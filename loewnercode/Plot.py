@@ -5,15 +5,15 @@ from os.path import dirname, exists
 from os import mkdir
 import Constants
 
-plt.style.use('ggplot')
+plt.style.use('bmh')
 
 class Plot:
 
-    def __init__(self, driving_func_index, run_params, results, sqrt_param = None, remove_last_point = True):
+    def __init__(self, driving_func_index, run_params, results, sqrt_param = None):
 
-        # Create empty lists for plot points
-        self.real_values = [result.real for result in results]
-        self.imag_values = [result.imag for result in results]
+        # Create list of real and imaginary values (removes last point)
+        self.real_values = [result.real for result in results][:-1]
+        self.imag_values = [result.imag for result in results][:-1]
         
         # Assign the plot title
         self.output_plot_title = self.generate_plot_title(driving_func_index, sqrt_param)
@@ -26,9 +26,6 @@ class Plot:
         
         # Display or save plot
         self.display = True
-        
-        # Remove last point before plotting
-        self.remove_last_point = True
         
         # Assign the run paramters
         self.run_params = run_params

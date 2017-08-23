@@ -11,6 +11,7 @@ class LoewnerRun:
         self.driving_func_index = self.loewner_config.driving_func_index
         self.run_params = self.loewner_config.run_params
         self.sqrt_param = loewner_config.sqrt_param
+        self.module_code = loewner_config.module_code
         
         self.loewner_config.compile_loewner()
         
@@ -19,7 +20,7 @@ class LoewnerRun:
         
     def perform_loewner(self, start_point, end_point, n_points):
 
-        NumericalLoewner = import_module("modules.NumericalLoewner_" + str(self.driving_func_index))
+        NumericalLoewner = import_module("modules.NumericalLoewner_" + self.module_code)
     
         g_arr = empty(n_points, dtype=complex)
         NumericalLoewner.loewners_equation(start_point, end_point, g_arr)

@@ -36,25 +36,37 @@ class LoewnerConfig:
 
         # Compile string for a driving function that does not require any additional parameters
         if self.driving_func_index not in [Constants.KAPPA_IDX, Constants.C_ALPHA_IDX]:
+            self.create_module_code()
             return self.case_string()
 
         # Compile string for kappa driving function
         elif self.driving_func_index == Constants.KAPPA_IDX:
             self.sqrt_param = self.obtain_sqrt_parameter("Please enter the desired kappa value: ")
+            self.create_module_code()
             return self.case_string() + self.sqrt_param_string("-DKAPPA=", self.sqrt_param)
 
         # Compile string for c_alpha driving function
         elif self.driving_func_index == Constants.C_ALPHA_IDX:
             self.sqrt_param = self.obtain_sqrt_parameter("Please enter the desired c_alpha value: ")
+            self.create_module_code()
             return self.case_string() + self.sqrt_param_string("-DC_ALPHA=", self.sqrt_param)
 
         else:
             # Error
             pass
-
+            
+    def create_module_code(self):
+        
+        self.module_code = str(self.driving_func_index)
+        
+        if self.sqrt_param is None:
+            return
+        
+        self.module_code = self.module_code + "_" + self.sqrt_param.replace(".","")
+        
     def generate_f2p_last(self):
     
-        return ["modules.NumericalLoewner_" + str(self.driving_func_index)]
+        return ["modules.NumericalLoewner_" + self.module_code]
 
     def obtain_sqrt_parameter(self, query):
 

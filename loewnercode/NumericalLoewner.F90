@@ -10,7 +10,7 @@
 module constants
 implicit none
 
-   real, parameter :: pi = 3.1415926536
+   real, parameter :: pi = 4. * atan(1.)
    complex, parameter :: i = complex(0,1)
  
 end module constants
@@ -23,6 +23,15 @@ pure function square(x) result(j)
     j = x ** 2
 
 end function square
+
+pure function cotan(phi) result(cotan_phi)
+
+  real(8), intent(in) :: phi
+  real(8) :: cotan_phi
+
+  cotan_phi = 1.0 / dtan(phi)
+
+end function cotan  
 
 function driving_function(t) result(driving_value)
 use constants
@@ -90,7 +99,7 @@ implicit none
     real(8) :: final_time
     integer :: n_points 
 
-    ! Local variable declerations
+    ! Local variable declarations
     integer :: j = 0
     integer :: k = 0
 
@@ -111,7 +120,7 @@ implicit none
     complex(8) :: square
     real(8) :: driving_function
 
-    ! Return value decleration
+    ! Return value declaration
     complex(8) :: g_arr(n_points)
     
     total_change = final_time - start_time
@@ -146,3 +155,37 @@ implicit none
     end do
 
 end subroutine loewners_equation
+
+subroutine linear_driving(start_time, num_intervals)
+use constants
+implicit none
+
+    integer :: num_intervals
+    real(8) :: start_time
+
+    integer :: j = 0
+    integer :: M = 0
+
+    real(8) :: phi = 0
+    real(8) :: phi_incr = 0
+
+    complex(8) :: g_0 = 0
+
+    real(8) :: cotan
+    
+    ! Return value declaration
+    complex(8) :: g_arr(num_intervals)
+
+    phi_incr = pi / num_intervals
+
+    ! Compute g_0 M times
+    do j = 0, num_intervals
+
+        phi = start_time + (j * phi_incr)
+        g_0 = 2 - (2 * phi * cotan(phi)) + 2 * i * phi
+        
+        g_arr(j) = g_0
+
+    end do
+
+end subroutine linear_driving

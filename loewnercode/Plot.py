@@ -47,7 +47,7 @@ class Plot:
     def generate_plot(self):
 
         # Set the plot title
-        plt.title(self.output_plot_title, fontsize = 14, color = "black", y = 1.02, usetex = True)
+        plt.title(self.output_plot_title, fontsize = 19, color = "black", y = 1.02, usetex = True)
         
         # Plot the values
         plt.plot(self.real_values, self.imag_values)

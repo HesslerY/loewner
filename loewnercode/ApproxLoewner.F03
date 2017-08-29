@@ -97,7 +97,6 @@ implicit none
 
         g_t1 = g_bar(g_t1,prev_drive,delta_t)
 
-        
         ! Write the value of g_0 to the file
         write (1,*) real(g_t1), imag(g_t1)
 

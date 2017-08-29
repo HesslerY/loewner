@@ -12,7 +12,7 @@ def multiple_square_root(index, driving_text):
         
         try:
 
-            # Concert the value to an integer
+            # Convert the value to an integer
             num_runs = int(num_runs)
             
             # Repeat if this value is less than or equal to zero
@@ -101,9 +101,41 @@ def obtain_driving_selection():
             # Repeat if driving selection was not an integer
             continue
 
-driving_functions = obtain_driving_selection()
+def standard_mode():
 
-for driving_function in driving_functions:
-    loewner_run = LoewnerRun(driving_function)
-    
+    driving_functions = obtain_driving_selection()
+
+    for driving_function in driving_functions:
+        loewner_run = LoewnerRun(driving_function)
+
+def mode_selection():
+
+    while True:
+
+        print("RUN OPTIONS:")
+        
+        for i in range(len(Constants.RUN_OPTIONS)):
+            print("[" + str(i) + "] " + Constants.RUN_OPTIONS[i])
+        
+        # Ask for user input
+        mode_selection = input("Please enter the desired mode: ")
+
+        try:
+
+            # Convert the value to an integer
+            mode_selection = int(mode_selection)
+
+            # Enter standard mode
+            if mode_selection == 0:
+                return standard_mode()
+
+            else:
+                pass
+
+        except ValueError:
+            # Repeat if the input could not be converted to an integer
+            continue
+
+
+mode_selection()
 print("Done!")

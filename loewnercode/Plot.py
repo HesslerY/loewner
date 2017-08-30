@@ -22,7 +22,11 @@ class Plot:
         self.output_plot_directory = "outputimages/" + str(driving_func_index) + "/"
         
         # Determine the partial filename for the plot images
-        self.partial_output_filename = str(driving_func_index) + " " + "-".join([str(x) for x in run_params])
+        if sqrt_param:
+            self.partial_output_filename = str(driving_func_index) + " " + str(sqrt_param) + "-".join([str(x) for x in run_params])
+        
+        else:
+            self.partial_output_filename = str(driving_func_index) + " " + "-".join([str(x) for x in run_params])
         
         # Display or save plot
         self.display = True

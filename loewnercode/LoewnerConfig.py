@@ -10,8 +10,8 @@ class LoewnerConfig:
         # Assign the driving function index
         self.driving_func_index = driving_func_index
         
-        # Set squareroot parameter to None
-        self.sqrt_param = None
+        # Set squareroot parameter to zero
+        self.sqrt_param = 0.0
 
         # Assign the corresponding compilation command
         self.compile_command = Constants.f2py_first + self.generate_compile_command() + Constants.f2py_second + self.generate_f2p_last()
@@ -26,10 +26,12 @@ class LoewnerConfig:
         
     def case_string(self):   
      
+        # Generate a string for the CASE conditional compilation option
         return ["-DCASE=" + str(self.driving_func_index)]
         
     def sqrt_param_string(self, param_name, param_val):
     
+        # Generate a string for the KAPPA/C_ALPHA conditional compilation option
         return [param_name + str(param_val)]
 
     def generate_compile_command(self):
@@ -57,15 +59,12 @@ class LoewnerConfig:
             
     def create_module_code(self):
         
+        # Set the module code to the driving function index
         self.module_code = str(self.driving_func_index)
-        
-        if self.sqrt_param is None:
-            return
-        
-        self.module_code = self.module_code + "_" + self.sqrt_param.replace(".","")
         
     def generate_f2p_last(self):
     
+        # Create the string that defines the module name
         return ["modules.NumericalLoewner_" + self.module_code]
 
     def obtain_sqrt_parameter(self, query):
@@ -124,5 +123,6 @@ class LoewnerConfig:
                 continue
                 
     def compile_loewner(self):
-    
-         call(self.compile_command)
+
+        # Compile the module with f2py
+        call(self.compile_command)

@@ -7,20 +7,27 @@
 !                                                                              !
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+program test
+end program test
+
 module constants
 implicit none
 
-   real, parameter :: pi = 4. * atan(1.)
+   real(8), parameter :: pi = 4. * atan(1.)
+   real(8) :: sqrt_param = 0.0
    complex, parameter :: i = complex(0,1)
  
 end module constants
 
-pure function square(x) result(j)
+pure function square(x) result(y)
 
-    complex(8), intent(in) :: x ! Argument
-    complex(8) :: j ! Return value
+    ! Argument
+    complex(8), intent(in) :: x
+    
+    ! Return value
+    complex(8) :: y
 
-    j = x ** 2
+    y = x ** 2
 
 end function square
 
@@ -31,15 +38,18 @@ pure function cotan(phi) result(cotan_phi)
 
   cotan_phi = 1.0 / dtan(phi)
 
-end function cotan  
+end function cotan
 
 function driving_function(t) result(driving_value)
 use constants
 
-    real(8), intent(in) :: t ! argument
-    real(8) :: driving_value ! return value
+    ! Argument
+    real(8), intent(in) :: t
+    
+    ! Return value
+    real(8) :: driving_value
  
-#if CASE == 0
+#if CASE == 0 
     driving_value = 0.0
 
 #elif CASE == 1 
@@ -68,36 +78,29 @@ use constants
 
 #elif CASE == 9
     driving_value = t * sin(t * pi)
-
+    
 #elif CASE == 10
-#ifdef KAPPA
-    driving_value = 2 * dsqrt(KAPPA * (1 - t))
-#else
-    stop "Error: Square-root driving selected but KAPPA is undefined."
-#endif
+    driving_value = 2 * dsqrt(sqrt_param * (1 - t))
 
 #elif CASE == 11
-#ifdef C_ALPHA
-    driving_value = dsqrt(t) * C_ALPHA
+    driving_value = dsqrt(t) * sqrt_param
+    
 #else
-    stop "Error: Square-root driving selected but C_ALPHA is undefined."
-#endif
-
-#else
-    stop "Error: Driving function selection not recognised."
-
+    stop "Error: Driving function not recognised."
+    
 #endif
 
 end function driving_function
 
-subroutine loewners_equation(start_time, final_time, n_points, g_arr)
+subroutine loewners_equation(start_time, final_time, n_points, g_arr, sqrt_driving)
 use constants
 implicit none
 
     ! Argument declerations
     real(8) :: start_time
     real(8) :: final_time
-    integer :: n_points 
+    real(8) :: sqrt_driving
+    integer :: n_points
 
     ! Local variable declarations
     integer :: j = 0
@@ -123,9 +126,18 @@ implicit none
     ! Return value declaration
     complex(8) :: g_arr(n_points)
     
+    sqrt_param  = sqrt_driving
+    
+    ! Find the difference between start time and final time
     total_change = final_time - start_time
+    
+    ! 
     max_t_incr = total_change / n_points
+    
+    ! Determine delta_t
     delta_t = max_t_incr /  100
+    
+    ! 
     two_delta_t = delta_t * 2
 
     ! Compute g_0 n_points times
@@ -137,7 +149,7 @@ implicit none
         driving_arg = max_t
 
         do while (driving_arg > 0)
-
+        
             driving_value = driving_function(driving_arg)
             
             b_term = (driving_value + g_t1) * 0.5
@@ -150,6 +162,7 @@ implicit none
 
         end do
 
+        ! Place the latest value in the array
         g_arr(j) = g_t1
 
     end do
@@ -160,22 +173,25 @@ subroutine linear_driving(start_time, num_intervals)
 use constants
 implicit none
 
+    ! Argument declarations
     integer :: num_intervals
     real(8) :: start_time
 
+    ! Local variable declarations
     integer :: j = 0
-    integer :: M = 0
 
     real(8) :: phi = 0
     real(8) :: phi_incr = 0
 
     complex(8) :: g_0 = 0
 
+    ! Functions
     real(8) :: cotan
     
     ! Return value declaration
     complex(8) :: g_arr(num_intervals)
 
+    ! Compute the number of internals for linear driving approximation
     phi_incr = pi / num_intervals
 
     ! Compute g_0 M times
@@ -184,6 +200,7 @@ implicit none
         phi = start_time + (j * phi_incr)
         g_0 = 2 - (2 * phi * cotan(phi)) + 2 * i * phi
         
+        ! Place the latest value in the array
         g_arr(j) = g_0
 
     end do

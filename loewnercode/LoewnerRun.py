@@ -6,6 +6,7 @@ class LoewnerRun:
 
     def __init__(self, loewner_config):
     
+        # Assign the LoewnerConfig object
         self.loewner_config = loewner_config
         
         self.driving_func_index = self.loewner_config.driving_func_index
@@ -18,11 +19,13 @@ class LoewnerRun:
 
     def import_loewner(self):
 
+        # Try to import the corresponding module
         return import_module("modules.NumericalLoewner_" + self.module_code)
 
     def perform_loewner(self, start_point, end_point, n_points):
 
         try :
+            # Check if the module can be imported successfully
             NumericalLoewner = self.import_loewner() 
 
         except ModuleNotFoundError:
@@ -30,16 +33,16 @@ class LoewnerRun:
             NumericalLoewner = self.import_loewner() 
     
         g_arr = empty(n_points, dtype=complex)
-        NumericalLoewner.loewners_equation(start_point, end_point, g_arr)
+        NumericalLoewner.loewners_equation(start_point, end_point, g_arr, self.sqrt_param)
 
         return g_arr
     
     def create_plot(self):
     
-        if self.sqrt_param is None:
-            plot = Plot(self.driving_func_index, self.run_params, self.results)
-
-        else:
+        if self.sqrt_param:
             plot = Plot(self.driving_func_index, self.run_params, self.results, self.sqrt_param)
 
+        else:
+            plot = Plot(self.driving_func_index, self.run_params, self.results)
+            
         plot.generate_plot()

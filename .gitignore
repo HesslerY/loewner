@@ -8,3 +8,4 @@ outputimages/*
 outputimages/
 *.so
 *test.py
+Test.F90

@@ -13,7 +13,7 @@ DRIVING_INFO = [["0.0","$\\xi (t) = 0$"],
                 ["sin(t * pi)", "$\\xi (t) = \sin(\pi t)$"],
                 ["t * sin(t * pi)","$\\xi (t) = t \ \sin(\pi t)$"],
                 ["2 * dsqrt(kappa * (1 - t))", "$\\xi (t) = 2 \ \sqrt{ SQRT_PARAM \ (1 - t)}$"],
-	        ["dsqrt(t) * c_alpha","$\\xi (t) = c_{SQRT_PARAM} \sqrt{t}$"]]
+                ["dsqrt(t) * c_alpha","$\\xi (t) = c_{SQRT_PARAM} \sqrt{t}$"]]
 
 # Obtain the total number of driving functions
 TOTAL_DRIVING_FUNCTIONS = len(DRIVING_INFO)

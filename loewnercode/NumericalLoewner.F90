@@ -16,14 +16,14 @@ implicit none
    real(8), parameter :: pi = 4. * atan(1.)
    real(8) :: sqrt_param = 0.0
    complex, parameter :: i = complex(0,1)
- 
+
 end module constants
 
 pure function square(x) result(y)
 
     ! Argument
     complex(8), intent(in) :: x
-    
+
     ! Return value
     complex(8) :: y
 
@@ -33,10 +33,13 @@ end function square
 
 pure function cotan(phi) result(cotan_phi)
 
-  real(8), intent(in) :: phi
-  real(8) :: cotan_phi
+    ! Argument
+    real(8), intent(in) :: phi
 
-  cotan_phi = 1.0 / dtan(phi)
+    ! Return value
+    real(8) :: cotan_phi
+
+    cotan_phi = 1.0 / dtan(phi)
 
 end function cotan
 
@@ -45,24 +48,24 @@ use constants
 
     ! Argument
     real(8), intent(in) :: t
-    
+
     ! Return value
     real(8) :: driving_value
- 
-#if CASE == 0 
+
+#if CASE == 0
     driving_value = 0.0
 
-#elif CASE == 1 
+#elif CASE == 1
     driving_value = t
 
 #elif CASE == 2
-    driving_value = cos(t)    
+    driving_value = cos(t)
 
 #elif CASE == 3
     driving_value = t * cos(t)
 
 #elif CASE == 4
-    driving_value = cos(t * pi) 
+    driving_value = cos(t * pi)
 
 #elif CASE == 5
     driving_value = t * cos(t * pi)
@@ -78,16 +81,16 @@ use constants
 
 #elif CASE == 9
     driving_value = t * sin(t * pi)
-    
+
 #elif CASE == 10
     driving_value = 2 * dsqrt(sqrt_param * (1 - t))
 
 #elif CASE == 11
     driving_value = dsqrt(t) * sqrt_param
-    
+
 #else
     stop "Error: Driving function not recognised."
-    
+
 #endif
 
 end function driving_function
@@ -96,10 +99,10 @@ subroutine loewners_equation(start_time, final_time, n_points, g_arr, sqrt_drivi
 use constants
 implicit none
 
-    ! Argument declerations
+    ! Argument declarations
     real(8) :: start_time
     real(8) :: final_time
-    real(8) :: sqrt_driving
+    real(8), optional :: sqrt_driving
     integer :: n_points
 
     ! Local variable declarations
@@ -125,36 +128,47 @@ implicit none
 
     ! Return value declaration
     complex(8) :: g_arr(n_points)
-    
-    sqrt_param  = sqrt_driving
-    
+
+    if (present(sqrt_driving)) then
+        sqrt_param  = sqrt_driving
+    endif
+
     ! Find the difference between start time and final time
     total_change = final_time - start_time
-    
-    ! 
+
+    ! Find the value by which max_t is incremented after each iteration
     max_t_incr = total_change / n_points
-    
-    ! Determine delta_t
+
+    ! Determine the delta values
     delta_t = max_t_incr /  100
-    
-    ! 
     two_delta_t = delta_t * 2
 
     ! Compute g_0 n_points times
     do j = 1, n_points
 
+        ! Set max_t
         max_t = start_time + (j * max_t_incr)
+
+        ! Find the initial value for g_1
         g_t1 = complex(driving_function(max_t),0)
+
+        ! Reset the counter for the inner loop
         k = 0
+
+        ! Determine the initial value for the driving function argument
         driving_arg = max_t
 
         do while (driving_arg > 0)
-        
+
+            ! Obtain the driving value
             driving_value = driving_function(driving_arg)
-            
+
+            ! Solve Loewner's equation
             b_term = (driving_value + g_t1) * 0.5
             c_term = (driving_value * g_t1) + two_delta_t
             g_t2 = b_term + cdsqrt(c_term - square(b_term)) * i
+
+            ! S
             g_t1 = g_t2
 
             k = k + 1
@@ -187,7 +201,7 @@ implicit none
 
     ! Functions
     real(8) :: cotan
-    
+
     ! Return value declaration
     complex(8) :: g_arr(num_intervals)
 
@@ -199,7 +213,7 @@ implicit none
 
         phi = start_time + (j * phi_incr)
         g_0 = 2 - (2 * phi * cotan(phi)) + 2 * i * phi
-        
+
         ! Place the latest value in the array
         g_arr(j) = g_0
 

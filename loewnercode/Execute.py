@@ -6,22 +6,22 @@ from LoewnerRun import LoewnerRun
 def multiple_square_root(index, driving_text):
 
     while True:
-    
+
         # Ask for user input
         num_runs = input("Please enter the number of times you wish to run " + driving_text + ": ")
-        
+
         try:
 
             # Convert the value to an integer
             num_runs = int(num_runs)
-            
+
             # Repeat if this value is less than or equal to zero
             if num_runs <= 0:
                 continue
-            
-            # Return the list with the square root driving function num_runs many times    
+
+            # Return the list with the square root driving function num_runs many times
             return [index for _ in range(num_runs - 1)]
-            
+
         except ValueError:
             # Repeat if input could not be converted to an integer
             continue
@@ -30,10 +30,10 @@ def select_multiple():
 
     while True:
 
-        # Ask for the user input
-        indices = input("Plase enter the indices of the driving functions you wish to use seperated by a space: ")
-        
         try:
+
+            # Ask for the user input
+            indices = input("Plase enter the indices of the driving functions you wish to use seperated by a space: ")
 
             # Convert the indices to integer list
             indices = list(set([int(x) for x in indices.split()]))
@@ -44,11 +44,11 @@ def select_multiple():
                 # Determine the kappa value
                 if Constants.KAPPA_IDX in indices:
                     indices = indices + multiple_square_root(Constants.KAPPA_IDX, "KAPPA")
-                    
+
                 # Determine the c_alpha value
                 if Constants.C_ALPHA_IDX in indices:
                     indices = indices + multiple_square_root(Constants.C_ALPHA_IDX, "C_ALPHA")
-                
+
                 # Return if all indices are in an acceptable range
                 return sorted(indices)
 
@@ -113,10 +113,10 @@ def mode_selection():
     while True:
 
         print("RUN OPTIONS:")
-        
+
         for i in range(len(Constants.RUN_OPTIONS)):
             print("[" + str(i) + "] " + Constants.RUN_OPTIONS[i])
-        
+
         # Ask for user input
         mode_selection = input("Please enter the desired mode: ")
 

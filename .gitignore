@@ -9,3 +9,4 @@ outputimages/
 *.so
 *test.py
 Test.F90
+*.F90#

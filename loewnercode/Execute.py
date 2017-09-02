@@ -64,7 +64,7 @@ def obtain_driving_selection():
 
     while True:
 
-        print("AVALIABLE DRIVING FUNCTIONS")
+        print("AVALIABLE DRIVING FUNCTIONS:")
 
         # Print all of the possible driving functions
         for i in range(Constants.TOTAL_DRIVING_FUNCTIONS):
@@ -83,15 +83,15 @@ def obtain_driving_selection():
 
             # Return if one of the first nine driving functions is selected
             if answer < Constants.MULTIPLE_IDX:
-                return [LoewnerConfig(answer)]
+                return [LoewnerConfig(driving_function=answer, exact_mode=False)]
 
             # Create a list for multiple driving functions
             elif answer == Constants.MULTIPLE_IDX:
-                return [LoewnerConfig(index) for index in select_multiple()]
+                return [LoewnerConfig(driving_function=index, exact_mode=False) for index in select_multiple()]
 
             # Create a list containing all driving functions
             elif answer == Constants.ALL_IDX:
-                return [LoewnerConfig(i) for i in range(Constants.TOTAL_DRIVING_FUNCTIONS)]
+                return [LoewnerConfig(driving_function=i, exact_mode=False) for i in range(Constants.TOTAL_DRIVING_FUNCTIONS)]
 
             # Print message in case of invalid choice
             else:
@@ -101,12 +101,46 @@ def obtain_driving_selection():
             # Repeat if driving selection was not an integer
             continue
 
+def obtain_exact_selection():
+
+    total_driving_functions = len(Constants.EXACT_OPTIONS)
+
+    while True:
+
+        print("AVALIABLE DRIVING FUNCTIONS:")
+
+        # Print all avaliable driving functions
+        for i in range(total_driving_functions):
+            print("[" + str(i) + "] " + Constants.EXACT_OPTIONS[i])
+
+        # Ask for the user selection
+        answer = input("Please select a driving function: ")
+
+        try:
+
+            answer = int(answer)
+
+            if answer < 0 or answer >= total_driving_functions:
+                continue
+
+            return [LoewnerConfig(driving_function=answer, exact_mode=True)]
+
+        except ValueError:
+            continue
+
 def standard_mode():
 
     driving_functions = obtain_driving_selection()
 
     for driving_function in driving_functions:
         loewner_run = LoewnerRun(driving_function)
+
+def exact_solutions():
+
+    driving_functions = obtain_exact_selection()
+
+    for driving_function in driving_functions:
+        pass
 
 def mode_selection():
 
@@ -118,16 +152,22 @@ def mode_selection():
             print("[" + str(i) + "] " + Constants.RUN_OPTIONS[i])
 
         # Ask for user input
-        mode_selection = input("Please enter the desired mode: ")
+        answer = input("Please enter the desired mode: ")
 
         try:
 
             # Convert the value to an integer
-            mode_selection = int(mode_selection)
+            answer = int(answer)
 
             # Enter standard mode
-            if mode_selection == 0:
+            if answer == 0:
                 return standard_mode()
+
+            if answer == 1:
+                exit()
+
+            if answer == 2:
+                return exact_solutions()
 
             else:
                 pass

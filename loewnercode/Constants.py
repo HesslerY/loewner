@@ -1,7 +1,7 @@
-# Declare a list of run options
+# Declare a list of mode options
 RUN_OPTIONS = ["Standard Mode","Resolution Mode","Exact Solutions"]
 
-# Declare a list of all the avaliable driving functions
+# Declare a list of driving function options
 DRIVING_INFO = [["0.0","$\\xi (t) = 0$"],
                 ["t","$\\xi (t) = t$"],
                 ["cos(t)","$\\xi (t) = \cos(t)$"],
@@ -14,6 +14,9 @@ DRIVING_INFO = [["0.0","$\\xi (t) = 0$"],
                 ["t * sin(t * pi)","$\\xi (t) = t \ \sin(\pi t)$"],
                 ["2 * dsqrt(kappa * (1 - t))", "$\\xi (t) = 2 \ \sqrt{ SQRT_PARAM \ (1 - t)}$"],
                 ["dsqrt(t) * c_alpha","$\\xi (t) = c_{SQRT_PARAM} \sqrt{t}$"]]
+
+# Declare a list of "exact" solution options
+EXACT_OPTIONS = [["t","$\\xi (t) = t$"]]
 
 # Obtain the total number of driving functions
 TOTAL_DRIVING_FUNCTIONS = len(DRIVING_INFO)

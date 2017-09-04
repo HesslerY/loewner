@@ -1,7 +1,5 @@
-import Constants
-from Plot import Plot
 from subprocess import call
-from numpy import f2py
+import Constants
 
 class LoewnerConfig:
 
@@ -39,43 +37,7 @@ class LoewnerConfig:
         # Generate a string for the KAPPA/C_ALPHA conditional compilation option
         return [param_name + str(param_val)]
 
-    def generate_compile_command(self):
-
-        compile_command = Constants.F2PY_FIRST
-
-        if not self.exact_mode:
-
-            # Compile string for a driving function that does not require any additional parameters
-            if self.driving_function not in [Constants.KAPPA_IDX, Constants.C_ALPHA_IDX]:
-                compile_command += ["-DCASE=" + str(self.driving_function)]
-
-            # Compile string for kappa driving function
-            elif self.driving_function == Constants.KAPPA_IDX:
-                self.sqrt_param = self.obtain_sqrt_parameter()
-                compile_command += [self.sqrt_param_string("-DKAPPA=", self.sqrt_param)]
-
-            # Compile string for c_alpha driving function
-            elif self.driving_function == Constants.C_ALPHA_IDX:
-                self.sqrt_param = self.obtain_sqrt_parameter("Please enter the desired c_alpha value: ")
-                compile_command += [self.sqrt_param_string("-DC_ALPHA=", self.sqrt_param)]
-
-            else:
-                # Error
-                pass
-
-            return compile_command + ["NumericalLoewner.F90", "-m", "modules.NumericalLoewner_" + str(self.driving_function)]
-
-        else:
-            # Exact module compilation command
-            pass
-
-
-    def generate_f2p_last(self):
-
-        # Create the string that defines the module name
-        return ["modules.NumericalLoewner_" + self.module_code]
-
-    def obtain_sqrt_parameter(self, query):
+    def obtain_sqrt_parameter(self):
 
         if self.driving_function == Constants.KAPPA_IDX:
             query = "Please enter the desired kappa value: "
@@ -98,6 +60,43 @@ class LoewnerConfig:
             except ValueError:
                 # Repeat if input could not be converted to float
                 continue
+
+    def generate_compile_command(self):
+
+        compile_command = Constants.F2PY_FIRST
+
+        if not self.exact_mode:
+
+            # Compile string for a driving function that does not require any additional parameters
+            if self.driving_function not in [Constants.KAPPA_IDX, Constants.C_ALPHA_IDX]:
+                compile_command += [self.case_string()]
+
+            # Compile string for kappa driving function
+            elif self.driving_function == Constants.KAPPA_IDX:
+                self.sqrt_param = self.obtain_sqrt_parameter()
+                compile_command += [self.sqrt_param_string("-DKAPPA=", self.sqrt_param)]
+
+            # Compile string for c_alpha driving function
+            elif self.driving_function == Constants.C_ALPHA_IDX:
+                self.sqrt_param = self.obtain_sqrt_parameter()
+                compile_command += [self.sqrt_param_string("-DC_ALPHA=", self.sqrt_param)]
+
+            else:
+                # Error
+                pass
+
+            return compile_command + ["NumericalLoewner.F90", "-m", "modules.NumericalLoewner_" \
+                                                                    + str(self.driving_function)]
+
+        else:
+            # Exact module compilation command
+            pass
+
+
+    def generate_f2p_last(self):
+
+        # Create the string that defines the module name
+        return ["modules.NumericalLoewner_" + self.module_code]
 
     def obtain_execute_command(self):
 

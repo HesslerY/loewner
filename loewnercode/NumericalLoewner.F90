@@ -1,7 +1,7 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !                                                                              !
 ! Program: NumericalLoewner.F90                                                !
-! Purpose: Obtain numerlical solutions for Loewner's equation with a variety   !
+! Purpose: Obtain numerical solutions for Loewner's equation with a variety    !
 !          of driving functions.                                               !
 ! Author:  Dolica Akello-Egwel                                                 !
 !                                                                              !
@@ -90,8 +90,9 @@ implicit none
     ! Argument declarations
     real(8) :: start_time
     real(8) :: final_time
-    real(8), optional :: sqrt_driving
     integer :: n_points
+    complex(8) :: g_arr(n_points)
+    real(8), optional :: sqrt_driving
 
     ! Local variable declarations
     integer :: j = 0
@@ -110,12 +111,9 @@ implicit none
     complex(8) :: b_term = 0
     complex(8) :: c_term = 0
 
-    ! Functions
+    ! Function declarations
     complex(8) :: square
     real(8) :: driving_function
-
-    ! Return value declaration
-    complex(8) :: g_arr(n_points)
 
     if (present(sqrt_driving)) then
         sqrt_param  = sqrt_driving

@@ -111,7 +111,7 @@ def obtain_exact_selection():
 
         # Print all avaliable driving functions
         for i in range(total_driving_functions):
-            print("[" + str(i) + "] " + Constants.EXACT_OPTIONS[i])
+            print("[" + str(i) + "] " + Constants.EXACT_OPTIONS[i][0])
 
         # Ask for the user selection
         answer = input("Please select a driving function: ")
@@ -140,7 +140,7 @@ def exact_solutions():
     driving_functions = obtain_exact_selection()
 
     for driving_function in driving_functions:
-        pass
+        loewner_run = LoewnerRun(driving_function)
 
 def mode_selection():
 

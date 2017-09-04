@@ -10,18 +10,16 @@ class LoewnerConfig:
         # Assign the driving function index
         self.driving_function = driving_function
 
+        # Assign the module code
+        self.module_code = str(driving_function)
+
         # Assign the exact solutions mode parameter
         self.exact_mode = exact_mode
 
         # Set squareroot parameter to None
         self.sqrt_param = None
 
-        if exact_mode:
-            self.compile_command = Constants.f2py_first + Constands.f2py_second + ["NumericalLoewner"]
-
-        else:
-            # Assign the corresponding compilation command
-            self.compile_command = Constants.f2py_first + self.generate_compile_command() + Constants.f2py_second + self.generate_f2p_last()
+        self.compile_command = self.generate_compile_command()
 
         # Determine the execute command
         self.execute_command = self.obtain_execute_command()
@@ -43,31 +41,34 @@ class LoewnerConfig:
 
     def generate_compile_command(self):
 
-        # Compile string for a driving function that does not require any additional parameters
-        if self.driving_function not in [Constants.KAPPA_IDX, Constants.C_ALPHA_IDX]:
-            self.create_module_code()
-            return self.case_string()
+        compile_command = Constants.F2PY_FIRST
 
-        # Compile string for kappa driving function
-        elif self.driving_function == Constants.KAPPA_IDX:
-            self.sqrt_param = self.obtain_sqrt_parameter("Please enter the desired kappa value: ")
-            self.create_module_code()
-            return self.case_string() + self.sqrt_param_string("-DKAPPA=", self.sqrt_param)
+        if not self.exact_mode:
 
-        # Compile string for c_alpha driving function
-        elif self.driving_func_index == Constants.C_ALPHA_IDX:
-            self.sqrt_param = self.obtain_sqrt_parameter("Please enter the desired c_alpha value: ")
-            self.create_module_code()
-            return self.case_string() + self.sqrt_param_string("-DC_ALPHA=", self.sqrt_param)
+            # Compile string for a driving function that does not require any additional parameters
+            if self.driving_function not in [Constants.KAPPA_IDX, Constants.C_ALPHA_IDX]:
+                compile_command += ["-DCASE=" + str(self.driving_function)]
+
+            # Compile string for kappa driving function
+            elif self.driving_function == Constants.KAPPA_IDX:
+                self.sqrt_param = self.obtain_sqrt_parameter()
+                compile_command += [self.sqrt_param_string("-DKAPPA=", self.sqrt_param)]
+
+            # Compile string for c_alpha driving function
+            elif self.driving_function == Constants.C_ALPHA_IDX:
+                self.sqrt_param = self.obtain_sqrt_parameter("Please enter the desired c_alpha value: ")
+                compile_command += [self.sqrt_param_string("-DC_ALPHA=", self.sqrt_param)]
+
+            else:
+                # Error
+                pass
+
+            return compile_command + ["NumericalLoewner.F90", "-m", "modules.NumericalLoewner_" + str(self.driving_function)]
 
         else:
-            # Error
+            # Exact module compilation command
             pass
 
-    def create_module_code(self):
-
-        # Set the module code to the driving function index
-        self.module_code = str(self.driving_function)
 
     def generate_f2p_last(self):
 
@@ -75,6 +76,13 @@ class LoewnerConfig:
         return ["modules.NumericalLoewner_" + self.module_code]
 
     def obtain_sqrt_parameter(self, query):
+
+        if self.driving_function == Constants.KAPPA_IDX:
+            query = "Please enter the desired kappa value: "
+        elif self.driving_function == Constants.C_ALPHA_IDX:
+            query = "Please enter the desired c_alpha value: "
+        else:
+            pass
 
         while True:
 
@@ -96,7 +104,8 @@ class LoewnerConfig:
         while True:
 
             # Ask for the run parameters
-            values = input(self.driving_string() + "Please enter the start time, end time, and number of points seperated by a space: ")
+            values = input(self.driving_string() + "Please enter the start time, end time, and " \
+                                                 + "number of points seperated by a space: ")
 
             try:
 

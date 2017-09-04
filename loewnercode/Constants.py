@@ -16,7 +16,7 @@ DRIVING_INFO = [["0.0","$\\xi (t) = 0$"],
                 ["dsqrt(t) * c_alpha","$\\xi (t) = c_{SQRT_PARAM} \sqrt{t}$"]]
 
 # Declare a list of "exact" solution options
-EXACT_OPTIONS = [["t","$\\xi (t) = t$"]]
+EXACT_OPTIONS = [["t", "$\\xi (t) = t$"]]
 
 # Obtain the total number of driving functions
 TOTAL_DRIVING_FUNCTIONS = len(DRIVING_INFO)
@@ -28,5 +28,7 @@ MULTIPLE_IDX = 12
 ALL_IDX = 13
 
 # Compilation-related lists
-f2py_first = ["f2py", "-c"]
-f2py_second = ["NumericalLoewner.F90", "-m"]
+F2PY_FIRST = ["f2py", "-c"]
+
+def is_sqrt_driving(driving_function):
+    return driving_function in [KAPPA_IDX, C_ALPHA_IDX]

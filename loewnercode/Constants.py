@@ -16,7 +16,7 @@ DRIVING_INFO = [["0.0","$\\xi (t) = 0$"],
                 ["dsqrt(t) * c_alpha","$\\xi (t) = c_{SQRT_PARAM} \sqrt{t}$"]]
 
 # Declare a list of "exact" solution options
-EXACT_OPTIONS = [["t", "$\\xi (t) = t$"]]
+EXACT_INFO = [["t", "$\\xi (t) = t$"]]
 
 # Obtain the total number of driving functions
 TOTAL_DRIVING_FUNCTIONS = len(DRIVING_INFO)

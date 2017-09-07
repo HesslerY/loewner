@@ -119,7 +119,7 @@ def obtain_exact_selection():
 
         # Print all avaliable driving functions
         for i in range(Constants.TOTAL_DRIVING_FUNCTIONS):
-            print("[" + str(i) + "] " + Constants.EXACT_OPTIONS[i][0])
+            print("[" + str(i) + "] " + Constants.EXACT_INFO[i][0])
 
         # Ask for the user selection
         answer = input("Please select a driving function: ")
@@ -131,48 +131,11 @@ def obtain_exact_selection():
             if answer < 0 or answer >= total_driving_functions:
                 continue
 
-            return [LoewnerRun(driving_function)]
+            return [ExactLoewnerRun(driving_function)]
 
         except ValueError:
             continue
 
-def set_resolution_parameters(loewner_run):
-
-    while True:
-
-        # Ask for the run parameters
-        values = input(loewner_run.driving_string() + "Please enter the star" \
-                       + "t time, end time, and number of points seperated b" \
-                       + "y a space: ")
-        try:
-
-            # Split the input
-            values = values.split()
-
-            # Ensure that three values were entered
-            if len(values) != 3:
-                continue
-
-            start_time = float(values[0])
-
-            # Check that the start time >= 0
-            if start_time < 0:
-                continue
-
-            # Check that final time is greater than the start time
-            if float(values[1]) <= start_time:
-                continue
-
-            # Check that the number of points is >= 1
-            if int(values[2]) < 1:
-                continue
-
-            # Create the execution command
-            return [start_time, float(values[1]), int(values[2])]
-
-        except ValueError:
-            # Repeat if input had incorrect format
-            continue
             
 def obtain_squareroot_parameter(loewner_run):
 
@@ -216,13 +179,19 @@ def standard_mode():
         if Constants.squareroot_driving(loewner_run.driving_function):
             loewner_run.sqrt_param = obtain_squareroot_parameter(loewner_run)
 
-        loewner_run.resolution_parameters = set_resolution_parameters(loewner_run)
+        loewner_run.set_resolution_parameters()
         loewner_run.perform_loewner()
 
     generate_plots(loewner_runs)
 
 def exact_solutions():
-    exit()
+   
+    loewner_runs = obtain_exact_selection()
+
+    for loewner_run in loewner_run:
+
+        loewner_run.set_resolution_parameters()
+        loewner_run.perform_loewner()
 
 def mode_selection():
 
@@ -246,7 +215,7 @@ def mode_selection():
                 return standard_mode()
 
             if answer == 1:
-                exit()
+                pass 
 
             if answer == 2:
                 return exact_solutions()

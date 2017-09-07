@@ -5,13 +5,17 @@ from importlib import import_module
 
 class LoewnerRun:
 
-    def __init__(self, driving_function):
+    def __init__(self, driving_function, filename = "NumericalLoewner.F90", module = "NumericalLoewner_"):
 
         # Assign the driving function index
         self.driving_function = driving_function
 
         # Assign the module code
         self.module_code = str(driving_function)
+
+        self.fortran_filename = filename 
+
+        self.module_name = module + self.module_code
 
         # Generate the command for preparing a module with f2py
         self.compile_command = self.set_compile_command() 
@@ -28,21 +32,11 @@ class LoewnerRun:
         # brackets
         return "[" + Constants.DRIVING_INFO[self.driving_function][0] + "] "
 
-    def case_string(self):
-
-        # Generate a string for the CASE conditional compilation option
-        return ["-DCASE=" + self.module_code]
-
-    def generate_f2p_last(self):
-
-        # Create the string that defines the module name
-        return ["modules.NumericalLoewner_" + self.module_code]
-
     def set_compile_command(self):
     
-        return Constants.F2PY_FIRST + self.case_string() \
-               + ["NumericalLoewner.F90", "-m", "modules.NumericalLoewner_" \
-               + self.module_code] 
+        return Constants.F2PY_FIRST + ["-DCASE=" + self.module_code] \
+               + [self.fortran_filename, "-m", "modules." \
+               + self.module_name] 
 
     def compile_loewner(self):
 
@@ -52,7 +46,50 @@ class LoewnerRun:
     def import_loewner(self):
 
         # Try to import the corresponding module
-        return import_module("modules.NumericalLoewner_" + self.module_code)
+        return import_module("modules." + self.module_name)
+
+    def set_resolution_parameters(self):
+
+        while True:
+    
+            # Ask for the run parameters
+            values = input(self.driving_string() + "Please enter the star" \
+                       + "t time, end time, and number of points seperated b" \
+                       + "y a space: ")
+            try:
+
+                # Split the input
+                values = values.split()
+
+                # Ensure that three values were entered
+                if len(values) != 3:
+                    continue
+    
+                start_time = float(values[0])
+    
+                # Check that the start time >= 0
+                if start_time < 0:
+                    continue
+   
+                final_time = float(values[1])
+
+                # Check that final time is greater than the start time
+                if final_time <= start_time:
+                    continue
+   
+                total_points = int(values[2])
+
+                # Check that the number of points is >= 1
+                if total_points < 1:
+                    continue
+    
+                # Create the execution command
+                self.resolution_parameters = [start_time, final_time, total_points]
+                return
+
+            except ValueError:
+                # Repeat if input had incorrect format
+                continue
 
     def perform_loewner(self):
 
@@ -102,3 +139,23 @@ class SqrtLoewnerRun(LoewnerRun):
 
         self.results = g_arr
 
+class ExactLoewnerRun(LoewnerRun):
+
+    def __init__(self, driving_function):
+
+        LoewnerRun.__init__self(self, driving_function, "ExactLoewner.F90","ExactLoewner")
+        
+        self.fortran_filename = "ExactLoewner.F90"
+        self.module_name = "ExactLoewner"
+
+    def driving_string(self):
+
+        # Return a string containing the name of the driving function in square 
+        # brackets
+        return "[" + Constants.EXACT_INFO[self.driving_function][0] + "] "
+    
+    def set_compile_command(self):
+    
+        return Constants.F2PY_FIRST \
+               + [self.fortran_filename, "-m", "modules." \
+               + self.module_name] 

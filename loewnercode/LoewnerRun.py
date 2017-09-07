@@ -14,7 +14,7 @@ class LoewnerRun:
         self.module_code = str(driving_function)
 
         # Generate the command for preparing a module with f2py
-        self.compile_command = None
+        self.compile_command = self.set_compile_command() 
 
         # Obtain the time and resolution parameters
         self.resolution_parameters = None
@@ -38,6 +38,12 @@ class LoewnerRun:
         # Create the string that defines the module name
         return ["modules.NumericalLoewner_" + self.module_code]
 
+    def set_compile_command(self):
+    
+        return Constants.F2PY_FIRST + self.case_string() \
+               + ["NumericalLoewner.F90", "-m", "modules.NumericalLoewner_" \
+               + self.module_code] 
+
     def compile_loewner(self):
 
         # Compile the module with f2py
@@ -57,9 +63,10 @@ class LoewnerRun:
 
         except ModuleNotFoundError:
 
+            self.set_compile_command()
             self.compile_loewner()
             NumericalLoewner = self.import_loewner()
-
+      
         g_arr = empty(self.resolution_parameters[2], dtype=complex)
         NumericalLoewner.loewners_equation(self.resolution_parameters[0], self.resolution_parameters[1], g_arr)
 
@@ -67,38 +74,31 @@ class LoewnerRun:
 
 class SqrtLoewnerRun(LoewnerRun):
 
-    def __init__(self):
-        pass
+    def __init__(self, driving_function):
+
+        LoewnerRun.__init__(self, driving_function)
+        self.sqrt_param = None
         
     def sqrt_param_string(self, param_name, param_val):
 
         # Generate a string for the kappa or c_alpha conditional compilation option
         return [param_name + str(param_val)]
-    
-    def obtain_sqrt_parameter(self):
+ 
+    def perform_loewner(self):
 
-        if self.driving_function == Constants.KAPPA_IDX:
-            query = "Please enter the desired kappa value: "
+        try:
 
-        elif self.driving_function == Constants.C_ALPHA_IDX:
-            query = "Please enter the desired c_alpha value: "
+            # Check if the module can be imported successfully
+            NumericalLoewner = self.import_loewner()
 
-        else:
-            # Error
-            pass
+        except ModuleNotFoundError:
 
-        while True:
+            self.set_compile_command()
+            self.compile_loewner()
+            NumericalLoewner = self.import_loewner()
+      
+        g_arr = empty(self.resolution_parameters[2], dtype=complex)
+        NumericalLoewner.loewners_equation(self.resolution_parameters[0], self.resolution_parameters[1], g_arr, sqrt_driving=self.sqrt_param)
 
-            # Ask for the square root parameter
-            answer = input(query)
+        self.results = g_arr
 
-            try:
-
-                # Return if answer can be converted to a float and is positive
-                if float(answer) > 0:
-                    return answer
-
-            except ValueError:
-                # Repeat if answer could not be converted to float
-                continue
-        

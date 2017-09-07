@@ -1,5 +1,6 @@
 import Constants
 from LoewnerRun import LoewnerRun
+from LoewnerRun import SqrtLoewnerRun
 from Plot import Plot
 
 def multiple_square_root(index, driving_text):
@@ -7,7 +8,7 @@ def multiple_square_root(index, driving_text):
     while True:
 
         # Ask for user input
-        num_runs = input("Please enter the number of times you wish to run " \
+        total_runs = input("Please enter the number of times you wish to run " \
                          + driving_text + ": ")
 
         try:
@@ -62,6 +63,13 @@ def select_multiple():
             # Repeat if input could not be converted to integer list
             continue
 
+def create_loewner_run(driving_function):
+
+    if not Constants.squareroot_driving(driving_function):
+        return LoewnerRun(driving_function)
+
+    return SqrtLoewnerRun(driving_function)
+
 def obtain_driving_selection():
 
     while True:
@@ -85,15 +93,15 @@ def obtain_driving_selection():
 
             # Return if one of the first nine driving functions is selected
             if answer < Constants.MULTIPLE_IDX:
-                return [LoewnerRun(answer)]
+                return [create_loewner_run(answer)]
 
             # Create a list for multiple driving functions
             elif answer == Constants.MULTIPLE_IDX:
-                return [LoewnerRun(index) for index in select_multiple()]
+                return [create_loewner_run(index) for index in select_multiple()]
 
             # Create a list containing all driving functions
             elif answer == Constants.ALL_IDX:
-                return [LoewnerRun(i) for i in range(Constants.TOTAL_DRIVING_FUNCTIONS)]
+                return [create_loewner_run(i) for i in range(Constants.TOTAL_DRIVING_FUNCTIONS)]
 
             # Print message in case of invalid choice
             else:
@@ -166,11 +174,32 @@ def set_resolution_parameters(loewner_run):
             # Repeat if input had incorrect format
             continue
             
-def set_compile_command(loewner_run):
-    
-    return Constants.F2PY_FIRST + loewner_run.case_string() \
-           + ["NumericalLoewner.F90", "-m", "modules.NumericalLoewner_" \
-           + loewner_run.module_code] 
+def obtain_squareroot_parameter(loewner_run):
+
+    if loewner_run.driving_function == Constants.KAPPA_IDX:
+        query = "Please enter the desired kappa value: "
+
+    elif loewner_run.driving_function == Constants.C_ALPHA_IDX:
+        query = "Please enter the desired c_alpha value: "
+
+    else:
+        # Error
+        pass
+
+    while True:
+
+        try:
+
+           # Ask for the square root parameter
+            answer = float(input(query))
+
+            # Return if answer can be converted to a float and is positive
+            if answer > 0:
+                return answer 
+
+        except ValueError:
+            # Repeat if answer could not be converted to float
+            continue
 
 def generate_plots(loewner_runs):
 
@@ -183,6 +212,9 @@ def standard_mode():
     loewner_runs = obtain_driving_selection()
 
     for loewner_run in loewner_runs:
+
+        if Constants.squareroot_driving(loewner_run.driving_function):
+            loewner_run.sqrt_param = obtain_squareroot_parameter(loewner_run)
 
         loewner_run.resolution_parameters = set_resolution_parameters(loewner_run)
         loewner_run.perform_loewner()

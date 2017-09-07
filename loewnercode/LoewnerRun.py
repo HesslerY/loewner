@@ -143,11 +143,8 @@ class ExactLoewnerRun(LoewnerRun):
 
     def __init__(self, driving_function):
 
-        LoewnerRun.__init__self(self, driving_function, "ExactLoewner.F90","ExactLoewner")
+        LoewnerRun.__init__(self, driving_function, "ExactLoewner.F90","ExactLoewner")
         
-        self.fortran_filename = "ExactLoewner.F90"
-        self.module_name = "ExactLoewner"
-
     def driving_string(self):
 
         # Return a string containing the name of the driving function in square 
@@ -156,6 +153,6 @@ class ExactLoewnerRun(LoewnerRun):
     
     def set_compile_command(self):
     
-        return Constants.F2PY_FIRST \
+        self.compile_command = Constants.F2PY_FIRST \
                + [self.fortran_filename, "-m", "modules." \
                + self.module_name] 

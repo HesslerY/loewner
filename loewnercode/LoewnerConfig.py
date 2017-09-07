@@ -1,9 +1,11 @@
-from subprocess import call
 import Constants
+from subprocess import call
+from numpy import empty
+from importlib import import_module
 
 class LoewnerConfig:
 
-    def __init__(self, driving_function, exact_mode):
+    def __init__(self, driving_function):
 
         # Assign the driving function index
         self.driving_function = driving_function
@@ -11,133 +13,92 @@ class LoewnerConfig:
         # Assign the module code
         self.module_code = str(driving_function)
 
-        # Assign the exact solutions mode parameter
-        self.exact_mode = exact_mode
+        # Generate the command for preparing a module with f2py
+        self.compile_command = None
 
-        # Set squareroot parameter to None
-        self.sqrt_param = None
+        # Obtain the time and resolution parameters
+        self.resolution_parameters = None
 
-        self.compile_command = self.generate_compile_command()
-
-        # Determine the execute command
-        self.execute_command = self.obtain_execute_command()
+        # Create a results attribute
+        self.results = None
 
     def driving_string(self):
 
-        # Return a string containing the name of the driving function in square brackets
+        # Return a string containing the name of the driving function in square 
+        # brackets
         return "[" + Constants.DRIVING_INFO[self.driving_function][0] + "] "
 
     def case_string(self):
 
         # Generate a string for the CASE conditional compilation option
-        return ["-DCASE=" + str(self.driving_function)]
-
-    def sqrt_param_string(self, param_name, param_val):
-
-        # Generate a string for the KAPPA/C_ALPHA conditional compilation option
-        return [param_name + str(param_val)]
-
-    def obtain_sqrt_parameter(self):
-
-        if self.driving_function == Constants.KAPPA_IDX:
-            query = "Please enter the desired kappa value: "
-        elif self.driving_function == Constants.C_ALPHA_IDX:
-            query = "Please enter the desired c_alpha value: "
-        else:
-            pass
-
-        while True:
-
-            # Ask for the square root parameter
-            sqrt_parameter = input(query)
-
-            try:
-
-                # Return if parameter is positive
-                if float(sqrt_parameter) > 0:
-                    return sqrt_parameter
-
-            except ValueError:
-                # Repeat if input could not be converted to float
-                continue
-
-    def generate_compile_command(self):
-
-        compile_command = Constants.F2PY_FIRST
-
-        if not self.exact_mode:
-
-            # Compile string for a driving function that does not require any additional parameters
-            if self.driving_function not in [Constants.KAPPA_IDX, Constants.C_ALPHA_IDX]:
-                compile_command += [self.case_string()]
-
-            # Compile string for kappa driving function
-            elif self.driving_function == Constants.KAPPA_IDX:
-                self.sqrt_param = self.obtain_sqrt_parameter()
-                compile_command += [self.sqrt_param_string("-DKAPPA=", self.sqrt_param)]
-
-            # Compile string for c_alpha driving function
-            elif self.driving_function == Constants.C_ALPHA_IDX:
-                self.sqrt_param = self.obtain_sqrt_parameter()
-                compile_command += [self.sqrt_param_string("-DC_ALPHA=", self.sqrt_param)]
-
-            else:
-                # Error
-                pass
-
-            return compile_command + ["NumericalLoewner.F90", "-m", "modules.NumericalLoewner_" \
-                                                                    + str(self.driving_function)]
-
-        else:
-            # Exact module compilation command
-            pass
-
+        return ["-DCASE=" + self.module_code]
 
     def generate_f2p_last(self):
 
         # Create the string that defines the module name
         return ["modules.NumericalLoewner_" + self.module_code]
 
-    def obtain_execute_command(self):
-
-        while True:
-
-            # Ask for the run parameters
-            values = input(self.driving_string() + "Please enter the start time, end time, and " \
-                                                 + "number of points seperated by a space: ")
-
-            try:
-
-                # Split the input
-                values = values.split()
-
-                # Ensure that three values were entered
-                if len(values) != 3:
-                    continue
-
-                start_time = float(values[0])
-
-                # Check that the start time >= 0
-                if start_time < 0:
-                    continue
-
-                # Check that final time is greater than the start time
-                if float(values[1]) <= start_time:
-                    continue
-
-                # Check that the number of points is >= 1
-                if int(values[2]) < 1:
-                    continue
-
-                # Create the execution command
-                self.run_params = [start_time, float(values[1]), int(values[2])]
-                return
-
-            except ValueError:
-                # Repeat if input had incorrect format
-                continue
-
     def compile_loewner(self):
 
         # Compile the module with f2py
         call(self.compile_command)
+        
+    def import_loewner(self):
+
+        # Try to import the corresponding module
+        return import_module("modules.NumericalLoewner_" + self.module_code)
+
+    def perform_loewner(self):
+
+        try:
+
+            # Check if the module can be imported successfully
+            NumericalLoewner = self.import_loewner()
+
+        except ModuleNotFoundError:
+
+            self.compile_loewner()
+            NumericalLoewner = self.import_loewner()
+
+        g_arr = empty(self.resolution_parameters[2], dtype=complex)
+        NumericalLoewner.loewners_equation(self.resolution_parameters[0], self.resolution_parameters[1], g_arr)
+
+        self.results = g_arr
+
+class SqrtLoewnerConfig(LoewnerConfig):
+
+    def __init__(self):
+        pass
+        
+    def sqrt_param_string(self, param_name, param_val):
+
+        # Generate a string for the kappa or c_alpha conditional compilation option
+        return [param_name + str(param_val)]
+    
+    def obtain_sqrt_parameter(self):
+
+        if self.driving_function == Constants.KAPPA_IDX:
+            query = "Please enter the desired kappa value: "
+
+        elif self.driving_function == Constants.C_ALPHA_IDX:
+            query = "Please enter the desired c_alpha value: "
+
+        else:
+            # Error
+            pass
+
+        while True:
+
+            # Ask for the square root parameter
+            answer = input(query)
+
+            try:
+
+                # Return if answer can be converted to a float and is positive
+                if float(answer) > 0:
+                    return answer
+
+            except ValueError:
+                # Repeat if answer could not be converted to float
+                continue
+        

@@ -1,26 +1,27 @@
 import Constants
-
 from LoewnerConfig import LoewnerConfig
-from LoewnerRun import LoewnerRun
+from Plot import Plot
 
 def multiple_square_root(index, driving_text):
 
     while True:
 
         # Ask for user input
-        num_runs = input("Please enter the number of times you wish to run " + driving_text + ": ")
+        num_runs = input("Please enter the number of times you wish to run " \
+                         + driving_text + ": ")
 
         try:
 
             # Convert the value to an integer
-            num_runs = int(num_runs)
+            total_runs = int(total_runs)
 
             # Repeat if this value is less than or equal to zero
-            if num_runs <= 0:
+            if total_runs <= 0:
                 continue
 
-            # Return the list with the square root driving function num_runs many times
-            return [index for _ in range(num_runs - 1)]
+            # Return the list with the square root driving function num_runs
+            # many times
+            return [index for _ in range(total_runs - 1)]
 
         except ValueError:
             # Repeat if input could not be converted to an integer
@@ -33,7 +34,8 @@ def select_multiple():
         try:
 
             # Ask for the user input
-            indices = input("Plase enter the indices of the driving functions you wish to use seperated by a space: ")
+            indices = input("Please enter the indices of the driving " \
+                            + "functions you wish to use seperated by a space: ")
 
             # Convert the indices to integer list
             indices = list(set([int(x) for x in indices.split()]))
@@ -83,15 +85,15 @@ def obtain_driving_selection():
 
             # Return if one of the first nine driving functions is selected
             if answer < Constants.MULTIPLE_IDX:
-                return [LoewnerConfig(driving_function=answer, exact_mode=False)]
+                return [LoewnerConfig(answer)]
 
             # Create a list for multiple driving functions
             elif answer == Constants.MULTIPLE_IDX:
-                return [LoewnerConfig(driving_function=index, exact_mode=False) for index in select_multiple()]
+                return [LoewnerConfig(index) for index in select_multiple()]
 
             # Create a list containing all driving functions
             elif answer == Constants.ALL_IDX:
-                return [LoewnerConfig(driving_function=i, exact_mode=False) for i in range(Constants.TOTAL_DRIVING_FUNCTIONS)]
+                return [LoewnerConfig(i) for i in range(Constants.TOTAL_DRIVING_FUNCTIONS)]
 
             # Print message in case of invalid choice
             else:
@@ -103,14 +105,12 @@ def obtain_driving_selection():
 
 def obtain_exact_selection():
 
-    total_driving_functions = len(Constants.EXACT_OPTIONS)
-
     while True:
 
         print("AVALIABLE DRIVING FUNCTIONS:")
 
         # Print all avaliable driving functions
-        for i in range(total_driving_functions):
+        for i in range(Constants.TOTAL_DRIVING_FUNCTIONS):
             print("[" + str(i) + "] " + Constants.EXACT_OPTIONS[i][0])
 
         # Ask for the user selection
@@ -123,24 +123,75 @@ def obtain_exact_selection():
             if answer < 0 or answer >= total_driving_functions:
                 continue
 
-            return [LoewnerConfig(driving_function=answer, exact_mode=True)]
+            return [LoewnerConfig(driving_function)]
 
         except ValueError:
             continue
 
+def set_resolution_parameters(loewner_run):
+
+    while True:
+
+        # Ask for the run parameters
+        values = input(loewner_run.driving_string() + "Please enter the star" \
+                       + "t time, end time, and number of points seperated b" \
+                       + "y a space: ")
+        try:
+
+            # Split the input
+            values = values.split()
+
+            # Ensure that three values were entered
+            if len(values) != 3:
+                continue
+
+            start_time = float(values[0])
+
+            # Check that the start time >= 0
+            if start_time < 0:
+                continue
+
+            # Check that final time is greater than the start time
+            if float(values[1]) <= start_time:
+                continue
+
+            # Check that the number of points is >= 1
+            if int(values[2]) < 1:
+                continue
+
+            # Create the execution command
+            return [start_time, float(values[1]), int(values[2])]
+
+        except ValueError:
+            # Repeat if input had incorrect format
+            continue
+            
+def set_compile_command(loewner_run):
+    
+    return Constants.F2PY_FIRST + loewner_run.case_string() \
+           + ["NumericalLoewner.F90", "-m", "modules.NumericalLoewner_" \
+           + loewner_run.module_code] 
+
+def generate_plots(loewner_runs):
+
+    for loewner_run in loewner_runs:
+        loewner_plot = Plot(loewner_run.driving_function, loewner_run.resolution_parameters, loewner_run.results)
+        loewner_plot.generate_plot()
+
 def standard_mode():
 
-    driving_functions = obtain_driving_selection()
+    loewner_runs = obtain_driving_selection()
 
-    for driving_function in driving_functions:
-        loewner_run = LoewnerRun(driving_function)
+    for loewner_run in loewner_runs:
+
+        loewner_run.resolution_parameters = set_resolution_parameters(loewner_run)
+        loewner_run.compile_command = set_compile_command(loewner_run)
+        loewner_run.perform_loewner()
+
+    generate_plots(loewner_runs)
 
 def exact_solutions():
-
-    driving_functions = obtain_exact_selection()
-
-    for driving_function in driving_functions:
-        loewner_run = LoewnerRun(driving_function)
+    exit()
 
 def mode_selection():
 
@@ -170,7 +221,8 @@ def mode_selection():
                 return exact_solutions()
 
             else:
-                pass
+                # Error
+                continue
 
         except ValueError:
             # Repeat if the input could not be converted to an integer
@@ -178,4 +230,3 @@ def mode_selection():
 
 
 mode_selection()
-print("Done!")

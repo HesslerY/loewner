@@ -1,46 +1,39 @@
+import Constants
 import matplotlib.pyplot as plt
 from math import pi, degrees
 from numpy import arctan2
 from os.path import dirname, exists
 from os import mkdir
-import Constants
 
 plt.style.use('bmh')
 
 class Plot:
 
-    def __init__(self, driving_func_index, run_params, results, sqrt_param = None):
+    def __init__(self, driving_function, resolution_parameters, results):
 
         # Create list of real and imaginary values (removes last point)
         self.real_values = [result.real for result in results][:-1]
         self.imag_values = [result.imag for result in results][:-1]
         
         # Assign the plot title
-        self.output_plot_title = self.generate_plot_title(driving_func_index, sqrt_param)
+        self.output_plot_title = self.generate_plot_title(driving_function) 
     
         # Determine the output directory for the plot images
-        self.output_plot_directory = "outputimages/" + str(driving_func_index) + "/"
+        self.output_plot_directory = "outputimages/" + str(driving_function) + "/"
         
         # Determine the partial filename for the plot images
-        if sqrt_param:
-            self.partial_output_filename = str(driving_func_index) + " " + str(sqrt_param) + "-".join([str(x) for x in run_params])
-        
-        else:
-            self.partial_output_filename = str(driving_func_index) + " " + "-".join([str(x) for x in run_params])
+        self.partial_output_filename = str(driving_function) + " " + "-".join([str(x) for x in resolution_parameters])
         
         # Display or save plot
         self.display = True
         
         # Assign the run paramters
-        self.run_params = run_params
+        self.resolution_parameters = resolution_parameters
         
-    def generate_plot_title(self, driving_func_index, sqrt_param):
+    def generate_plot_title(self, driving_function):
     
-        if driving_func_index not in [Constants.KAPPA_IDX, Constants.C_ALPHA_IDX]:
-            return Constants.DRIVING_INFO[driving_func_index][1]
+        return Constants.DRIVING_INFO[driving_function][1]
             
-        return Constants.DRIVING_INFO[driving_func_index][1].replace("SQRT_PARAM", sqrt_param)
-
     def create_output_folder(self):
         
         image_directory = dirname(self.output_plot_directory)

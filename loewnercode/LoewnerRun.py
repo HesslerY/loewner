@@ -15,10 +15,10 @@ class LoewnerRun:
 
         self.fortran_filename = filename 
 
-        self.module_name = module + self.module_code
+        self.module_name = "modules." + module + self.module_code
 
         # Generate the command for preparing a module with f2py
-        self.compile_command = self.set_compile_command() 
+        self.compile_command = None
 
         # Obtain the time and resolution parameters
         self.resolution_parameters = None
@@ -34,9 +34,9 @@ class LoewnerRun:
 
     def set_compile_command(self):
     
-        return Constants.F2PY_FIRST + ["-DCASE=" + self.module_code] \
-               + [self.fortran_filename, "-m", "modules." \
-               + self.module_name] 
+        self.compile_command = Constants.F2PY_FIRST + ["-DCASE=" + self.module_code] \
+               + [self.fortran_filename, "-m", \
+                  self.module_name] 
 
     def compile_loewner(self):
 
@@ -46,7 +46,7 @@ class LoewnerRun:
     def import_loewner(self):
 
         # Try to import the corresponding module
-        return import_module("modules." + self.module_name)
+        return import_module(self.module_name)
 
     def set_resolution_parameters(self):
 

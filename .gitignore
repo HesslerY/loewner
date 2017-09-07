@@ -10,3 +10,5 @@ outputimages/
 *test.py
 Test.F90
 *.F90#
+*.swp
+.#*

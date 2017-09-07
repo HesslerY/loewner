@@ -1,5 +1,5 @@
 import Constants
-from LoewnerConfig import LoewnerConfig
+from LoewnerRun import LoewnerRun
 from Plot import Plot
 
 def multiple_square_root(index, driving_text):
@@ -85,15 +85,15 @@ def obtain_driving_selection():
 
             # Return if one of the first nine driving functions is selected
             if answer < Constants.MULTIPLE_IDX:
-                return [LoewnerConfig(answer)]
+                return [LoewnerRun(answer)]
 
             # Create a list for multiple driving functions
             elif answer == Constants.MULTIPLE_IDX:
-                return [LoewnerConfig(index) for index in select_multiple()]
+                return [LoewnerRun(index) for index in select_multiple()]
 
             # Create a list containing all driving functions
             elif answer == Constants.ALL_IDX:
-                return [LoewnerConfig(i) for i in range(Constants.TOTAL_DRIVING_FUNCTIONS)]
+                return [LoewnerRun(i) for i in range(Constants.TOTAL_DRIVING_FUNCTIONS)]
 
             # Print message in case of invalid choice
             else:
@@ -123,7 +123,7 @@ def obtain_exact_selection():
             if answer < 0 or answer >= total_driving_functions:
                 continue
 
-            return [LoewnerConfig(driving_function)]
+            return [LoewnerRun(driving_function)]
 
         except ValueError:
             continue
@@ -185,7 +185,6 @@ def standard_mode():
     for loewner_run in loewner_runs:
 
         loewner_run.resolution_parameters = set_resolution_parameters(loewner_run)
-        loewner_run.compile_command = set_compile_command(loewner_run)
         loewner_run.perform_loewner()
 
     generate_plots(loewner_runs)

@@ -3,7 +3,7 @@ from subprocess import call
 from numpy import empty
 from importlib import import_module
 
-class LoewnerConfig:
+class LoewnerRun:
 
     def __init__(self, driving_function):
 
@@ -65,7 +65,7 @@ class LoewnerConfig:
 
         self.results = g_arr
 
-class SqrtLoewnerConfig(LoewnerConfig):
+class SqrtLoewnerRun(LoewnerRun):
 
     def __init__(self):
         pass

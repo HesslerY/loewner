@@ -78,7 +78,6 @@ subroutine inverse_loewner(g_arr, total_points, driving_arr, time_arr)
         write (*,*) "+ve h" , compute_h(h, lower_delta(i), upper_delta(i))
         write (*,*)
 
-
     enddo
 
 end subroutine inverse_loewner

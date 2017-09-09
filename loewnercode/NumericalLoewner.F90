@@ -41,7 +41,7 @@ use constants
     real(8) :: driving_value
 
 #if CASE == 0
-    driving_value = 0.0
+    driving_value = 0 
 
 #elif CASE == 1
     driving_value = t

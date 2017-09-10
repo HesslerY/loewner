@@ -78,7 +78,7 @@ def obtain_driving_selection():
 
         # Print all of the possible driving functions
         for i in range(Constants.TOTAL_DRIVING_FUNCTIONS):
-            print("[" + str(i) + "] " + Constants.DRIVING_INFO[i][0])
+            print("[" + str(i) + "] " + Constants.DRIVING_INFO[i])
 
         print("[12] MULTIPLE")
         print("[13] ALL")

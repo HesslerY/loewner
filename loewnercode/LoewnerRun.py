@@ -5,7 +5,7 @@ from importlib import import_module
 
 class LoewnerRun:
 
-    def __init__(self, driving_function, filename = "NumericalLoewner.F90", module = "NumericalLoewner_"):
+    def __init__(self, driving_function, filename = "NumericalLoewner"):
 
         # Assign the driving function index
         self.driving_function = driving_function
@@ -13,9 +13,9 @@ class LoewnerRun:
         # Assign the module code
         self.module_code = str(driving_function)
 
-        self.fortran_filename = filename 
+        self.fortran_filename = filename + ".F90" 
 
-        self.module_name = "modules." + module + self.module_code
+        self.module_name = "modules." + filename + "_"  + self.module_code
 
         # Generate the command for preparing a module with f2py
         self.compile_command = None
@@ -30,7 +30,7 @@ class LoewnerRun:
 
         # Return a string containing the name of the driving function in square 
         # brackets
-        return "[" + Constants.DRIVING_INFO[self.driving_function][0] + "] "
+        return "[" + Constants.DRIVING_INFO[self.driving_function] + "] "
 
     def set_compile_command(self):
     
@@ -143,7 +143,7 @@ class ExactLoewnerRun(LoewnerRun):
 
     def __init__(self, driving_function):
 
-        LoewnerRun.__init__(self, driving_function, "ExactLoewner.F90","ExactLoewner")
+        LoewnerRun.__init__(self, driving_function, "ExactLoewner")
         
     def driving_string(self):
 

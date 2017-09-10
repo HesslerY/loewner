@@ -16,7 +16,7 @@ class Plot:
         self.imag_values = [result.imag for result in results][:-1]
         
         # Assign the plot title
-        self.output_plot_title = self.generate_plot_title(driving_function) 
+        self.output_plot_title = Constants.PLOT_TITLE[driving_function]
     
         # Determine the output directory for the plot images
         self.output_plot_directory = "outputimages/" + str(driving_function) + "/"
@@ -30,10 +30,6 @@ class Plot:
         # Assign the run paramters
         self.resolution_parameters = resolution_parameters
         
-    def generate_plot_title(self, driving_function):
-    
-        return Constants.DRIVING_INFO[driving_function][1]
-            
     def create_output_folder(self):
         
         image_directory = dirname(self.output_plot_directory)

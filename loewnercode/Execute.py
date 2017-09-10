@@ -228,5 +228,4 @@ def mode_selection():
             # Repeat if the input could not be converted to an integer
             continue
 
-
 mode_selection()

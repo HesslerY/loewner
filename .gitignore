@@ -7,7 +7,7 @@ output/
 outputimages/*
 outputimages/
 *.so
-*test.py
+loewnertest.py
 Test.F90
 *.F90#
 *.swp

@@ -1,5 +1,5 @@
 import Constants
-from subprocess import call
+from subprocess import check_output
 from numpy import empty
 from importlib import import_module
 
@@ -41,7 +41,11 @@ class LoewnerRun:
     def compile_loewner(self):
 
         # Compile the module with f2py
-        call(self.compile_command)
+        try:
+            check_output(self.compile_command)
+        except subprocess.CalledProcessError:
+            # Error
+            pass
         
     def import_loewner(self):
 

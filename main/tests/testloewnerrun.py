@@ -69,6 +69,21 @@ class LoewnerRunTests(unittest.TestCase):
         total_loewner_runs = len(loewner_runs)
 
         self.assertTrue(total_module_files == total_loewner_runs)
-            
+
+    def test_perform_loewner(self):
+
+        loewner_runs = self.create_loewner_runs()
+
+        total_points = 50 
+
+        for loewner_run in loewner_runs:
+
+            self.assertTrue(loewner_run.results == None)
+
+            loewner_run.resolution_parameters = [0,1,total_points]
+            loewner_run.perform_loewner()
+
+            self.assertTrue(len(loewner_run.results) == total_points)
+
 if __name__ == '__main__':
     unittest.main()

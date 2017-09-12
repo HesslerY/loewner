@@ -1,5 +1,6 @@
 from os import remove
 from glob import glob
+from random import randint
 import sys
 import inspect
 import unittest
@@ -84,6 +85,31 @@ class LoewnerRunTests(unittest.TestCase):
             loewner_run.perform_loewner()
 
             self.assertTrue(len(loewner_run.results) == total_points)
+
+    def test_constant_driving(self):
+
+        loewner_run = LoewnerRun(0)
+        
+        for _ in range(5):
+
+            loewner_run.results = None
+
+            start_time = randint(0,25)
+            final_time = randint(26,50)
+            total_points = randint(5,100)
+
+            loewner_run.resolution_parameters = [start_time, final_time, total_points]
+            loewner_run.perform_loewner()
+
+            results = loewner_run.results
+
+            self.assertTrue(results[0].real == 0)
+
+            for i in range(1,total_points):
+
+                self.assertTrue(results[i].real == 0)
+                self.assertTrue(results[i].imag > results[i - 1].imag)
+
 
 if __name__ == '__main__':
     unittest.main()

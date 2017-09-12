@@ -116,8 +116,13 @@ implicit none
     real(8) :: driving_function
 
     if (present(sqrt_driving)) then
+#if CASE == 10
         sqrt_param  = sqrt_driving
+#elif CASE == 11
+        sqrt_param = (2 - 4 * sqrt_driving) / cdsqrt(sqrt_driving - square(sqrt_driving))
+#endif
     endif
+
 
     ! Find the difference between start time and final time
     total_change = final_time - start_time

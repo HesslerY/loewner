@@ -19,9 +19,13 @@ class LoewnerRunTests(unittest.TestCase):
 
             if not Constants.squareroot_driving(driving_function):
                 loewner_runs.append(LoewnerRun(driving_function))
-
+                loewner_runs[-1].final_time = 1
             else:
                 loewner_runs.append(SqrtLoewnerRun(driving_function))
+                loewner_runs[-1].final_time = 15
+
+            loewner_runs[-1].start_time = 0
+            loewner_runs[-1].total_points = 500
 
         return loewner_runs
 
@@ -81,7 +85,7 @@ class LoewnerRunTests(unittest.TestCase):
 
             self.assertTrue(loewner_run.results == None)
 
-            loewner_run.resolution_parameters = [0,1,total_points]
+            loewner_run.total_points = total_points
             loewner_run.perform_loewner()
 
             self.assertTrue(len(loewner_run.results) == total_points)
@@ -94,22 +98,20 @@ class LoewnerRunTests(unittest.TestCase):
 
             loewner_run.results = None
 
-            start_time = randint(0,25)
-            final_time = randint(26,50)
-            total_points = randint(5,100)
+            loewner_run.start_time = randint(0,25)
+            loewner_run.final_time = randint(26,50)
+            loewner_run.total_points = randint(5,100) 
 
-            loewner_run.resolution_parameters = [start_time, final_time, total_points]
             loewner_run.perform_loewner()
 
             results = loewner_run.results
 
             self.assertTrue(results[0].real == 0)
 
-            for i in range(1,total_points):
+            for i in range(1,loewner_run.total_points):
 
                 self.assertTrue(results[i].real == 0)
                 self.assertTrue(results[i].imag > results[i - 1].imag)
-
 
 if __name__ == '__main__':
     unittest.main()

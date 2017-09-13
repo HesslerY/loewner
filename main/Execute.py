@@ -164,10 +164,17 @@ def obtain_squareroot_parameter(loewner_run):
             # Repeat if answer could not be converted to float
             continue
 
-def generate_plots(loewner_runs):
+def generate_plots(loewner_runs,standard):
 
     for loewner_run in loewner_runs:
-        loewner_plot = Plot(loewner_run.driving_function, loewner_run.resolution_parameters, loewner_run.results)
+       
+        if standard:
+            res_params = [loewner_run.start_time, loewner_run.final_time, loewner_run.total_points]
+
+        else:
+            res_params = [loewner_run.start_time, loewner_run.total_points]
+
+        loewner_plot = Plot(loewner_run.driving_function, res_params, loewner_run.results)
         loewner_plot.generate_plot()
 
 def standard_mode():
@@ -182,7 +189,7 @@ def standard_mode():
         loewner_run.set_resolution_parameters()
         loewner_run.perform_loewner()
 
-    generate_plots(loewner_runs)
+    generate_plots(loewner_runs,True)
 
 def exact_solutions():
    
@@ -192,6 +199,8 @@ def exact_solutions():
 
         loewner_run.set_resolution_parameters()
         loewner_run.perform_loewner()
+
+    generate_plots(loewner_runs,False)
 
 def mode_selection():
 

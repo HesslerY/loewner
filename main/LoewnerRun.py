@@ -22,7 +22,9 @@ class LoewnerRun:
         self.compile_command = None
 
         # Obtain the time and resolution parameters
-        self.resolution_parameters = None
+        self.start_time = None
+        self.final_time = None
+        self.total_points = None
 
         # Create a results attribute
         self.results = None
@@ -70,26 +72,24 @@ class LoewnerRun:
                 if len(values) != 3:
                     continue
     
-                start_time = float(values[0])
+                self.start_time = float(values[0])
     
                 # Check that the start time >= 0
-                if start_time < 0:
+                if self.start_time < 0:
                     continue
    
-                final_time = float(values[1])
+                self.final_time = float(values[1])
 
                 # Check that final time is greater than the start time
-                if final_time <= start_time:
+                if self.final_time <= self.start_time:
                     continue
    
-                total_points = int(values[2])
+                self.total_points = int(values[2])
 
                 # Check that the number of points is >= 1
-                if total_points < 1:
+                if self.total_points < 1:
                     continue
     
-                # Create the execution command
-                self.resolution_parameters = [start_time, final_time, total_points]
                 return
 
             except ValueError:
@@ -109,8 +109,8 @@ class LoewnerRun:
             self.compile_loewner()
             NumericalLoewner = self.import_loewner()
       
-        g_arr = empty(self.resolution_parameters[2], dtype=complex)
-        NumericalLoewner.loewners_equation(self.resolution_parameters[0], self.resolution_parameters[1], g_arr)
+        g_arr = empty(self.total_points, dtype=complex)
+        NumericalLoewner.loewners_equation(self.start_time, self.final_time, g_arr)
 
         self.results = g_arr
 
@@ -139,8 +139,8 @@ class SqrtLoewnerRun(LoewnerRun):
             self.compile_loewner()
             NumericalLoewner = self.import_loewner()
       
-        g_arr = empty(self.resolution_parameters[2], dtype=complex)
-        NumericalLoewner.loewners_equation(self.resolution_parameters[0], self.resolution_parameters[1], g_arr, sqrt_driving=self.sqrt_param)
+        g_arr = empty(self.total_points, dtype=complex)
+        NumericalLoewner.loewners_equation(self.start_time, self.final_time, g_arr, sqrt_driving=self.sqrt_param)
 
         self.results = g_arr
 

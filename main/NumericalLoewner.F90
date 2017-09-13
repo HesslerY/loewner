@@ -123,7 +123,6 @@ implicit none
 #endif
     endif
 
-
     ! Find the difference between start time and final time
     total_change = final_time - start_time
 

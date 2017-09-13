@@ -20,29 +20,26 @@ implicit none
     ! Argument declarations
     integer :: n_intervals
     real(8) :: start_time
+    complex(8) :: g_arr(n_intervals)
 
     ! Local variable declarations
     integer :: j = 0
-    complex(8) :: g_0 = 0
     real(8) :: phi = 0
+    real(8) :: two_phi = 0
     real(8) :: phi_incr = 0
 
     ! Functions
     real(8) :: cotan
 
-    ! Return value declaration
-    complex(8) :: g_arr(n_intervals)
-
     phi_incr = pi / n_intervals
 
     ! Compute g_0 M times
-    do j = 0, n_intervals
+    do j = 1, n_intervals
 
         phi = start_time + (j * phi_incr)
-        g_0 = 2 - (2 * phi * cotan(phi)) + 2 * i * phi
+        two_phi = phi * 2
 
-        ! Place the latest value in the array
-        g_arr(j) = g_0
+        g_arr(j) = 2 - (two_phi * cotan(phi)) + i * two_phi
 
     end do
 

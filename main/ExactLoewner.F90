@@ -1,3 +1,6 @@
+program test
+end program test
+
 pure function cotan(phi) result(cotan_phi)
 
     ! Argument
@@ -10,33 +13,30 @@ pure function cotan(phi) result(cotan_phi)
 
 end function cotan
 
-subroutine linear_driving(start_time, num_intervals)
+subroutine linear_driving(start_time, n_intervals, g_arr)
 use constants
 implicit none
 
     ! Argument declarations
-    integer :: num_intervals
+    integer :: n_intervals
     real(8) :: start_time
 
     ! Local variable declarations
     integer :: j = 0
-
+    complex(8) :: g_0 = 0
     real(8) :: phi = 0
     real(8) :: phi_incr = 0
-
-    complex(8) :: g_0 = 0
 
     ! Functions
     real(8) :: cotan
 
     ! Return value declaration
-    complex(8) :: g_arr(num_intervals)
+    complex(8) :: g_arr(n_intervals)
 
-    ! Compute the number of internals for linear driving approximation
-    phi_incr = pi / num_intervals
+    phi_incr = pi / n_intervals
 
     ! Compute g_0 M times
-    do j = 0, num_intervals
+    do j = 0, n_intervals
 
         phi = start_time + (j * phi_incr)
         g_0 = 2 - (2 * phi * cotan(phi)) + 2 * i * phi

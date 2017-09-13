@@ -29,7 +29,11 @@ PLOT_TITLE = ["$\\xi (t) = 0$",
               "$\\xi (t) = c_{SQRT_PARAM} \sqrt{t}$"]
 
 # Declare a list of "exact" solution options
-EXACT_INFO = [["t", "$\\xi (t) = t$"]]
+EXACT_INFO = ["t"]
+
+EXACT_TITLE = ["$\\xi (t) = t$"]
+
+TOTAL_EXACT_DRIVING = len(EXACT_INFO)
 
 # Obtain the total number of driving functions
 TOTAL_DRIVING_FUNCTIONS = len(DRIVING_INFO)

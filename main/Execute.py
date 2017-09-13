@@ -1,6 +1,7 @@
 import Constants
 from LoewnerRun import LoewnerRun
 from LoewnerRun import SqrtLoewnerRun
+from LoewnerRun import ExactLoewnerRun
 from Plot import Plot
 
 def multiple_square_root(index, driving_text):
@@ -118,24 +119,23 @@ def obtain_exact_selection():
         print("AVALIABLE DRIVING FUNCTIONS:")
 
         # Print all avaliable driving functions
-        for i in range(Constants.TOTAL_DRIVING_FUNCTIONS):
-            print("[" + str(i) + "] " + Constants.EXACT_INFO[i][0])
+        for i in range(Constants.TOTAL_EXACT_DRIVING):
+            print("[" + str(i) + "] " + Constants.EXACT_INFO[i])
 
         # Ask for the user selection
         answer = input("Please select a driving function: ")
 
         try:
 
-            answer = int(answer)
+            driving_function = int(answer)
 
-            if answer < 0 or answer >= total_driving_functions:
+            if driving_function < 0 or driving_function >= Constants.TOTAL_EXACT_DRIVING:
                 continue
 
             return [ExactLoewnerRun(driving_function)]
 
         except ValueError:
             continue
-
             
 def obtain_squareroot_parameter(loewner_run):
 
@@ -188,7 +188,7 @@ def exact_solutions():
    
     loewner_runs = obtain_exact_selection()
 
-    for loewner_run in loewner_run:
+    for loewner_run in loewner_runs:
 
         loewner_run.set_resolution_parameters()
         loewner_run.perform_loewner()

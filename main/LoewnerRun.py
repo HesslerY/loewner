@@ -1,5 +1,6 @@
 import Constants
 from subprocess import check_output
+from subprocess import CalledProcessError 
 from numpy import empty
 from importlib import import_module
 
@@ -43,10 +44,10 @@ class LoewnerRun:
         # Compile the module with f2py
         try:
             check_output(self.compile_command)
-        except subprocess.CalledProcessError:
-            # Error
-            pass
-        
+        except CalledProcessError:
+            print("Error: Could not compile module.")
+            exit()
+
     def import_loewner(self):
 
         # Try to import the corresponding module
@@ -148,15 +149,83 @@ class ExactLoewnerRun(LoewnerRun):
     def __init__(self, driving_function):
 
         LoewnerRun.__init__(self, driving_function, "ExactLoewner")
+        self.module_name = "modules.ExactLoewner"
         
     def driving_string(self):
 
         # Return a string containing the name of the driving function in square 
         # brackets
-        return "[" + Constants.EXACT_INFO[self.driving_function][0] + "] "
+        return "[" + Constants.EXACT_INFO[self.driving_function] + "] "
     
     def set_compile_command(self):
     
         self.compile_command = Constants.F2PY_FIRST \
-               + [self.fortran_filename, "-m", "modules." \
-               + self.module_name] 
+               + [self.fortran_filename, "-m", \
+               self.module_name]
+
+    def set_resolution_parameters(self):
+
+        query = ["Please enter the start time and number of intervals seperated by a space: "]
+
+        while True:
+    
+            # Ask for the run parameters
+            values = input(self.driving_string() + query[self.driving_function])
+            
+            try:
+
+                # Split the input
+                values = values.split()
+                
+                if self.driving_function == 0:
+
+                    # Ensure that three values were entered
+                    if len(values) != 2:
+                        continue
+        
+                    self.start_time = float(values[0])
+        
+                    # Check that the start time >= 0
+                    if self.start_time < 0:
+                        continue
+       
+                    self.total_points = int(values[1])
+
+                    # Check that the number of points is >= 1
+                    if self.total_points < 1:
+                        continue
+
+                    return
+
+                else:
+                    # Not yet implemented
+                    pass
+
+            except ValueError:
+                    # Repeat if input had incorrect format
+                    continue
+
+    def perform_loewner(self):
+
+        try:
+
+            # Check that the module can be imported successfully
+            ExactLoewner = self.import_loewner()
+
+        except ModuleNotFoundError:
+
+            self.set_compile_command()
+            self.compile_loewner()
+            ExactLoewner = self.import_loewner()
+
+        g_arr = empty(self.total_points, dtype=complex)
+
+        if self.driving_function == 0:
+            ExactLoewner.linear_driving(start_time=self.start_time,g_arr=g_arr)
+
+        else:
+            # Not yet implemented
+            pass
+
+        self.results = g_arr
+

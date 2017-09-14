@@ -13,3 +13,4 @@ Test.F90
 *.swp
 .#*
 *.swo
+*.pyc

@@ -143,7 +143,7 @@ def obtain_squareroot_parameter(loewner_run):
         query = "Please enter the desired kappa value: "
 
     elif loewner_run.driving_function == Constants.C_ALPHA_IDX:
-        query = "Please enter the desired c_alpha value: "
+        query = "Please enter the desired alpha value: "
 
     else:
         # Error
@@ -167,7 +167,7 @@ def obtain_squareroot_parameter(loewner_run):
 def generate_plots(loewner_runs,standard):
 
     for loewner_run in loewner_runs:
-       
+
         if standard:
             res_params = [loewner_run.start_time, loewner_run.final_time, loewner_run.total_points]
 

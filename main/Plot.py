@@ -12,9 +12,9 @@ class Plot:
     def __init__(self, driving_function, resolution_parameters, results):
 
         # Create list of real and imaginary values (removes last point)
-        self.real_values = [result.real for result in results][:-1]
-        self.imag_values = [result.imag for result in results][:-1]
-        
+        self.real_values = [result.real for result in results]
+        self.imag_values = [result.imag for result in results]
+
         # Assign the plot title
         self.output_plot_title = Constants.PLOT_TITLE[driving_function]
     

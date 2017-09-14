@@ -137,7 +137,7 @@ implicit none
     do j = 1, n_points
 
         ! Set max_t
-        max_t = start_time + (j * max_t_incr)
+        max_t = start_time + ((j - 1) * max_t_incr)
 
         ! Find the initial value for g_1
         g_t1 = complex(driving_function(max_t),0)

@@ -19,7 +19,7 @@ pure function compute_h(z,lower_delta,upper_delta) result(h)
     h = cdsqrt((z - lower_delta) ** 2 + (4 * upper_delta))
 
     if (imagpart(h) < 0) then
-        h = h * -1
+        h = h * (-1)
     endif
 
 end function compute_h
@@ -31,8 +31,6 @@ subroutine inverse_loewner(g_arr, total_points, driving_arr, time_arr)
     integer :: total_points
     real(8) :: driving_arr(total_points)
     real(8) :: time_arr(total_points)
-    integer :: pos_h = 0
-    integer :: neg_h = 0
 
     ! Local variable declarations
     real(8) :: lower_delta(total_points)

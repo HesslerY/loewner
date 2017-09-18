@@ -18,6 +18,10 @@ pure function compute_h(z,lower_delta,upper_delta) result(h)
 
     h = cdsqrt((z - lower_delta) ** 2 + (4 * upper_delta))
 
+    if (imagpart(h) < 0) then
+        h = h * -1
+    endif
+
 end function compute_h
 
 subroutine inverse_loewner(g_arr, total_points, driving_arr, time_arr)
@@ -27,13 +31,14 @@ subroutine inverse_loewner(g_arr, total_points, driving_arr, time_arr)
     integer :: total_points
     real(8) :: driving_arr(total_points)
     real(8) :: time_arr(total_points)
+    integer :: pos_h = 0
+    integer :: neg_h = 0
 
     ! Local variable declarations
     real(8) :: lower_delta(total_points)
     real(8) :: upper_delta(total_points)
 
     complex(8) :: h
-    complex(8) :: w
 
     ! Function declarations
     complex(8) :: compute_h
@@ -52,31 +57,19 @@ subroutine inverse_loewner(g_arr, total_points, driving_arr, time_arr)
         ! Assign the current g-value to h
         h = g_arr(i)
 
-        if (i < total_points) then
-            w = g_arr(i + 1)
-        endif
-
         ! Repeatedly call the h function on itself
         do j = 1, i - 1
 
             h = compute_h(h,lower_delta(j),upper_delta(j))
-            w = compute_h(w,lower_delta(j),upper_delta(j))
 
         enddo
 
-        ! Obtain the most recent value for lower delta and upper delta
         lower_delta(i) = realpart(h)
         upper_delta(i) = (imagpart(h) ** 2) * 0.25
 
         ! Obtain the most recently value for the driving function and time
         driving_arr(i) = driving_arr(i - 1) + lower_delta(i)
         time_arr(i) = time_arr(i - 1) + upper_delta(i)
-
-        write (*,*) "-ve w" , compute_h((-1 * w),( -1 * lower_delta(i)), upper_delta(i))
-        write (*,*) "+ve w" , compute_h(w, lower_delta(i), upper_delta(i))
-        write (*,*) "-ve h" , compute_h((-1 * h),( -1 * lower_delta(i)), upper_delta(i))
-        write (*,*) "+ve h" , compute_h(h, lower_delta(i), upper_delta(i))
-        write (*,*)
 
     enddo
 

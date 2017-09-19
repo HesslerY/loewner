@@ -1,37 +1,46 @@
 import Constants
-import npyscreen as np
+import urwid
 
-class ModeSelection(np.ActionForm):
-    def create(self):
-        self.mode_selection = self.add(np.TitleSelectOne, scroll_exit=True, value=[1,], name='Select a mode:', values = Constants.RUN_OPTIONS[:])
+# This function handles input not handled by widgets.
+# It's passed into the MainLoop constructor at the bottom.
+def unhandled_input(key):
+  if key in ('q','Q'):
+    raise urwid.ExitMainLoop()
+  if key == 'n':
+    try:
 
-    def afterEditing(self):
+      ## This is the part you're probably asking about
 
-        if self.mode_selection.get_selected_objects()[0] == Constants.RUN_OPTIONS[0]:
-            self.parentApp.switchForm('STANDARDMODE')
-        if self.mode_selection.get_selected_objects()[0] == Constants.RUN_OPTIONS[1]:
-            self.parentApp.switchForm('RESMODE')
-        if self.mode_selection.get_selected_objects()[0] == Constants.RUN_OPTIONS[2]:
-            self.parentApp.switchForm('EXACTMODE')
-    def on_cancel(self):
-        self.parentApp.switchFormPrevious()
+      loop.widget = next(views).build()
+    except StopIteration:
+      raise urwid.ExitMainLoop()
 
-class StandardMode(np.Form):
-    def create(self):
-        self.driving_selection = self.add(np.TitleMultiSelect, scroll_exit=True, value=[1,], name='Select the driving function(s):', values = Constants.DRIVING_INFO[:])
-#        self.value = None
-#        self.wgName  = self.add(np.TitleFixedText, name = "Name:",)
-#        self.wgDept = self.add(np.TitleText, name = "Dept:")
-#        self.wgEmp      = self.add(np.TitleText, name = "Employed:")
-    def afterEditing(self):
-        pass
-    def on_cancel(self):
-        self.parentApp.switchFormPrevious()
+# A class that is used to create new views, which are
+# two text widgets, piled, and made into a box widget with
+# urwid filler
+class MainView(object):
 
-class myApp(np.NPSAppManaged):
-    def onStart(self):
-        self.addForm('MAIN', ModeSelection, name='Mode Selection')
-        self.addForm('STANDARDMODE', StandardMode, name='Driving Function Selection')
+  def __init__(self,title_text,body_text):
+    self.title_text = title_text
+    self.body_text = body_text
 
-if __name__ == '__main__':
-    TestApp = myApp().run()
+  def build(self):
+    buttongroup = []
+    options = [urwid.RadioButton(group=buttongroup,label=option) for option in Constants.RUN_OPTIONS]
+    title = urwid.Text(self.title_text)
+    body = urwid.Text(self.body_text)
+    body = urwid.Pile(options)
+    fill = urwid.Filler(body,valign="top",top=1,bottom=1)
+    return fill
+
+# An iterator consisting of 3 instantiated MainView objects.
+# When a user presses Enter, since that particular key sequence
+# isn't handled by a widget, it gets passed into unhandled_input.
+views = iter([ MainView(title_text='Page One',body_text='Lorem ipsum dolor sit amet...'),
+          MainView(title_text='Page Two',body_text='consectetur adipiscing elit.'),
+          MainView(title_text='Page Three',body_text='Etiam id hendrerit neque.')
+        ])
+
+initial_view = next(views).build()
+loop = urwid.MainLoop(initial_view,unhandled_input=unhandled_input)
+loop.run()

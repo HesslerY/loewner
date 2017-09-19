@@ -18,6 +18,7 @@ pure function compute_h(z,lower_delta,upper_delta) result(h)
 
     h = cdsqrt((z - lower_delta) ** 2 + (4 * upper_delta))
 
+    !
     if (imagpart(h) < 0) then
         h = h * (-1)
     endif
@@ -35,7 +36,6 @@ subroutine inverse_loewner(g_arr, total_points, driving_arr, time_arr)
     ! Local variable declarations
     real(8) :: lower_delta(total_points)
     real(8) :: upper_delta(total_points)
-
     complex(8) :: h
 
     ! Function declarations
@@ -55,13 +55,14 @@ subroutine inverse_loewner(g_arr, total_points, driving_arr, time_arr)
         ! Assign the current g-value to h
         h = g_arr(i)
 
-        ! Repeatedly call the h function on itself
+        ! Repeatedly call the compute_h function on the previous value of h
         do j = 1, i - 1
 
             h = compute_h(h,lower_delta(j),upper_delta(j))
 
         enddo
 
+        ! Computer lower and upper delta
         lower_delta(i) = realpart(h)
         upper_delta(i) = (imagpart(h) ** 2) * 0.25
 

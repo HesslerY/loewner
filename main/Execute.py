@@ -81,8 +81,8 @@ def obtain_driving_selection():
         for i in range(Constants.TOTAL_DRIVING_FUNCTIONS):
             print("[" + str(i) + "] " + Constants.DRIVING_INFO[i])
 
-        print("[12] MULTIPLE")
-        print("[13] ALL")
+        print("[" + str(Constants.MULTIPLE_IDX) + "] MULTIPLE")
+        print("[" + str(Constants.ALL_IDX) + "] ALL")
 
         # Ask for the user selection
         answer = input("Please select a driving function: ")
@@ -136,7 +136,7 @@ def obtain_exact_selection():
 
         except ValueError:
             continue
-            
+
 def obtain_squareroot_parameter(loewner_run):
 
     if loewner_run.driving_function == Constants.KAPPA_IDX:
@@ -158,7 +158,7 @@ def obtain_squareroot_parameter(loewner_run):
 
             # Return if answer can be converted to a float and is positive
             if answer > 0:
-                return answer 
+                return answer
 
         except ValueError:
             # Repeat if answer could not be converted to float
@@ -192,7 +192,7 @@ def standard_mode():
     generate_plots(loewner_runs,True)
 
 def exact_solutions():
-   
+
     loewner_runs = obtain_exact_selection()
 
     for loewner_run in loewner_runs:
@@ -224,7 +224,7 @@ def mode_selection():
                 return standard_mode()
 
             if answer == 1:
-                pass 
+                pass
 
             if answer == 2:
                 return exact_solutions()

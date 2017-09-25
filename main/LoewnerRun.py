@@ -1,6 +1,6 @@
 import Constants
 from subprocess import check_output, call
-from subprocess import CalledProcessError 
+from subprocess import CalledProcessError
 from numpy import empty
 from importlib import import_module
 
@@ -14,7 +14,7 @@ class LoewnerRun:
         # Assign the module code
         self.module_code = str(driving_function)
 
-        self.fortran_filename = filename + ".F90" 
+        self.fortran_filename = filename + ".F90"
 
         self.module_name = "modules." + filename + "_"  + self.module_code
 
@@ -31,15 +31,15 @@ class LoewnerRun:
 
     def driving_string(self):
 
-        # Return a string containing the name of the driving function in square 
+        # Return a string containing the name of the driving function in square
         # brackets
         return "[" + Constants.DRIVING_INFO[self.driving_function] + "] "
 
     def set_compile_command(self):
-    
+
         self.compile_command = Constants.F2PY_FIRST + ["-DCASE=" + self.module_code] \
                + [self.fortran_filename, "-m", \
-                  self.module_name] 
+                  self.module_name]
 
     def compile_loewner(self):
 
@@ -47,6 +47,7 @@ class LoewnerRun:
         try:
             check_output(self.compile_command)
         except CalledProcessError:
+            print(self.compile_command)
             print("Error: Could not compile module.")
             exit()
 
@@ -58,7 +59,7 @@ class LoewnerRun:
     def set_resolution_parameters(self):
 
         while True:
-    
+
             # Ask for the run parameters
             values = input(self.driving_string() + "Please enter the star" \
                        + "t time, end time, and number of points seperated b" \
@@ -71,25 +72,25 @@ class LoewnerRun:
                 # Ensure that three values were entered
                 if len(values) != 3:
                     continue
-    
+
                 self.start_time = float(values[0])
-    
+
                 # Check that the start time >= 0
                 if self.start_time < 0:
                     continue
-   
+
                 self.final_time = float(values[1])
 
                 # Check that final time is greater than the start time
                 if self.final_time <= self.start_time:
                     continue
-   
+
                 self.total_points = int(values[2])
 
                 # Check that the number of points is >= 1
                 if self.total_points < 1:
                     continue
-    
+
                 return
 
             except ValueError:
@@ -108,7 +109,7 @@ class LoewnerRun:
             self.set_compile_command()
             self.compile_loewner()
             NumericalLoewner = self.import_loewner()
-      
+
         g_arr = empty(self.total_points, dtype=complex)
         NumericalLoewner.loewners_equation(self.start_time, self.final_time, g_arr)
 
@@ -120,12 +121,12 @@ class SqrtLoewnerRun(LoewnerRun):
 
         LoewnerRun.__init__(self, driving_function)
         self.sqrt_param = None
-        
+
     def sqrt_param_string(self, param_name, param_val):
 
         # Generate a string for the kappa or c_alpha conditional compilation option
         return [param_name + str(param_val)]
- 
+
     def perform_loewner(self):
 
         try:
@@ -138,7 +139,7 @@ class SqrtLoewnerRun(LoewnerRun):
             self.set_compile_command()
             self.compile_loewner()
             NumericalLoewner = self.import_loewner()
-      
+
         g_arr = empty(self.total_points, dtype=complex)
         NumericalLoewner.loewners_equation(self.start_time, self.final_time, g_arr, sqrt_driving=self.sqrt_param)
 
@@ -150,15 +151,15 @@ class ExactLoewnerRun(LoewnerRun):
 
         LoewnerRun.__init__(self, driving_function, "ExactLoewner")
         self.module_name = "modules.ExactLoewner"
-        
+
     def driving_string(self):
 
-        # Return a string containing the name of the driving function in square 
+        # Return a string containing the name of the driving function in square
         # brackets
         return "[" + Constants.EXACT_INFO[self.driving_function] + "] "
-    
+
     def set_compile_command(self):
-    
+
         self.compile_command = Constants.F2PY_FIRST \
                + [self.fortran_filename, "-m", \
                self.module_name]
@@ -168,27 +169,27 @@ class ExactLoewnerRun(LoewnerRun):
         query = ["Please enter the start time and number of intervals seperated by a space: "]
 
         while True:
-    
+
             # Ask for the run parameters
             values = input(self.driving_string() + query[self.driving_function])
-            
+
             try:
 
                 # Split the input
                 values = values.split()
-                
+
                 if self.driving_function == 0:
 
                     # Ensure that three values were entered
                     if len(values) != 2:
                         continue
-        
+
                     self.start_time = float(values[0])
-        
+
                     # Check that the start time >= 0
                     if self.start_time < 0:
                         continue
-       
+
                     self.total_points = int(values[1])
 
                     # Check that the number of points is >= 1

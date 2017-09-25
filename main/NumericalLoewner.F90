@@ -41,7 +41,7 @@ use constants
     real(8) :: driving_value
 
 #if CASE == 0
-    driving_value = 0.0 
+    driving_value = 0.0
 
 #elif CASE == 1
     driving_value = t
@@ -75,6 +75,12 @@ use constants
 
 #elif CASE == 11
     driving_value = dsqrt(t) * sqrt_param
+
+#elif CASE == 12
+    driving_value = floor(t)
+
+#elif CASE == 13
+    driving_value = mod(floor(t), 2)
 
 #else
     stop "Error: Driving function not recognised."

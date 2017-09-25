@@ -13,7 +13,9 @@ DRIVING_INFO = ["0.0",
                 "sin(t * pi)",
                 "t * sin(t * pi)",
                 "2 * dsqrt(kappa * (1 - t))",
-                "dsqrt(t) * c_alpha"]
+                "dsqrt(t) * c_alpha",
+                "floor(t)",
+                "floot(t) % 2"]
 
 PLOT_TITLE = ["$\\xi (t) = 0$",
               "$\\xi (t) = t$",
@@ -26,7 +28,9 @@ PLOT_TITLE = ["$\\xi (t) = 0$",
               "$\\xi (t) = \sin(\pi t)$",
               "$\\xi (t) = t \ \sin(\pi t)$",
               "$\\xi (t) = 2 \ \sqrt{ SQRT_PARAM \ (1 - t)}$",
-              "$\\xi (t) = c_{SQRT_PARAM} \sqrt{t}$"]
+              "$\\xi (t) = c_{SQRT_PARAM} \sqrt{t}$",
+              "$\\xi (t) = \lfloor t \\rfloor $",
+              "$\\xi (t) = \lfloor t \\rfloor \ \\mathrm{mod} \ 2$"]
 
 # Declare a list of "exact" solution options
 EXACT_INFO = ["t"]
@@ -41,8 +45,8 @@ TOTAL_DRIVING_FUNCTIONS = len(DRIVING_INFO)
 # Indices for "special" driving functions
 KAPPA_IDX = 10
 C_ALPHA_IDX = 11
-MULTIPLE_IDX = 12
-ALL_IDX = 13
+MULTIPLE_IDX = TOTAL_DRIVING_FUNCTIONS
+ALL_IDX = TOTAL_DRIVING_FUNCTIONS + 1
 
 # Compilation-related lists
 F2PY_FIRST = ["f2py", "-c"]

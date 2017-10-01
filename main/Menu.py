@@ -1,46 +1,40 @@
-import Constants
-import urwid
+import npyscreen
+import curses
 
-# This function handles input not handled by widgets.
-# It's passed into the MainLoop constructor at the bottom.
-def unhandled_input(key):
-  if key in ('q','Q'):
-    raise urwid.ExitMainLoop()
-  if key == 'n':
-    try:
+class RunLoewner(npyscreen.NPSAppManaged):
 
-      ## This is the part you're probably asking about
+    def onStart(self):
 
-      loop.widget = next(views).build()
-    except StopIteration:
-      raise urwid.ExitMainLoop()
+        self.addForm("MAIN", LoewnerOptions, name="Main")
 
-# A class that is used to create new views, which are
-# two text widgets, piled, and made into a box widget with
-# urwid filler
-class MainView(object):
+class LoewnerOptions(npyscreen.ActionForm):
 
-  def __init__(self,title_text,body_text):
-    self.title_text = title_text
-    self.body_text = body_text
+    def create(self):
 
-  def build(self):
-    buttongroup = []
-    options = [urwid.RadioButton(group=buttongroup,label=option) for option in Constants.RUN_OPTIONS]
-    title = urwid.Text(self.title_text)
-    body = urwid.Text(self.body_text)
-    body = urwid.Pile(options)
-    fill = urwid.Filler(body,valign="top",top=1,bottom=1)
-    return fill
+        self.option = self.add(npyscreen.TitleSelectOne, max_height=4, value = [1,], name="Pick One",
+                values = ["Option1","Option2","Option3"], scroll_exit=True)
 
-# An iterator consisting of 3 instantiated MainView objects.
-# When a user presses Enter, since that particular key sequence
-# isn't handled by a widget, it gets passed into unhandled_input.
-views = iter([ MainView(title_text='Page One',body_text='Lorem ipsum dolor sit amet...'),
-          MainView(title_text='Page Two',body_text='consectetur adipiscing elit.'),
-          MainView(title_text='Page Three',body_text='Etiam id hendrerit neque.')
-        ])
+    def on_ok(self):
 
-initial_view = next(views).build()
-loop = urwid.MainLoop(initial_view,unhandled_input=unhandled_input)
-loop.run()
+        if str(self.option.get_selected_objects()) == "['Opt1']":
+            change_forms()
+
+    def on_cancel(self):
+
+        self.parentApp.switchForm(None)
+
+    def change_forms(self, *args, **keywords):
+
+        if self.name == "Main":
+            change_to = "SECOND"
+        elif self.name == "Screen 2":
+            change_to = "THIRD"
+        else:
+            change_to = "MAIN"
+
+        # Tell the MyTestApp object to change forms.
+        self.parentApp.change_form(change_to)
+
+if __name__ == "__main__":
+    App = RunLoewner()
+    App.run()

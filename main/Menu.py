@@ -39,7 +39,6 @@ class RunLoewner(npyscreen.NPSAppManaged):
         self.addForm("MAIN", LoewnerOptions, name="Loewner's Equation")
         self.addForm("SELECTSTANDARD", DrivingOptions, name="Loewner's Equation")
         self.addForm("PARAMSSTANDARD", StandardParameters, name="Loewner's Equation")
-        self.addForm("SQRTRUNS", NumberSqrtRuns, name="Loewner's Equation")
 
     def change_form(self, name):
 
@@ -90,7 +89,7 @@ class StandardParameters(npyscreen.ActionForm):
 
 class NumberSqrtRuns(npyscreen.ActionForm):
 
-    def beforeEditing(self):
+    def create(self):
 
         if sqrt_bool[0]:
             self.kappa = self.add(npyscreen.TitleText, name="Enter the number of desired kappa runs:")
@@ -161,7 +160,8 @@ class DrivingOptions(npyscreen.ActionForm):
             create_loewner_runs(selections)
 
             if any(sqrt_bool):
-               self.parentApp.switchForm("SQRTRUNS")
+                self.parentApp.addForm("SQRTRUNS", NumberSqrtRuns, name="Loewner's Equation")
+                self.parentApp.switchForm("SQRTRUNS")
 
             else:
                 self.parentApp.change_form("PARAMSSTANDARD")

@@ -50,8 +50,13 @@ class DrivingOptions(npyscreen.ActionForm):
 
     def on_ok(self):
 
-        selection = self.option.get_selected_objects()[0]
-        self.change_forms(selection)
+        selection = self.option.get_selected_objects()
+
+        if selection is not None:
+            self.change_forms(selection)
+
+        else:
+            npyscreen.notify_confirm("Please select at least one driving function","Bad Input")
 
     def on_cancel(self):
 

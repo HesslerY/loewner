@@ -5,8 +5,22 @@ from LoewnerRun import LoewnerRun
 from LoewnerRun import SqrtLoewnerRun
 
 loewner_runs = []
+sqrt_bool = [False, False]
+
+def selection_contains_squareroot(selections):
+
+    global sqrt_bool
+    indices = [Constants.DRIVING_INDICES[selection] for selection in selections]
+
+    if (Constants.KAPPA_IDX in indices):
+        sqrt_bool[0] = True
+
+    if (Constants.C_ALPHA_IDX in indices):
+        sqrt_bool[1] = True
 
 def create_loewner_runs(selections):
+
+    global loewner_runs
 
     for selection in selections:
 
@@ -25,6 +39,7 @@ class RunLoewner(npyscreen.NPSAppManaged):
         self.addForm("MAIN", LoewnerOptions, name="Loewner's Equation")
         self.addForm("SELECTSTANDARD", DrivingOptions, name="Loewner's Equation")
         self.addForm("PARAMSSTANDARD", DrivingOptions, name="Loewner's Equation")
+        self.addForm("SQRTRUNS", NumberSqrtRuns, name="Loewner's Equation")
 
     def change_form(self, name):
 
@@ -73,14 +88,28 @@ class StandardParameters(npyscreen.ActionForm):
     def on_cancel(self):
         pass
 
+class NumberSqrtRuns(npyscreen.ActionForm):
+
+    def beforeEditing(self):
+
+        if sqrt_bool[0]:
+            self.kappa = self.add(npyscreen.TitleText, name="Enter the number of desired kappa runs:")
+
+        if sqrt_bool[1]:
+            self.c_alpha = self.add(npyscreen.TitleText, name="Enter the number of desired c_alpha runs:", value=1)
+
+    def on_ok(self):
+        pass
+
+    def on_cancel(self):
+        self.parentApp.switchFormPrevious()
+
 class DrivingOptions(npyscreen.ActionForm):
 
     def create(self):
 
-        self.add(npyscreen.TitleFixedText, name = "Use space to select/deselect the driving function(s):")
-        self.option = self.add(npyscreen.TitleMultiSelect, value = [0,], name=" ",
+        self.option = self.add(npyscreen.TitleMultiSelect, max_height=Constants.TOTAL_DRIVING_FUNCTIONS + 2, value = [0,], name="Use space to select/deselect the driving function(s):",
                 values = Constants.DRIVING_INFO, scroll_exit=True)
-        self.next_screen = "PARAMSSTANDARD"
 
     def on_ok(self):
 
@@ -88,8 +117,14 @@ class DrivingOptions(npyscreen.ActionForm):
 
         if selections is not None:
 
+            selection_contains_squareroot(selections)
             create_loewner_runs(selections)
-            self.parentApp.change_form(self.next_screen)
+
+            if any(sqrt_bool):
+               self.parentApp.switchForm("SQRTRUNS")
+
+            else:
+                self.parentApp.change_form("PARAMSSTANDARD")
 
         else:
             npyscreen.notify_confirm("Please select at least one driving function","Bad Input")

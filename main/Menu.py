@@ -6,8 +6,8 @@ class RunLoewner(npyscreen.NPSAppManaged):
 
     def onStart(self):
 
-        self.addForm("MAIN", LoewnerOptions, name="Main")
-        self.addForm("STANDARD", DrivingOptions, name="Select the driving function(s):")
+        self.addForm("MAIN", LoewnerOptions, name="Loewner's Equation")
+        self.addForm("STANDARD", DrivingOptions, name="Loewner's Equation")
 
     def change_form(self, name):
 
@@ -44,8 +44,8 @@ class DrivingOptions(npyscreen.ActionForm):
 
     def create(self):
 
-        self.option = self.add(npyscreen.TitleSelectOne, max_height=3, value = [1,], name="Pick One",
-                values = ["a","b","c"], scroll_exit=True)
+        self.option = self.add(npyscreen.TitleMultiSelect, value = [0,], name="Select the driving function(s):\n",
+                values = Constants.DRIVING_INFO, scroll_exit=True)
 
     def on_ok(self):
 
@@ -66,6 +66,7 @@ class DrivingOptions(npyscreen.ActionForm):
             change_to = "MAIN"
 
         self.parentApp.change_form(change_to)
+
 if __name__ == "__main__":
     App = RunLoewner()
     App.run()

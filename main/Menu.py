@@ -7,7 +7,8 @@ class RunLoewner(npyscreen.NPSAppManaged):
     def onStart(self):
 
         self.addForm("MAIN", LoewnerOptions, name="Loewner's Equation")
-        self.addForm("STANDARD", DrivingOptions, name="Loewner's Equation")
+        self.addForm("SELECTSTANDARD", DrivingOptions, name="Loewner's Equation")
+        self.addForm("PARAMSSTANDARD", DrivingOptions, name="Loewner's Equation")
 
     def change_form(self, name):
 
@@ -32,13 +33,29 @@ class LoewnerOptions(npyscreen.ActionForm):
     def change_forms(self, selection):
 
         if selection == "Standard Mode":
-            change_to = "STANDARD"
+            change_to = "SELECTSTANDARD"
+
         elif selection == "Exact Solutions":
             change_to = "EXACT"
+
+        elif selection == "Standard Parameters":
+            change_to = "PARAMSSTANDARD"
+
         else:
             change_to = "MAIN"
 
         self.parentApp.change_form(change_to)
+
+class StandardParameters(npyscreen.ActionForm):
+
+    def create(self):
+        pass
+
+    def on_ok(self):
+        pass
+
+    def on_cancel(self):
+        pass
 
 class DrivingOptions(npyscreen.ActionForm):
 
@@ -47,13 +64,14 @@ class DrivingOptions(npyscreen.ActionForm):
         self.add(npyscreen.TitleFixedText, name = "Use space to select/deselect the driving function(s):")
         self.option = self.add(npyscreen.TitleMultiSelect, value = [0,], name=" ",
                 values = Constants.DRIVING_INFO, scroll_exit=True)
+        self.next_screen = "PARAMSSTANDARD"
 
     def on_ok(self):
 
         selection = self.option.get_selected_objects()
 
         if selection is not None:
-            self.change_forms(selection)
+            self.parentApp.change_form(self.next_screen)
 
         else:
             npyscreen.notify_confirm("Please select at least one driving function","Bad Input")
@@ -61,17 +79,6 @@ class DrivingOptions(npyscreen.ActionForm):
     def on_cancel(self):
 
         self.parentApp.switchForm(None)
-
-    def change_forms(self, selection):
-
-        if selection == "Standard Mode":
-            change_to = "STANDARD"
-        elif selection == "Exact Solutions":
-            change_to = "EXACT"
-        else:
-            change_to = "MAIN"
-
-        self.parentApp.change_form(change_to)
 
 if __name__ == "__main__":
     App = RunLoewner()

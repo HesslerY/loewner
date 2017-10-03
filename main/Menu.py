@@ -38,7 +38,7 @@ class RunLoewner(npyscreen.NPSAppManaged):
 
         self.addForm("MAIN", LoewnerOptions, name="Loewner's Equation")
         self.addForm("SELECTSTANDARD", DrivingOptions, name="Loewner's Equation")
-        self.addForm("PARAMSSTANDARD", DrivingOptions, name="Loewner's Equation")
+        self.addForm("PARAMSSTANDARD", StandardParameters, name="Loewner's Equation")
         self.addForm("SQRTRUNS", NumberSqrtRuns, name="Loewner's Equation")
 
     def change_form(self, name):
@@ -80,7 +80,7 @@ class LoewnerOptions(npyscreen.ActionForm):
 class StandardParameters(npyscreen.ActionForm):
 
     def create(self):
-        pass
+        self.add(npyscreen.TitleText, name="Wow")
 
     def on_ok(self):
         pass
@@ -99,7 +99,47 @@ class NumberSqrtRuns(npyscreen.ActionForm):
             self.c_alpha = self.add(npyscreen.TitleText, name="Enter the number of desired c_alpha runs:", value=1)
 
     def on_ok(self):
-        pass
+
+        change_screen = True
+
+        if sqrt_bool[0]:
+
+            kappa_num = self.kappa.value
+
+            try:
+
+                kappa_num = int(kappa_num)
+
+                if kappa_num < 1:
+
+                    npyscreen.notify_confirm("The number of kappa runs should be greater than or equal to one.","Bad Input")
+                    change_screen = False
+
+            except ValueError:
+
+                npyscreen.notify_confirm("The could not be converted to an integer.","Bad Input")
+                change_screen = False
+
+        if sqrt_bool[1]:
+
+            c_alpha_num = self.c_alpha.value
+
+            try:
+
+                c_alpha_num = int(c_alpha_num)
+
+                if c_alpha_num < 1:
+
+                    npyscreen.notify_confirm("The number of c-alpha runs should be greater than or equal to one.","Bad Input")
+                    change_screen = False
+
+            except ValueError:
+
+                npyscreen.notify_confirm("The number of c-alpha runs could not be converted to an integer.","Bad Input")
+                change_screen = False
+
+        if change_screen:
+            self.parentApp.switchForm("PARAMSSTANDARD")
 
     def on_cancel(self):
         self.parentApp.switchFormPrevious()
@@ -130,8 +170,7 @@ class DrivingOptions(npyscreen.ActionForm):
             npyscreen.notify_confirm("Please select at least one driving function","Bad Input")
 
     def on_cancel(self):
-
-        self.parentApp.switchForm(None)
+        self.parentApp.switchFormPrevious()
 
 if __name__ == "__main__":
     App = RunLoewner()

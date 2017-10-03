@@ -1,6 +1,22 @@
 import npyscreen
 import curses
 import Constants
+from LoewnerRun import LoewnerRun
+from LoewnerRun import SqrtLoewnerRun
+
+loewner_runs = []
+
+def create_loewner_runs(selections):
+
+    for selection in selections:
+
+        index = Constants.DRIVING_INDICES[selection]
+
+        if Constants.squareroot_driving(index):
+            loewner_runs.append(SqrtLoewnerRun(index))
+
+        else:
+            loewner_runs.append(LoewnerRun(index))
 
 class RunLoewner(npyscreen.NPSAppManaged):
 
@@ -68,9 +84,11 @@ class DrivingOptions(npyscreen.ActionForm):
 
     def on_ok(self):
 
-        selection = self.option.get_selected_objects()
+        selections = self.option.get_selected_objects()
 
-        if selection is not None:
+        if selections is not None:
+
+            create_loewner_runs(selections)
             self.parentApp.change_form(self.next_screen)
 
         else:

@@ -32,6 +32,8 @@ PLOT_TITLE = ["$\\xi (t) = 0$",
               "$\\xi (t) = \lfloor t \\rfloor $",
               "$\\xi (t) = \lfloor t \\rfloor \ \\mathrm{mod} \ 2$"]
 
+DRIVING_INDICES = {pair[1] : pair[0] for pair in enumerate(DRIVING_INFO)}
+
 # Declare a list of "exact" solution options
 EXACT_INFO = ["t"]
 

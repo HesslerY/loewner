@@ -18,7 +18,7 @@ class LoewnerOptions(npyscreen.ActionForm):
     def create(self):
 
         self.option = self.add(npyscreen.TitleSelectOne, max_height=3, value = [1,], name="Pick One",
-                values = ["Standard Mode","Option2","Option3"], scroll_exit=True)
+                values = Constants.RUN_OPTIONS, scroll_exit=True)
 
     def on_ok(self):
 
@@ -44,7 +44,8 @@ class DrivingOptions(npyscreen.ActionForm):
 
     def create(self):
 
-        self.option = self.add(npyscreen.TitleMultiSelect, value = [0,], name="Select the driving function(s):\n",
+        self.add(npyscreen.TitleFixedText, name = "Use space to select/deselect the driving function(s):")
+        self.option = self.add(npyscreen.TitleMultiSelect, value = [0,], name=" ",
                 values = Constants.DRIVING_INFO, scroll_exit=True)
 
     def on_ok(self):

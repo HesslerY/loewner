@@ -38,7 +38,6 @@ class RunLoewner(npyscreen.NPSAppManaged):
 
         self.addForm("MAIN", LoewnerOptions, name="Loewner's Equation")
         self.addForm("SELECTSTANDARD", DrivingOptions, name="Loewner's Equation")
-        self.addForm("PARAMSSTANDARD", StandardParameters, name="Loewner's Equation")
 
     def change_form(self, name):
 
@@ -79,7 +78,13 @@ class LoewnerOptions(npyscreen.ActionForm):
 class StandardParameters(npyscreen.ActionForm):
 
     def create(self):
-        self.add(npyscreen.TitleText, name="Wow")
+
+        for run in loewner_runs:
+
+            self.add(npyscreen.TitleText, name="Start time:")
+            self.add(npyscreen.TitleText, name="Final time:")
+            self.add(npyscreen.TitleText, name="Resolution:")
+
 
     def on_ok(self):
         pass
@@ -138,6 +143,7 @@ class NumberSqrtRuns(npyscreen.ActionForm):
                 change_screen = False
 
         if change_screen:
+            self.parentApp.addForm("PARAMSSTANDARD", StandardParameters, name="Loewner's Equation")
             self.parentApp.switchForm("PARAMSSTANDARD")
 
     def on_cancel(self):
@@ -164,6 +170,7 @@ class DrivingOptions(npyscreen.ActionForm):
                 self.parentApp.switchForm("SQRTRUNS")
 
             else:
+                self.parentApp.addForm("PARAMSSTANDARD", StandardParameters, name="Loewner's Equation")
                 self.parentApp.change_form("PARAMSSTANDARD")
 
         else:

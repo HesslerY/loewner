@@ -4,8 +4,11 @@ import Constants
 from LoewnerRun import LoewnerRun
 from LoewnerRun import SqrtLoewnerRun
 
+selections = []
 loewner_runs = []
 sqrt_bool = [False, False]
+kappa_runs = 0
+c_alpha_runs = 0
 
 def selection_contains_squareroot(selections):
 
@@ -26,8 +29,13 @@ def create_loewner_runs(selections):
 
         index = Constants.DRIVING_INDICES[selection]
 
-        if Constants.squareroot_driving(index):
-            loewner_runs.append(SqrtLoewnerRun(index))
+        if index == Constants.KAPPA_IDX:
+            for _ in range(kappa_runs):
+                loewner_runs.append(SqrtLoewnerRun(index))
+
+        elif index == Constants.C_ALPHA_IDX:
+            for _ in range(c_alpha_runs):
+                loewner_runs.append(SqrtLoewnerRun(index))
 
         else:
             loewner_runs.append(LoewnerRun(index))
@@ -81,10 +89,12 @@ class StandardParameters(npyscreen.ActionForm):
 
         for run in loewner_runs:
 
+            driving_function_string = Constants.DRIVING_INFO[run.driving_function]
+            self.add(npyscreen.TitleFixedText, name=driving_function_string)
             self.add(npyscreen.TitleText, name="Start time:")
             self.add(npyscreen.TitleText, name="Final time:")
             self.add(npyscreen.TitleText, name="Resolution:")
-
+            self.add(npyscreen.TitleFixedText, name=" ")
 
     def on_ok(self):
         pass
@@ -106,15 +116,18 @@ class NumberSqrtRuns(npyscreen.ActionForm):
 
         change_screen = True
 
+        global kappa_runs
+        global c_alpha_runs
+
         if sqrt_bool[0]:
 
-            kappa_num = self.kappa.value
+            kappa_runs = self.kappa.value
 
             try:
 
-                kappa_num = int(kappa_num)
+                kappa_runs = int(kappa_runs)
 
-                if kappa_num < 1:
+                if kappa_runs < 1:
 
                     npyscreen.notify_confirm("The number of kappa runs should be greater than or equal to one.","Bad Input")
                     change_screen = False
@@ -126,13 +139,13 @@ class NumberSqrtRuns(npyscreen.ActionForm):
 
         if sqrt_bool[1]:
 
-            c_alpha_num = self.c_alpha.value
+            c_alpha_runs = self.c_alpha.value
 
             try:
 
-                c_alpha_num = int(c_alpha_num)
+                c_alpha_runs = int(c_alpha_runs)
 
-                if c_alpha_num < 1:
+                if c_alpha_runs < 1:
 
                     npyscreen.notify_confirm("The number of c-alpha runs should be greater than or equal to one.","Bad Input")
                     change_screen = False
@@ -143,6 +156,8 @@ class NumberSqrtRuns(npyscreen.ActionForm):
                 change_screen = False
 
         if change_screen:
+
+            create_loewner_runs(selections)
             self.parentApp.addForm("PARAMSSTANDARD", StandardParameters, name="Loewner's Equation")
             self.parentApp.switchForm("PARAMSSTANDARD")
 
@@ -158,20 +173,22 @@ class DrivingOptions(npyscreen.ActionForm):
 
     def on_ok(self):
 
+        global selections
         selections = self.option.get_selected_objects()
 
         if selections is not None:
 
             selection_contains_squareroot(selections)
-            create_loewner_runs(selections)
 
             if any(sqrt_bool):
                 self.parentApp.addForm("SQRTRUNS", NumberSqrtRuns, name="Loewner's Equation")
                 self.parentApp.switchForm("SQRTRUNS")
 
             else:
+                create_loewner_runs(selections)
                 self.parentApp.addForm("PARAMSSTANDARD", StandardParameters, name="Loewner's Equation")
                 self.parentApp.change_form("PARAMSSTANDARD")
+
 
         else:
             npyscreen.notify_confirm("Please select at least one driving function","Bad Input")

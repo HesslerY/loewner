@@ -116,7 +116,7 @@ class NumberSqrtRuns(npyscreen.ActionForm):
 
             except ValueError:
 
-                npyscreen.notify_confirm("The could not be converted to an integer.","Bad Input")
+                npyscreen.notify_confirm("The number of kappa runs could not be converted to an integer.","Bad Input")
                 change_screen = False
 
         if sqrt_bool[1]:

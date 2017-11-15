@@ -1,9 +1,10 @@
 import Constants
 import matplotlib.pyplot as plt
 from math import pi, degrees
-from numpy import arctan2
+from numpy import arctan2,array
 from os.path import dirname, exists
 from os import mkdir
+import matplotlib.ticker as ticker
 
 plt.style.use('seaborn')
 
@@ -13,6 +14,7 @@ class Plot:
 
         self.results = results
         self.driving_function = driving_function
+
         # Assign the plot title
         self.output_plot_title = Constants.PLOT_TITLE[driving_function]
 
@@ -37,21 +39,26 @@ class Plot:
         # Plot the values
         plt.plot(self.results.real, self.results.imag, color='crimson')
 
-        sqrtdr = [i for i in range(2,9)]
+        periodic_driving = [i for i in range(2,10)]
+
+        ax = plt.axes()
 
         if not self.display:
 
             plt.ylim(bottom=0)
 
-            if self.driving_function not in sqrtdr:
+            if self.driving_function not in periodic_driving:
 
                 plt.title(self.output_plot_title, fontsize = 19, color = "black", y = 1.02, usetex = True)
 
-                if self.driving_function == 0:
-                    plt.xticks(self.results.real, ["","","0","",""])
-
                 plt.xlabel('Re(g)')
                 plt.ylabel('Im(g)')
+
+                if self.driving_function == 0:
+                    plt.xticks([-2,0,2])
+
+                if self.driving_function == 12:
+                    ax.xaxis.set_major_locator(ticker.MultipleLocator(5))
 
             else:
                 plt.xticks([])
@@ -68,3 +75,36 @@ class Plot:
 
     def generate_scatter_plot(self):
         pass
+
+class MultiPlot(Plot):
+
+    def __init__(self, driving_function, resolution_parameters, results_arr, plot_dir = None):
+
+        self.multi_result = results_arr
+
+        if driving_function == 10:
+            df_arg = "kappa"
+            self.shift_results()
+
+        elif driving_function == 11:
+            df_arg = "calpha"
+
+        Plot.__init__(self,df_arg,resolution_parameters,[],plot_dir)
+
+    def shift_results(self):
+
+        for result in self.multi_result:
+
+            offset = result[0].real
+
+            for i in range(len(result)):
+
+                result[i] = result[i] - offset
+
+            plt.plot(result.real, result.imag)
+
+        plt.show()
+
+    def generate_plot(self):
+        pass
+

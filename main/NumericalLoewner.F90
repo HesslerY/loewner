@@ -132,8 +132,12 @@ implicit none
     ! Find the difference between start time and final time
     total_change = final_time - start_time
 
+#if CASE == 10
     ! Find the value by which max_t is incremented after each iteration
-    max_t_incr = total_change / n_points
+    max_t_incr = total_change / (n_points )
+#else
+    max_t_incr = total_change / (n_points - 1)
+#endif
 
     ! Determine the delta values
     delta_t = max_t_incr /  100

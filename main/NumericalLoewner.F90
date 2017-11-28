@@ -97,7 +97,7 @@ implicit none
     real(8) :: start_time
     real(8) :: final_time
     integer :: n_points
-    complex(8) :: g_arr(n_points + 1)
+    complex(8) :: g_arr(n_points)
     real(8), optional :: sqrt_driving
 
     ! Local variable declarations
@@ -140,7 +140,7 @@ implicit none
     two_delta_t = delta_t * 2
 
     ! Compute g_0 n_points times
-    do j = 1, n_points + 1
+    do j = 1, n_points
 
         ! Set max_t
         max_t = start_time + ((j - 1) * max_t_incr)

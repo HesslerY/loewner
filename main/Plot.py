@@ -82,14 +82,14 @@ class MultiPlot(Plot):
 
         self.multi_result = results_arr
 
+        Plot.__init__(self,driving_function,resolution_parameters,[],plot_dir)
+
         if driving_function == 10:
-            df_arg = "kappa"
+            self.output_plot_title = "$\\xi (t) = 2 \ \sqrt{ \kappa \ (1 - t)}$"
             self.shift_results()
 
         elif driving_function == 11:
-            df_arg = "calpha"
-
-        Plot.__init__(self,df_arg,resolution_parameters,[],plot_dir)
+            self.output_plot_title = "$\\xi (t) = c_{\\alpha} \sqrt{t}$",
 
     def shift_results(self):
 
@@ -103,8 +103,25 @@ class MultiPlot(Plot):
 
             plt.plot(result.real, result.imag)
 
-        plt.show()
-
     def generate_plot(self):
-        pass
+
+        ax = plt.axes()
+
+        if not self.display:
+
+            plt.ylim(bottom=0)
+
+            plt.title(self.output_plot_title, fontsize = 19, color = "black", y = 1.02, usetex = True)
+
+            plt.xlabel('Re(g)')
+            plt.ylabel('Im(g)')
+
+            plt.savefig(self.output_plot_directory + self.partial_output_filename + ".pdf")
+            plt.cla()
+
+        else:
+
+            # Set the plot title
+            plt.title(self.output_plot_title, fontsize = 19, color = "black", y = 1.02, usetex = True)
+            plt.show()
 

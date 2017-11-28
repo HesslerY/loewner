@@ -70,3 +70,4 @@ kappa_res = [kappa_runs[0].start_time, kappa_runs[0].final_time, kappa_runs[0].t
 
 kappa_plotter = MultiPlot(kappa_drive, kappa_res, kappa_results, plot_dir)
 kappa_plotter.shift_results()
+kappa_plotter.generate_plot()

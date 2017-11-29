@@ -1,6 +1,7 @@
 from LoewnerRun import LoewnerRun, SqrtLoewnerRun
+from InverseRun import InverseRun
 import Constants
-from Plot import Plot, MultiPlot
+from Plot import Plot, MultiPlot, InversePlot
 
 def create_loewner_runs():
 
@@ -59,6 +60,15 @@ for run in loewner_runs:
     plotter = Plot(df,res,points,plot_dir)
     plotter.generate_plot()
 
+    inverse_loewner = InverseRun(df,points,res)
+    inverse_loewner.perform_inverse()
+
+    time_arr = inverse_loewner.time_arr
+    driving_arr = inverse_loewner.driving_arr
+
+    plotter = InversePlot(df,res,time_arr,driving_arr,plot_dir)
+    plotter.generate_plot()
+
 kappa_results = []
 
 for run in kappa_runs:
@@ -71,3 +81,16 @@ kappa_res = [kappa_runs[0].start_time, kappa_runs[0].final_time, kappa_runs[0].t
 kappa_plotter = MultiPlot(kappa_drive, kappa_res, kappa_results, plot_dir)
 kappa_plotter.shift_results()
 kappa_plotter.generate_plot()
+
+calpha_results = []
+
+for run in calpha_runs:
+    run.perform_loewner()
+    calpha_results.append(run.results)
+
+calpha_drive = calpha_runs[0].driving_function
+calpha_res = [calpha_runs[0].start_time, calpha_runs[0].final_time, calpha_runs[0].total_points]
+
+calpha_plotter = MultiPlot(calpha_drive, calpha_res, calpha_results, plot_dir)
+calpha_plotter.shift_results()
+calpha_plotter.generate_plot()

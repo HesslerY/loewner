@@ -26,7 +26,7 @@ class Plot:
             self.output_plot_directory = plot_dir
 
             # Determine the partial filename for the plot images
-            self.partial_output_filename = str(driving_function) + " " + "-".join([str(x) for x in resolution_parameters])
+            self.partial_output_filename = str(driving_function) + "-" + "-".join([str(x) for x in resolution_parameters])
 
             # Display or save plot
             self.display = False
@@ -89,7 +89,7 @@ class MultiPlot(Plot):
             self.shift_results()
 
         elif driving_function == 11:
-            self.output_plot_title = "$\\xi (t) = c_{\\alpha} \sqrt{t}$",
+            self.output_plot_title = "$\\xi (t) = c_{\\alpha} \sqrt{t}$"
 
     def shift_results(self):
 
@@ -104,8 +104,6 @@ class MultiPlot(Plot):
             plt.plot(result.real, result.imag)
 
     def generate_plot(self):
-
-        ax = plt.axes()
 
         if not self.display:
 
@@ -125,3 +123,34 @@ class MultiPlot(Plot):
             plt.title(self.output_plot_title, fontsize = 19, color = "black", y = 1.02, usetex = True)
             plt.show()
 
+class InversePlot(Plot):
+
+    def __init__(self, driving_function, resolution_parameters, time_arr, driving_arr, plot_dir = None):
+
+        Plot.__init__(self,driving_function,resolution_parameters,[],plot_dir)
+
+        self.partial_output_filename = self.partial_output_filename + "-inv"
+
+        self.time_arr = time_arr
+        self.driving_arr = driving_arr
+
+    def generate_plot(self):
+
+        plt.plot(self.time_arr, self.driving_arr)
+
+        if not self.display:
+
+            # plt.ylim(bottom=0)
+            # plt.title(self.output_plot_title, fontsize = 19, color = "black", y = 1.02, usetex = True)
+
+            plt.xlabel('t')
+            plt.ylabel('\\xi(t)')
+
+            plt.savefig(self.output_plot_directory + self.partial_output_filename + ".pdf")
+            plt.cla()
+
+        else:
+
+            # Set the plot title
+            plt.title(self.output_plot_title, fontsize = 19, color = "black", y = 1.02, usetex = True)
+            plt.show()

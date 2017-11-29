@@ -140,11 +140,15 @@ class InversePlot(Plot):
 
         if not self.display:
 
-            # plt.ylim(bottom=0)
+            plt.xlim(xmin=0)
+
+            if self.driving_function is 1:
+                plt.ylim(ymin=0)
+
             # plt.title(self.output_plot_title, fontsize = 19, color = "black", y = 1.02, usetex = True)
 
-            plt.xlabel('t')
-            plt.ylabel('\\xi(t)')
+            plt.xlabel('$t$')
+            plt.ylabel('$\\xi(t)$')
 
             plt.savefig(self.output_plot_directory + self.partial_output_filename + ".pdf")
             plt.cla()

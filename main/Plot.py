@@ -51,8 +51,8 @@ class Plot:
 
                 plt.title(self.output_plot_title, fontsize = 19, color = "black", y = 1.02, usetex = True)
 
-                plt.xlabel('Re(g)')
-                plt.ylabel('Im(g)')
+                plt.xlabel('Re($g$)')
+                plt.ylabel('Im($g$)')
 
                 if self.driving_function == 0:
                     plt.xticks([-2,0,2])
@@ -64,7 +64,57 @@ class Plot:
                 plt.xticks([])
                 plt.yticks([])
 
-            plt.savefig(self.output_plot_directory + self.partial_output_filename + ".pdf")
+            plt.savefig(self.output_plot_directory + self.partial_output_filename + ".pdf", bbox_inches='tight')
+            plt.cla()
+
+        else:
+
+            # Set the plot title
+            plt.title(self.output_plot_title, fontsize = 19, color = "black", y = 1.02, usetex = True)
+            plt.show()
+
+    def generate_scatter_plot(self):
+        pass
+
+class MiniPlot(Plot):
+
+    def __init__(self, driving_function, resolution_parameters, results, plot_dir = None):
+
+        self.results = results
+        self.driving_function = driving_function
+
+        # Assign the plot title
+        self.output_plot_title = Constants.PLOT_TITLE[driving_function]
+
+        if plot_dir is None:
+            self.display == True
+
+        else:
+            # Determine the output directory for the plot images
+            self.output_plot_directory = plot_dir
+
+            # Determine the partial filename for the plot images
+            self.partial_output_filename = str(driving_function) + "-" + "-".join([str(x) for x in resolution_parameters]) + "-mini"
+
+            # Display or save plot
+            self.display = False
+
+        # Assign the run paramters
+        self.resolution_parameters = resolution_parameters
+
+    def generate_plot(self):
+
+        # Plot the values
+        plt.plot(self.results.real, self.results.imag, color='crimson')
+
+        if not self.display:
+
+            plt.ylim(bottom=0)
+
+            plt.xticks([])
+            plt.yticks([])
+
+            plt.savefig(self.output_plot_directory + self.partial_output_filename + ".pdf", bbox_inches='tight')
             plt.cla()
 
         else:
@@ -111,10 +161,10 @@ class MultiPlot(Plot):
 
             plt.title(self.output_plot_title, fontsize = 19, color = "black", y = 1.02, usetex = True)
 
-            plt.xlabel('Re(g)')
-            plt.ylabel('Im(g)')
+            plt.xlabel('Re($g$)')
+            plt.ylabel('Im($g$)')
 
-            plt.savefig(self.output_plot_directory + self.partial_output_filename + ".pdf")
+            plt.savefig(self.output_plot_directory + self.partial_output_filename + ".pdf", bbox_inches='tight')
             plt.cla()
 
         else:
@@ -147,10 +197,10 @@ class InversePlot(Plot):
 
             # plt.title(self.output_plot_title, fontsize = 19, color = "black", y = 1.02, usetex = True)
 
-            plt.xlabel('$t$')
-            plt.ylabel('$\\xi(t)$')
+            plt.xticks([])
+            plt.yticks([])
 
-            plt.savefig(self.output_plot_directory + self.partial_output_filename + ".pdf")
+            plt.savefig(self.output_plot_directory + self.partial_output_filename + ".pdf", bbox_inches='tight')
             plt.cla()
 
         else:

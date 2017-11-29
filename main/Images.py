@@ -1,7 +1,7 @@
 from LoewnerRun import LoewnerRun, SqrtLoewnerRun
 from InverseRun import InverseRun
 import Constants
-from Plot import Plot, MultiPlot, InversePlot
+from Plot import Plot, MultiPlot, InversePlot, MiniPlot
 
 def create_loewner_runs():
 
@@ -58,6 +58,9 @@ for run in loewner_runs:
     points = run.results
 
     plotter = Plot(df,res,points,plot_dir)
+    plotter.generate_plot()
+
+    plotter = MiniPlot(df,res,points,plot_dir)
     plotter.generate_plot()
 
     inverse_loewner = InverseRun(df,points,res)

@@ -1,7 +1,7 @@
 from LoewnerRun import LoewnerRun, SqrtLoewnerRun
 from InverseRun import InverseRun
 import Constants
-from Plot import Plot, MultiPlot, InversePlot, MiniPlot
+from Plot import Plot, MultiPlot, InversePlot, MiniPlot, InverseMultiPlot
 
 def create_loewner_runs():
 
@@ -20,7 +20,7 @@ def create_loewner_runs():
 def create_kappa_runs():
 
     loewner_runs = []
-    kappas = [1,2.5,3.5,4,4.5,6,8]
+    kappas = [i + 0.5 for i in range(1,10)]
 
     for kappa in kappas:
         loewner_runs.append(SqrtLoewnerRun(10))
@@ -73,10 +73,22 @@ for run in loewner_runs:
     plotter.generate_plot()
 
 kappa_results = []
+kappa_inverse = []
 
 for run in kappa_runs:
+
     run.perform_loewner()
-    kappa_results.append(run.results)
+
+    results = run.results
+    df = run.driving_function
+    res_params = [run.start_time, run.final_time, run.total_points]
+
+    kappa_results.append(results)
+
+    inverse_kappa = InverseRun(df, results, res_params)
+    inverse_kappa.perform_inverse()
+
+    kappa_inverse.append([inverse_kappa.time_arr, inverse_kappa.driving_arr])
 
 kappa_drive = kappa_runs[0].driving_function
 kappa_res = [kappa_runs[0].start_time, kappa_runs[0].final_time, kappa_runs[0].total_points]
@@ -85,11 +97,26 @@ kappa_plotter = MultiPlot(kappa_drive, kappa_res, kappa_results, plot_dir)
 kappa_plotter.shift_results()
 kappa_plotter.generate_plot()
 
+inverse_kappa_plotter = InverseMultiPlot(kappa_drive, kappa_res, kappa_inverse, plot_dir)
+inverse_kappa_plotter.generate_plot()
+
 calpha_results = []
+calpha_inverse = []
 
 for run in calpha_runs:
+
     run.perform_loewner()
-    calpha_results.append(run.results)
+
+    results = run.results
+    df = run.driving_function
+    res_params = [run.start_time, run.final_time, run.total_points]
+
+    calpha_results.append(results)
+
+    inverse_calpha = InverseRun(df, results, res_params)
+    inverse_calpha.perform_inverse()
+
+    calpha_inverse.append([inverse_calpha.time_arr, inverse_calpha.driving_arr])
 
 calpha_drive = calpha_runs[0].driving_function
 calpha_res = [calpha_runs[0].start_time, calpha_runs[0].final_time, calpha_runs[0].total_points]
@@ -97,3 +124,7 @@ calpha_res = [calpha_runs[0].start_time, calpha_runs[0].final_time, calpha_runs[
 calpha_plotter = MultiPlot(calpha_drive, calpha_res, calpha_results, plot_dir)
 calpha_plotter.shift_results()
 calpha_plotter.generate_plot()
+
+inverse_calpha_plotter = InverseMultiPlot(calpha_drive, calpha_res, calpha_inverse, plot_dir)
+inverse_calpha_plotter.generate_plot()
+

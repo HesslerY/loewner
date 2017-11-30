@@ -173,6 +173,47 @@ class MultiPlot(Plot):
             plt.title(self.output_plot_title, fontsize = 19, color = "black", y = 1.02, usetex = True)
             plt.show()
 
+class InverseMultiPlot(Plot):
+
+    def __init__(self, driving_function, resolution_parameters, results_arr, plot_dir = None):
+
+        self.multi_inverse = results_arr
+        Plot.__init__(self,driving_function,resolution_parameters,[],plot_dir)
+
+        if driving_function == 10:
+            self.output_plot_title = "$\\xi (t) = 2 \ \sqrt{ \kappa \ (1 - t)}$"
+
+        elif driving_function == 11:
+            self.output_plot_title = "$\\xi (t) = c_{\\alpha} \sqrt{t}$"
+
+        self.partial_output_filename += "-inv"
+
+    def generate_plot(self):
+
+        for result in self.multi_inverse:
+            plt.plot(result[0], result[1])
+
+        if not self.display:
+
+            plt.xlim(xmin=0)
+
+            if self.driving_function == 10:
+                plt.ylim(bottom=0)
+
+            plt.title(self.output_plot_title, fontsize = 19, color = "black", y = 1.02, usetex = True)
+
+            plt.xlabel('$t$')
+            plt.ylabel(r'$\xi(t)$')
+
+            plt.savefig(self.output_plot_directory + self.partial_output_filename + ".pdf", bbox_inches='tight')
+            plt.cla()
+
+        else:
+
+            # Set the plot title
+            plt.title(self.output_plot_title, fontsize = 19, color = "black", y = 1.02, usetex = True)
+            plt.show()
+
 class InversePlot(Plot):
 
     def __init__(self, driving_function, resolution_parameters, time_arr, driving_arr, plot_dir = None):

@@ -72,6 +72,21 @@ for run in loewner_runs:
     plotter = InversePlot(df,res,time_arr,driving_arr,plot_dir)
     plotter.generate_plot()
 
+total_points = 1000
+constant_final_times = [4,9,16,25]
+constant_run = loewner_runs[0]
+df = 0
+
+for final in constant_final_times:
+
+    constant_run.final_time = final
+    constant_run.perform_loewner()
+    res = [0, final, total_points]
+    points = constant_run.results
+
+    plotter = Plot(df,res,points,plot_dir)
+    plotter.generate_plot()
+
 kappa_results = []
 kappa_inverse = []
 
@@ -89,6 +104,9 @@ for run in kappa_runs:
     inverse_kappa.perform_inverse()
 
     kappa_inverse.append([inverse_kappa.time_arr, inverse_kappa.driving_arr])
+
+
+
 
 kappa_drive = kappa_runs[0].driving_function
 kappa_res = [kappa_runs[0].start_time, kappa_runs[0].final_time, kappa_runs[0].total_points]

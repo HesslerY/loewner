@@ -18,7 +18,7 @@ pure function compute_h(z,lower_delta,upper_delta) result(h)
 
     h = cdsqrt((z - lower_delta) ** 2 + (4 * upper_delta))
 
-    !
+    ! Change sign of the imaginary component of h is negative
     if (imagpart(h) < 0) then
         h = h * (-1)
     endif

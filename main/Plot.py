@@ -154,8 +154,7 @@ class MultiPlot(Plot):
 
             for result,label in zip(self.multi_result,self.labels):
 
-                print(result.real)
-                print(result.imag)
+                print(result.imag[-2])
                 plt.plot(result.real, result.imag, label=label)
 
             plt.legend(loc=0)

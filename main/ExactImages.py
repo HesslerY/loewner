@@ -11,11 +11,10 @@ exact_run.final_time = 25
 exact_run.start_time = 0
 exact_run.total_points = 1000
 exact_run.perform_loewner()
-print(exact_run.results)
 
 res = [5]
 
-for i in range(2):
+for i in range(3):
     res.append(res[-1] * 2)
 
 labels = [str(res_val) for res_val in res] + ["Exact"]
@@ -23,8 +22,6 @@ df = 1
 loewner_run = LoewnerRun(1)
 loewner_run.start_time = 0
 loewner_run.final_time = 25
-
-print(labels)
 
 for total_points in res:
 

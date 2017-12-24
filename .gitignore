@@ -16,3 +16,4 @@ Test.F90
 *.pyc
 misc/*
 misc
+*.sh

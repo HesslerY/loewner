@@ -13,14 +13,14 @@ pure function cotan(phi) result(cotan_phi)
 
 end function cotan
 
-subroutine linear_driving(start_time, n_intervals, g_arr)
+subroutine linear_driving(start_time, n_points, g_arr)
 use constants
 implicit none
 
     ! Argument declarations
-    integer :: n_intervals
+    integer :: n_points
     real(8) :: start_time
-    complex(8) :: g_arr(n_intervals + 1)
+    complex(8) :: g_arr(n_points)
 
     ! Local variable declarations
     integer :: j = 0
@@ -31,10 +31,10 @@ implicit none
     ! Functions
     real(8) :: cotan
 
-    phi_incr = (start_time - pi) / n_intervals
+    phi_incr = (start_time - pi) / (n_points - 1)
 
     ! Compute g_0 M times
-    do j = 1, n_intervals + 1
+    do j = 1, n_points
 
         phi = start_time + (j - 1) * phi_incr
         two_phi = phi * 2

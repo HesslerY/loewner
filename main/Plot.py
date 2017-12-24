@@ -18,18 +18,12 @@ class Plot:
         # Assign the plot title
         self.output_plot_title = Constants.PLOT_TITLE[driving_function]
 
-        if plot_dir is None:
-            self.display == True
+        self.plot_dir = plot_dir
 
-        else:
-            # Determine the output directory for the plot images
-            self.output_plot_directory = plot_dir
+        if bool(self.plot_dir):
 
             # Determine the partial filename for the plot images
             self.partial_output_filename = str(driving_function) + "-" + "-".join([str(x) for x in resolution_parameters])
-
-            # Display or save plot
-            self.display = False
 
         # Assign the run paramters
         self.resolution_parameters = resolution_parameters
@@ -43,7 +37,7 @@ class Plot:
 
         ax = plt.axes()
 
-        if not self.display:
+        if bool(self.plot_dir):
 
             plt.ylim(bottom=0)
 
@@ -57,6 +51,9 @@ class Plot:
                 if self.driving_function == 0:
                     plt.xticks([-2,0,2])
 
+                    if self.resolution_parameters[1] is not 25:
+                        plt.title("")
+
                 if self.driving_function == 12:
                     ax.xaxis.set_major_locator(ticker.MultipleLocator(5))
 
@@ -64,7 +61,7 @@ class Plot:
                 plt.xticks([])
                 plt.yticks([])
 
-            plt.savefig(self.output_plot_directory + self.partial_output_filename + ".pdf", bbox_inches='tight')
+            plt.savefig(self.plot_dir + self.partial_output_filename + ".pdf", bbox_inches='tight')
             plt.cla()
 
         else:
@@ -86,18 +83,12 @@ class MiniPlot(Plot):
         # Assign the plot title
         self.output_plot_title = Constants.PLOT_TITLE[driving_function]
 
-        if plot_dir is None:
-            self.display == True
+        self.plot_dir = plot_dir
 
-        else:
-            # Determine the output directory for the plot images
-            self.output_plot_directory = plot_dir
+        if bool(self.plot_dir):
 
             # Determine the partial filename for the plot images
             self.partial_output_filename = str(driving_function) + "-" + "-".join([str(x) for x in resolution_parameters]) + "-mini"
-
-            # Display or save plot
-            self.display = False
 
         # Assign the run paramters
         self.resolution_parameters = resolution_parameters
@@ -107,14 +98,14 @@ class MiniPlot(Plot):
         # Plot the values
         plt.plot(self.results.real, self.results.imag, color='crimson')
 
-        if not self.display:
+        if bool(self.plot_dir):
 
             plt.ylim(bottom=0)
 
             plt.xticks([])
             plt.yticks([])
 
-            plt.savefig(self.output_plot_directory + self.partial_output_filename + ".pdf", bbox_inches='tight')
+            plt.savefig(self.plot_dir + self.partial_output_filename + ".pdf", bbox_inches='tight')
             plt.cla()
 
         else:
@@ -128,7 +119,7 @@ class MiniPlot(Plot):
 
 class MultiPlot(Plot):
 
-    def __init__(self, driving_function, resolution_parameters, results_arr, plot_dir = None):
+    def __init__(self, driving_function, resolution_parameters, results_arr, plot_dir = None, labels = None):
 
         self.multi_result = results_arr
 
@@ -141,6 +132,12 @@ class MultiPlot(Plot):
         elif driving_function == 11:
             self.output_plot_title = "$\\xi (t) = c_{\\alpha} \sqrt{t}$"
 
+        self.labels = labels
+
+        if bool(self.labels):
+
+            self.partial_output_filename += "-exact"
+
     def shift_results(self):
 
         for result in self.multi_result:
@@ -151,11 +148,25 @@ class MultiPlot(Plot):
 
                 result[i] = result[i] - offset
 
-            plt.plot(result.real, result.imag)
-
     def generate_plot(self):
 
-        if not self.display:
+        if bool(self.labels):
+
+            for result,label in zip(self.multi_result,self.labels):
+
+                print(result.real)
+                print(result.imag)
+                plt.plot(result.real, result.imag, label=label)
+
+            plt.legend(loc=0)
+
+        else:
+
+            for result in self.multi_result:
+
+                plt.plot(result.real, result.imag)
+
+        if bool(self.plot_dir):
 
             plt.ylim(bottom=0)
 
@@ -164,7 +175,7 @@ class MultiPlot(Plot):
             plt.xlabel('Re($g$)')
             plt.ylabel('Im($g$)')
 
-            plt.savefig(self.output_plot_directory + self.partial_output_filename + ".pdf", bbox_inches='tight')
+            plt.savefig(self.plot_dir + self.partial_output_filename + ".pdf", bbox_inches='tight')
             plt.cla()
 
         else:
@@ -193,7 +204,7 @@ class InverseMultiPlot(Plot):
         for result in self.multi_inverse:
             plt.plot(result[0], result[1])
 
-        if not self.display:
+        if bool(self.plot_dir):
 
             plt.xlim(xmin=0)
 
@@ -205,7 +216,7 @@ class InverseMultiPlot(Plot):
             plt.xlabel('$t$')
             plt.ylabel(r'$\xi(t)$')
 
-            plt.savefig(self.output_plot_directory + self.partial_output_filename + ".pdf", bbox_inches='tight')
+            plt.savefig(self.plot_dir + self.partial_output_filename + ".pdf", bbox_inches='tight')
             plt.cla()
 
         else:
@@ -229,7 +240,7 @@ class InversePlot(Plot):
 
         plt.plot(self.time_arr, self.driving_arr)
 
-        if not self.display:
+        if bool(self.plot_dir):
 
             plt.xlim(xmin=0)
 
@@ -241,7 +252,7 @@ class InversePlot(Plot):
             plt.xticks([])
             plt.yticks([])
 
-            plt.savefig(self.output_plot_directory + self.partial_output_filename + ".pdf", bbox_inches='tight')
+            plt.savefig(self.plot_dir + self.partial_output_filename + ".pdf", bbox_inches='tight')
             plt.cla()
 
         else:

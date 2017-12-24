@@ -1,4 +1,4 @@
-from LoewnerRun import LoewnerRun, SqrtLoewnerRun
+from LoewnerRun import LoewnerRun, SqrtLoewnerRun, ExactLoewnerRun
 from InverseRun import InverseRun
 import Constants
 from Plot import Plot, MultiPlot, InversePlot, MiniPlot, InverseMultiPlot
@@ -73,7 +73,7 @@ for run in loewner_runs:
     plotter.generate_plot()
 
 total_points = 1000
-constant_final_times = [4,9,16,25]
+constant_final_times = [1,4,9,16]
 constant_run = loewner_runs[0]
 df = 0
 
@@ -104,9 +104,6 @@ for run in kappa_runs:
     inverse_kappa.perform_inverse()
 
     kappa_inverse.append([inverse_kappa.time_arr, inverse_kappa.driving_arr])
-
-
-
 
 kappa_drive = kappa_runs[0].driving_function
 kappa_res = [kappa_runs[0].start_time, kappa_runs[0].final_time, kappa_runs[0].total_points]

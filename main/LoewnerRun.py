@@ -1,7 +1,7 @@
 import Constants
 from subprocess import check_output, call
 from subprocess import CalledProcessError
-from numpy import empty
+from numpy import empty, delete
 from importlib import import_module
 
 class LoewnerRun:
@@ -110,10 +110,9 @@ class LoewnerRun:
             self.compile_loewner()
             NumericalLoewner = self.import_loewner()
 
-        g_arr = empty(self.total_points, dtype=complex)
-        NumericalLoewner.loewners_equation(self.start_time, self.final_time, g_arr)
-
-        self.results = g_arr
+        self.results = empty(self.total_points, dtype=complex)
+        print(self.results.shape)
+        NumericalLoewner.loewners_equation(self.start_time, self.final_time, self.results)
 
 class SqrtLoewnerRun(LoewnerRun):
 
@@ -140,10 +139,8 @@ class SqrtLoewnerRun(LoewnerRun):
             self.compile_loewner()
             NumericalLoewner = self.import_loewner()
 
-        g_arr = empty(self.total_points, dtype=complex)
-        NumericalLoewner.loewners_equation(self.start_time, self.final_time, g_arr, sqrt_driving=self.sqrt_param)
-
-        self.results = g_arr
+        self.results = empty(self.total_points, dtype=complex)
+        NumericalLoewner.loewners_equation(self.start_time, self.final_time, self.results, sqrt_driving=self.sqrt_param)
 
 class ExactLoewnerRun(LoewnerRun):
 
@@ -219,14 +216,12 @@ class ExactLoewnerRun(LoewnerRun):
             self.compile_loewner()
             ExactLoewner = self.import_loewner()
 
-        g_arr = empty(self.total_points, dtype=complex)
+        self.results = empty(self.total_points, dtype=complex)
 
-        if self.driving_function == 0:
-            ExactLoewner.linear_driving(start_time=self.start_time,g_arr=g_arr)
+        if self.driving_function == 1:
+            ExactLoewner.linear_driving(start_time=self.start_time,n_points=self.total_points,g_arr=self.results)
 
         else:
             # Not yet implemented
             pass
-
-        self.results = g_arr
 

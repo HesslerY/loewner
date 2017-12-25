@@ -5,8 +5,10 @@ from numpy import arctan2,array
 from os.path import dirname, exists
 from os import mkdir
 import matplotlib.ticker as ticker
+from matplotlib import rc
 
 plt.style.use('seaborn')
+rc('lines', linewidth=1.0)
 
 class Plot:
 

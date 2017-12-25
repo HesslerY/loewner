@@ -219,7 +219,7 @@ class ExactLoewnerRun(LoewnerRun):
         self.results = empty(self.total_points, dtype=complex)
 
         if self.driving_function == 1:
-            ExactLoewner.linear_driving(start_time=self.start_time,n_points=self.total_points,g_arr=self.results)
+            ExactLoewner.linear_driving(n_points=self.total_points,g_arr=self.results)
 
         else:
             # Not yet implemented

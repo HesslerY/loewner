@@ -2,7 +2,7 @@ from LoewnerRun import LoewnerRun, SqrtLoewnerRun, ExactLoewnerRun
 from InverseRun import InverseRun
 import Constants
 from Plot import Plot, MultiPlot, InversePlot, MiniPlot, InverseMultiPlot
-from numpy import savetxt, column_stack
+from numpy import savetxt, column_stack, full_like
 
 output_dir = "/home/dolica/Documents/writeuploewner/finalreport/data/"
 
@@ -71,6 +71,26 @@ def create_csv(loewner_run):
     combined = column_stack((real_vals,imag_vals))
     savetxt(filename, combined, fmt="%.18f")
 
+def shift(real_vals):
+
+    offset = full_like(real_vals,real_vals[0])
+    return real_vals - offset
+
+def sqrt_create_csv(loewner_run):
+
+    data = loewner_run.results
+    param = "-" + str(loewner_run.sqrt_param)[:3].replace(".","point")
+    filename = output_dir + filename_string(loewner_run)[:-4] + param + ".csv"
+
+    real_vals = data.real
+    imag_vals = data.imag
+
+    if loewner_run.driving_function == 10:
+        real_vals = shift(real_vals)
+
+    combined = column_stack((real_vals,imag_vals))
+    savetxt(filename, combined, fmt="%.18f")
+
 def inv_create_csv(time,driving,properties):
 
     filename = output_dir + "-".join([str(attr) for attr in properties]) + "-inv.csv"
@@ -94,22 +114,34 @@ for run in loewner_runs:
 
     inv_create_csv(time_arr,driving_arr,[df] + res)
 
-exit()
-
-total_points = 1000
 constant_final_times = [1,4,9,16]
 constant_run = loewner_runs[0]
-df = 0
 
 for final in constant_final_times:
 
     constant_run.final_time = final
     constant_run.perform_loewner()
-    res = [0, final, total_points]
-    points = constant_run.results
+    create_csv(constant_run)
 
-    plotter = Plot(df,res,points,plot_dir)
-    plotter.generate_plot()
+for run in kappa_runs:
+
+    run.perform_loewner()
+    df = run.driving_function
+    res = [run.start_time, run.final_time, run.total_points]
+    points = run.results
+
+    sqrt_create_csv(run)
+
+for run in calpha_runs:
+
+    run.perform_loewner()
+    df = run.driving_function
+    res = [run.start_time, run.final_time, run.total_points]
+    points = run.results
+
+    sqrt_create_csv(run)
+
+exit()
 
 kappa_results = []
 kappa_inverse = []

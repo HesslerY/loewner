@@ -2,6 +2,9 @@ from LoewnerRun import LoewnerRun, SqrtLoewnerRun, ExactLoewnerRun
 from InverseRun import InverseRun
 import Constants
 from Plot import Plot, MultiPlot, InversePlot, MiniPlot, InverseMultiPlot
+from numpy import savetxt, column_stack
+
+output_dir = "/home/dolica/Documents/writeuploewner/finalreport/data/"
 
 def create_loewner_runs():
 
@@ -50,6 +53,30 @@ loewner_runs = create_loewner_runs()
 kappa_runs = create_kappa_runs()
 calpha_runs = create_calpha_runs()
 
+def filename_string(loewner):
+
+    desc = [loewner.driving_function, loewner.start_time, loewner.final_time, loewner.total_points]
+    desc = [str(attr) for attr in desc]
+
+    return "-".join(desc) + ".csv"
+
+def create_csv(loewner_run):
+
+    data = loewner_run.results
+    filename = output_dir + filename_string(loewner_run)
+
+    real_vals = data.real
+    imag_vals = data.imag
+
+    combined = column_stack((real_vals,imag_vals))
+    savetxt(filename, combined, fmt="%.18f")
+
+def inv_create_csv(time,driving,properties):
+
+    filename = output_dir + "-".join([str(attr) for attr in properties]) + "-inv.csv"
+    combined = column_stack((time,driving))
+    savetxt(filename, combined, fmt="%.18f")
+
 for run in loewner_runs:
 
     run.perform_loewner()
@@ -57,11 +84,7 @@ for run in loewner_runs:
     res = [run.start_time, run.final_time, run.total_points]
     points = run.results
 
-    plotter = Plot(df,res,points,plot_dir)
-    plotter.generate_plot()
-
-    plotter = MiniPlot(df,res,points,plot_dir)
-    plotter.generate_plot()
+    create_csv(run)
 
     inverse_loewner = InverseRun(df,points,res)
     inverse_loewner.perform_inverse()
@@ -69,8 +92,9 @@ for run in loewner_runs:
     time_arr = inverse_loewner.time_arr
     driving_arr = inverse_loewner.driving_arr
 
-    plotter = InversePlot(df,res,time_arr,driving_arr,plot_dir)
-    plotter.generate_plot()
+    inv_create_csv(time_arr,driving_arr,[df] + res)
+
+exit()
 
 total_points = 1000
 constant_final_times = [1,4,9,16]

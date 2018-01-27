@@ -45,3 +45,24 @@ implicit none
     print *, phi
 
 end subroutine linear_driving
+
+subroutine root_mean_squared_error(exact_sol, approx_sol, n_points, rms_error)
+use constants
+implicit none
+
+    ! Argument declarations
+    integer :: n_points
+    complex(8) :: exact_sol(n_points)
+    complex(8) :: approx_sol(n_points)
+    real(8) :: rms_error
+
+    ! Compute g_0 M times
+    do j = 1, n_points
+
+        rms_error = rms_error + (approx_sol(j) - exact_sol(j)) ** 2
+
+    end do
+
+    rms_error = cdsqrt(rms_error / n)
+
+end subroutine root_mean_squared_error

@@ -70,7 +70,9 @@ class Plot:
 
             # Set the plot title
             plt.title(self.output_plot_title, fontsize = 19, color = "black", y = 1.02, usetex = True)
-            plt.show()
+            # plt.show()
+            from matplotlib2tikz import save as tikz_save
+            tikz_save('test.tex')
 
     def generate_scatter_plot(self):
         pass

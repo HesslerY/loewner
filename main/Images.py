@@ -48,22 +48,29 @@ def create_calpha_runs():
 
     return loewner_runs
 
-plot_dir = "/home/dolica/Documents/writeuploewner/finalreport/images/"
 loewner_runs = create_loewner_runs()
 kappa_runs = create_kappa_runs()
 calpha_runs = create_calpha_runs()
 
-def filename_string(loewner):
+filename_end = ".csv"
 
-    desc = [loewner.driving_function, loewner.start_time, loewner.final_time, loewner.total_points]
-    desc = [str(attr) for attr in desc]
+def sqrt_to_string(sqrt):
 
-    return "-".join(desc) + ".csv"
+    return str(sqrt)[:3].replace(".","point")
+
+def generate_properties(loewner):
+
+    return [loewner.driving_function, loewner.start_time, loewner.final_time, loewner.total_points]
+
+def properties_string(properties):
+
+    desc = [str(attr) for attr in properties]
+    return "-".join(desc)
 
 def create_csv(loewner_run):
 
     data = loewner_run.results
-    filename = output_dir + filename_string(loewner_run)
+    filename = output_dir + properties_string(generate_properties(loewner_run)) + filename_end
 
     real_vals = data.real
     imag_vals = data.imag
@@ -79,8 +86,10 @@ def shift(real_vals):
 def sqrt_create_csv(loewner_run):
 
     data = loewner_run.results
-    param = "-" + str(loewner_run.sqrt_param)[:3].replace(".","point")
-    filename = output_dir + filename_string(loewner_run)[:-4] + param + ".csv"
+    sqrt = loewner_run.sqrt_param
+
+    param = "-" + sqrt_to_string(sqrt)
+    filename = output_dir + properties_string(generate_properties(loewner_run)) + param + filename_end
 
     real_vals = data.real
     imag_vals = data.imag
@@ -93,7 +102,13 @@ def sqrt_create_csv(loewner_run):
 
 def inv_create_csv(time,driving,properties):
 
-    filename = output_dir + "-".join([str(attr) for attr in properties]) + "-inv.csv"
+    filename = output_dir + properties_string(properties) + "-inv" + filename_end
+    combined = column_stack((time,driving))
+    savetxt(filename, combined, fmt="%.18f")
+
+def sqrt_inv_create_csv(time,driving,properties,sqrt_param):
+
+    filename = output_dir + properties_string(properties) + "-" + sqrt_to_string(sqrt_param) + "-inv" + filename_end
     combined = column_stack((time,driving))
     savetxt(filename, combined, fmt="%.18f")
 
@@ -129,8 +144,17 @@ for run in kappa_runs:
     df = run.driving_function
     res = [run.start_time, run.final_time, run.total_points]
     points = run.results
+    sqrt_param = run.sqrt_param
 
     sqrt_create_csv(run)
+
+    inverse_loewner = InverseRun(df,points,res)
+    inverse_loewner.perform_inverse()
+
+    time_arr = inverse_loewner.time_arr
+    driving_arr = inverse_loewner.driving_arr
+
+    sqrt_inv_create_csv(time_arr,driving_arr,[df] + res,sqrt_param)
 
 for run in calpha_runs:
 
@@ -138,64 +162,15 @@ for run in calpha_runs:
     df = run.driving_function
     res = [run.start_time, run.final_time, run.total_points]
     points = run.results
+    sqrt_param = run.sqrt_param
 
     sqrt_create_csv(run)
 
-exit()
+    inverse_loewner = InverseRun(df,points,res)
+    inverse_loewner.perform_inverse()
 
-kappa_results = []
-kappa_inverse = []
+    time_arr = inverse_loewner.time_arr
+    driving_arr = inverse_loewner.driving_arr
 
-for run in kappa_runs:
-
-    run.perform_loewner()
-
-    results = run.results
-    df = run.driving_function
-    res_params = [run.start_time, run.final_time, run.total_points]
-
-    kappa_results.append(results)
-
-    inverse_kappa = InverseRun(df, results, res_params)
-    inverse_kappa.perform_inverse()
-
-    kappa_inverse.append([inverse_kappa.time_arr, inverse_kappa.driving_arr])
-
-kappa_drive = kappa_runs[0].driving_function
-kappa_res = [kappa_runs[0].start_time, kappa_runs[0].final_time, kappa_runs[0].total_points]
-
-kappa_plotter = MultiPlot(kappa_drive, kappa_res, kappa_results, plot_dir)
-kappa_plotter.shift_results()
-kappa_plotter.generate_plot()
-
-inverse_kappa_plotter = InverseMultiPlot(kappa_drive, kappa_res, kappa_inverse, plot_dir)
-inverse_kappa_plotter.generate_plot()
-
-calpha_results = []
-calpha_inverse = []
-
-for run in calpha_runs:
-
-    run.perform_loewner()
-
-    results = run.results
-    df = run.driving_function
-    res_params = [run.start_time, run.final_time, run.total_points]
-
-    calpha_results.append(results)
-
-    inverse_calpha = InverseRun(df, results, res_params)
-    inverse_calpha.perform_inverse()
-
-    calpha_inverse.append([inverse_calpha.time_arr, inverse_calpha.driving_arr])
-
-calpha_drive = calpha_runs[0].driving_function
-calpha_res = [calpha_runs[0].start_time, calpha_runs[0].final_time, calpha_runs[0].total_points]
-
-calpha_plotter = MultiPlot(calpha_drive, calpha_res, calpha_results, plot_dir)
-calpha_plotter.shift_results()
-calpha_plotter.generate_plot()
-
-inverse_calpha_plotter = InverseMultiPlot(calpha_drive, calpha_res, calpha_inverse, plot_dir)
-inverse_calpha_plotter.generate_plot()
+    sqrt_inv_create_csv(time_arr,driving_arr,[df] + res,sqrt_param)
 

@@ -225,3 +225,11 @@ class ExactLoewnerRun(LoewnerRun):
             # Not yet implemented
             pass
 
+    def root_mean_squared_error(self,approx_sol):
+
+        rms_error = 0
+
+        for i in range(self.total_points):
+            rms_error += (approx_sol[i] - exact_sol[i]) ** 2
+
+        return sqrt(rms_error / n)

@@ -40,7 +40,9 @@ exact_results = []
 
 exact_run = ExactLoewnerRun(1)
 exact_run.start_time = 0
-exact_run.total_points = 500
+exact_run.final_time = 25
+# exact_run.total_points = 500
+exact_run.total_points = 1000
 exact_run.perform_loewner()
 res = [5]
 
@@ -53,7 +55,8 @@ for i in range(3):
 df = 1
 loewner_run = LoewnerRun(1)
 loewner_run.start_time = 0
-loewner_run.final_time = 108
+# loewner_run.final_time = 108
+loewner_run.final_time = 25
 
 for total_points in res:
 

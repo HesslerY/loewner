@@ -45,3 +45,30 @@ implicit none
     print *, phi
 
 end subroutine linear_driving
+
+subroutine asymptotic_linear_driving(final_time,n_points,g_arr)
+use constants
+implicit none
+
+    ! Argument declarations
+    integer :: n_points
+    complex(8) :: g_arr(n_points)
+    real(8) :: final_time
+    real(8) :: time_incr = 0
+    real(8) :: t_j = 0
+
+    ! Local variable declarations
+    integer :: j = 0
+
+    time_incr = final_time / (n_points - 1)
+
+    ! Compute g_0 M times
+    do j = 1, n_points
+
+        t_j = (j - 1) * time_incr
+        g_arr(j) = 2 * dlog((t_j - 2) * 0.5) + 2 * pi * i
+        print *, g_arr(j)
+
+    end do
+
+end subroutine asymptotic_linear_driving

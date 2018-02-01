@@ -2,9 +2,25 @@ from LoewnerRun import LoewnerRun, SqrtLoewnerRun, ExactLoewnerRun
 from InverseRun import InverseRun
 import Constants
 from Plot import Plot, MultiPlot, InversePlot, MiniPlot, InverseMultiPlot
-from numpy import savetxt, column_stack, full_like
+from numpy import savetxt, column_stack, full_like, linspace
 
 output_dir = "/home/dolica/Documents/writeuploewner/finalreport/data/"
+final_time = 25
+
+def root_mean_squared_error(exact_sol, approx_sol):
+
+    approx_res = len(approx_sol)
+    approx_t = linspace(0,final_time,approx_res)
+
+    rms = 0
+
+    for i in range(approx_res):
+
+        rms += (approx_sol[i] - exact_sol[i * int(1000/approx_res)])
+        print(i * int(1000/approx_res))
+
+    return sqrt(rms/approx_res)
+
 
 def create_loewner_runs():
 

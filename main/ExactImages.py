@@ -1,7 +1,7 @@
 from LoewnerRun import LoewnerRun, ExactLoewnerRun
 from Plot import MultiPlot
 import matplotlib.pyplot as plt
-from numpy import savetxt, column_stack, full_like, linspace, empty, absolute
+from numpy import savetxt, column_stack, full_like, linspace, empty, absolute, complex128
 from math import sqrt
 # Exact solution for xi(t) = t
 
@@ -39,7 +39,7 @@ def create_csv(loewner_run,label=None):
 def read_exact_sol():
 
     exact_data = open("/home/dolica/Documents/writeuploewner/finalreport/data/1-0-25-1000-exact.csv","r")
-    exact_sol = empty(res[-1],dtype=complex)
+    exact_sol = empty(res[-1],dtype=complex128)
 
     i = 0
 

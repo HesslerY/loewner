@@ -1,7 +1,7 @@
 import Constants
 from subprocess import check_output, call
 from subprocess import CalledProcessError
-from numpy import empty, delete
+from numpy import empty, delete, complex128
 from importlib import import_module
 
 class LoewnerRun:
@@ -110,7 +110,7 @@ class LoewnerRun:
             self.compile_loewner()
             NumericalLoewner = self.import_loewner()
 
-        self.results = empty(self.total_points, dtype=complex)
+        self.results = empty(self.total_points, dtype=complex128)
         print(self.results.shape)
         NumericalLoewner.loewners_equation(self.start_time, self.final_time, self.results)
 
@@ -139,7 +139,7 @@ class SqrtLoewnerRun(LoewnerRun):
             self.compile_loewner()
             NumericalLoewner = self.import_loewner()
 
-        self.results = empty(self.total_points, dtype=complex)
+        self.results = empty(self.total_points, dtype=complex128)
         NumericalLoewner.loewners_equation(self.start_time, self.final_time, self.results, sqrt_driving=self.sqrt_param)
 
 class ExactLoewnerRun(LoewnerRun):
@@ -216,7 +216,7 @@ class ExactLoewnerRun(LoewnerRun):
             self.compile_loewner()
             ExactLoewner = self.import_loewner()
 
-        self.results = empty(self.total_points, dtype=complex)
+        self.results = empty(self.total_points, dtype=complex128)
 
         if self.driving_function == 1:
             ExactLoewner.asymptotic_linear_driving(final_time=self.final_time,n_points=self.total_points,g_arr=self.results)

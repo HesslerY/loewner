@@ -16,6 +16,7 @@ implicit none
    real(8), parameter :: pi = 4. * atan(1.)
    real(8) :: sqrt_param = 0.0
    complex, parameter :: i = complex(0,1)
+   complex(8), parameter :: ZERO = complex(0,0)
 
 end module constants
 
@@ -89,15 +90,16 @@ use constants
 
 end function driving_function
 
-subroutine loewners_equation(start_time, final_time, n_points, g_arr, sqrt_driving)
+subroutine loewners_equation(start_time, final_time, outer_n, inner_n, g_arr, sqrt_driving)
 use constants
 implicit none
 
     ! Argument declarations
     real(8) :: start_time
     real(8) :: final_time
-    integer :: n_points
-    complex(8) :: g_arr(n_points)
+    integer :: outer_n
+    integer :: inner_n
+    complex(8) :: g_arr(outer_n)
     real(8), optional :: sqrt_driving
 
     ! Local variable declarations
@@ -134,17 +136,17 @@ implicit none
 
 #if CASE == 10
     ! Find the value by which max_t is incremented after each iteration
-    max_t_incr = total_change / (n_points )
+    max_t_incr = total_change / (outer_n)
 #else
-    max_t_incr = total_change / (n_points - 1)
+    max_t_incr = total_change / (outer_n - 1)
 #endif
 
     ! Determine the delta values
-    delta_t = max_t_incr /  100
+    delta_t = max_t_incr /  inner_n
     two_delta_t = delta_t * 2
 
-    ! Compute g_0 n_points times
-    do j = 1, n_points
+    ! Compute g_0 outer_n times
+    do j = 1, outer_n
 
         ! Set max_t
         max_t = start_time + ((j - 1) * max_t_incr)
@@ -182,3 +184,4 @@ implicit none
     end do
 
 end subroutine loewners_equation
+

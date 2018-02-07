@@ -7,6 +7,7 @@
 !                                                                              !
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+! Empty program to aid with identifying compilation errors should f2py fail
 program test
 end program test
 
@@ -17,6 +18,7 @@ implicit none
    real(8) :: sqrt_param = 0.0
    complex, parameter :: i = complex(0,1)
    complex(8), parameter :: ZERO = complex(0,0)
+   integer, parameter :: a = 1
 
 end module constants
 
@@ -185,3 +187,109 @@ implicit none
 
 end subroutine loewners_equation
 
+subroutine cubic_loewner(start_time, final_time, outer_n, inner_n, first_g_arr, secnd_g_arr, sqrt_driving)
+    use PolynomialRoots
+    use constants
+    implicit none
+
+    ! Argument declarations
+    real(8) :: start_time
+    real(8) :: final_time
+    integer :: outer_n
+    integer :: inner_n
+    complex(8) :: first_g_arr(outer_n)
+    complex(8) :: secnd_g_arr(outer_n)
+    real(8), optional :: sqrt_driving
+
+    ! Local variable declarations
+    integer :: j = 0
+    integer :: k = 0
+
+    real(8) :: delta_t = 0
+    real(8) :: two_delta_t = 0
+    real(8) :: max_t = 0
+    real(8) :: max_t_incr = 0
+    real(8) :: driving_value = 0
+    real(8) :: total_change = 0
+    real(8) :: driving_arg = 0
+    real(8) :: c = 0
+
+    complex(8) :: first_g_t1 = 0
+    complex(8) :: first_g_t2 = 0
+    complex(8) :: secnd_g_t1 = 0
+    complex(8) :: secnd_g_t2 = 0
+
+    complex(8), dimension(3) :: first_polym_coeffs
+    complex(8), dimension(3) :: secnd_polym_coeffs
+
+    ! Function declarations
+    complex(8) :: square
+    real(8) :: driving_function
+
+    if (present(sqrt_driving)) then
+#if CASE == 10
+        sqrt_param  = sqrt_driving
+#elif CASE == 11
+        sqrt_param = (2 - 4 * sqrt_driving) / cdsqrt(sqrt_driving - square(sqrt_driving))
+#endif
+    endif
+
+    ! Determine the delta values
+    delta_t = max_t_incr /  inner_n
+    two_delta_t = delta_t * 2
+
+    ! Compute g_0 outer_n times
+    do j = 1, outer_n
+
+        ! Set max time
+        max_t = start_time + ((j - 1) * max_t_incr)
+
+        ! Find the initial values for g
+        first_g_t1 = complex(driving_function(max_t),0)
+        secnd_g_t1 = -first_g_t1
+
+        ! Reset the counter for the inner loop
+        k = 0
+
+        ! Determine the initial value for the driving function argument
+        driving_arg = max_t
+
+        do while (driving_arg > 0)
+
+            ! Obtain the driving value
+            driving_value = driving_function(driving_arg)
+
+            c = two_delta_t * driving_value**2
+
+            first_polym_coeffs(1) = a
+            first_polym_coeffs(2) = -first_g_t1
+            first_polym_coeffs(3) = c
+            first_polym_coeffs(3) = -first_g_t1 * driving_value**2
+
+            secnd_polym_coeffs(1) = a
+            secnd_polym_coeffs(2) = -secnd_g_t1
+            secnd_polym_coeffs(3) = c
+            secnd_polym_coeffs(3) = -secnd_g_t1 * driving_value**2
+
+            call CubicRoots(first_polym_coeffs,first_g_t2)
+            call CubicRoots(secnd_polym_coeffs,secnd_g_t2)
+
+            ! Update most recent value of g_t
+            first_g_t1 = first_g_t2
+            secnd_g_t1 = secnd_g_t2
+
+            ! Increment counter
+            k = k + 1
+
+            ! Check driving value argument for next interation
+            driving_arg = (max_t - (k * delta_t)) - delta_t
+
+        end do
+
+        ! Place the latest value in the arrays
+        first_g_arr(j) = first_g_t1
+        secnd_g_arr(j) = secnd_g_t1
+
+    end do
+
+end subroutine cubic_loewner

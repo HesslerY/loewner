@@ -32,7 +32,8 @@ def create_loewner_runs():
             loewner_runs.append(LoewnerRun(driving_function))
             loewner_runs[-1].final_time = 25
             loewner_runs[-1].start_time = 0
-            loewner_runs[-1].total_points = 1000
+            loewner_runs[-1].outer_points = 1000
+            loewner_runs[-1].inner_points = 100
 
     return loewner_runs
 
@@ -45,7 +46,8 @@ def create_kappa_runs():
         loewner_runs.append(SqrtLoewnerRun(10))
         loewner_runs[-1].final_time = 1
         loewner_runs[-1].start_time = 0
-        loewner_runs[-1].total_points = 1000
+        loewner_runs[-1].outer_points = 1000
+        loewner_runs[-1].inner_points = 100
         loewner_runs[-1].sqrt_param = kappa
 
     return loewner_runs
@@ -59,7 +61,8 @@ def create_calpha_runs():
         loewner_runs.append(SqrtLoewnerRun(11))
         loewner_runs[-1].final_time = 25
         loewner_runs[-1].start_time = 0
-        loewner_runs[-1].total_points = 1000
+        loewner_runs[-1].outer_points = 1000
+        loewner_runs[-1].inner_points = 100
         loewner_runs[-1].sqrt_param = alpha
 
     return loewner_runs
@@ -76,7 +79,7 @@ def sqrt_to_string(sqrt):
 
 def generate_properties(loewner):
 
-    return [loewner.driving_function, loewner.start_time, loewner.final_time, loewner.total_points]
+    return [loewner.driving_function, loewner.start_time, loewner.final_time, loewner.outer_points]
 
 def properties_string(properties):
 
@@ -132,7 +135,7 @@ for run in loewner_runs:
 
     run.perform_loewner()
     df = run.driving_function
-    res = [run.start_time, run.final_time, run.total_points]
+    res = [run.start_time, run.final_time, run.outer_points]
     points = run.results
 
     create_csv(run)
@@ -158,7 +161,7 @@ for run in kappa_runs:
 
     run.perform_loewner()
     df = run.driving_function
-    res = [run.start_time, run.final_time, run.total_points]
+    res = [run.start_time, run.final_time, run.outer_points]
     points = run.results
     sqrt_param = run.sqrt_param
 
@@ -176,7 +179,7 @@ for run in calpha_runs:
 
     run.perform_loewner()
     df = run.driving_function
-    res = [run.start_time, run.final_time, run.total_points]
+    res = [run.start_time, run.final_time, run.outer_points]
     points = run.results
     sqrt_param = run.sqrt_param
 

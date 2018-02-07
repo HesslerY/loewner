@@ -24,7 +24,8 @@ class LoewnerRun:
         # Obtain the time and resolution parameters
         self.start_time = None
         self.final_time = None
-        self.total_points = None
+        self.outer_points = None
+        self.inner_points = None
 
         # Create a results attribute
         self.results = None
@@ -85,10 +86,16 @@ class LoewnerRun:
                 if self.final_time <= self.start_time:
                     continue
 
-                self.total_points = int(values[2])
+                self.outer_points = int(values[2])
 
                 # Check that the number of points is >= 1
-                if self.total_points < 1:
+                if self.outer_points < 1:
+                    continue
+
+                self.inner_points = int(values[3])
+
+                # Check that the number of points is >= 1
+                if self.inner_points < 1:
                     continue
 
                 return
@@ -106,13 +113,16 @@ class LoewnerRun:
 
         except ModuleNotFoundError:
 
+            # Compile and import the module if it does not already exist
             self.set_compile_command()
             self.compile_loewner()
             NumericalLoewner = self.import_loewner()
 
-        self.results = empty(self.total_points, dtype=complex128)
-        print(self.results.shape)
-        NumericalLoewner.loewners_equation(self.start_time, self.final_time, self.results)
+        # Declare an empty complex array for the results
+        self.results = empty(self.outer_points, dtype=complex128)
+
+        # Solve Loewner's equation with the given parameters
+        NumericalLoewner.loewners_equation(self.start_time, self.final_time, self.inner_points, self.results)
 
 class SqrtLoewnerRun(LoewnerRun):
 
@@ -139,8 +149,9 @@ class SqrtLoewnerRun(LoewnerRun):
             self.compile_loewner()
             NumericalLoewner = self.import_loewner()
 
-        self.results = empty(self.total_points, dtype=complex128)
-        NumericalLoewner.loewners_equation(self.start_time, self.final_time, self.results, sqrt_driving=self.sqrt_param)
+        # Compile and import the module if it does not already exist
+        self.results = empty(self.outer_points, dtype=complex128)
+        NumericalLoewner.loewners_equation(start_time=self.start_time, final_time=self.final_time, inner_n=self.inner_points, g_arr=self.results, sqrt_driving=self.sqrt_param)
 
 class ExactLoewnerRun(LoewnerRun):
 
@@ -187,10 +198,10 @@ class ExactLoewnerRun(LoewnerRun):
                     if self.start_time < 0:
                         continue
 
-                    self.total_points = int(values[1])
+                    self.outer_points = int(values[1])
 
                     # Check that the number of points is >= 1
-                    if self.total_points < 1:
+                    if self.outer_points < 1:
                         continue
 
                     return
@@ -216,20 +227,12 @@ class ExactLoewnerRun(LoewnerRun):
             self.compile_loewner()
             ExactLoewner = self.import_loewner()
 
-        self.results = empty(self.total_points, dtype=complex128)
+        self.results = empty(self.outer_points, dtype=complex128)
 
         if self.driving_function == 1:
-            ExactLoewner.asymptotic_linear_driving(final_time=self.final_time,n_points=self.total_points,g_arr=self.results)
+            ExactLoewner.asymptotic_linear_driving(final_time=self.final_time,outer_n=self.outer_points,g_arr=self.results)
 
         else:
             # Not yet implemented
             pass
 
-    def root_mean_squared_error(self,approx_sol):
-
-        rms_error = 0
-
-        for i in range(self.total_points):
-            rms_error += (approx_sol[i] - exact_sol[i]) ** 2
-
-        return sqrt(rms_error / n)

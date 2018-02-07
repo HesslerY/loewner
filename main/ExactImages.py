@@ -6,10 +6,11 @@ from math import sqrt
 # Exact solution for xi(t) = t
 
 filename_end = ".csv"
+MAX_RES = 1000
 
 def generate_properties(loewner):
 
-    return [loewner.driving_function, loewner.start_time, loewner.final_time, loewner.total_points]
+    return [loewner.driving_function, loewner.start_time, loewner.final_time, loewner.outer_points, loewner.inner_points]
 
 def properties_string(properties):
 
@@ -39,7 +40,7 @@ def create_csv(loewner_run,label=None):
 def read_exact_sol():
 
     exact_data = open("/home/dolica/Documents/writeuploewner/finalreport/data/1-0-25-1000-exact.csv","r")
-    exact_sol = empty(res[-1],dtype=complex128)
+    exact_sol = empty(MAX_RES,dtype=complex128)
 
     i = 0
 
@@ -54,45 +55,37 @@ def read_exact_sol():
 
 def root_mean_squared_error(exact_sol, approx_sol):
 
-    approx_res = len(approx_sol)
-
-    approx_t = linspace(0,25,approx_res)
-
     rms = 0
-    incr = 1000/(approx_res - 1)
 
-    rms += absolute(approx_sol[0] - exact_sol[0]) ** 2
+    for i in range(MAX_RES):
 
-    for i in range(1,approx_res):
+        diff = (absolute(approx_sol[i]) - absolute(exact_sol[i]))
+        rms += diff ** 2
 
-        diff = (approx_sol[i] - exact_sol[int(incr * i) - 1])
-        rms += absolute(diff) ** 2
-
-    return sqrt(rms/approx_res)
+    return (1/MAX_RES) * sqrt(rms)
 
 output_dir = "/home/dolica/Documents/writeuploewner/finalreport/data/"
 exact_results = []
 
-res = [5, 10, 50, 100, 500, 1000]
+inner_res = [5, 10, 50, 100, 200, 300, 400, 500]
 
 df = 1
 loewner_run = LoewnerRun(1)
 loewner_run.start_time = 0
 loewner_run.final_time = 25
+loewner_run.outer_points = 1000
 
 approx_results = []
+exact_sol = read_exact_sol()
 
-for total_points in res:
+print("Root mean squared error:")
+for inner_points in inner_res:
 
-    loewner_run.total_points = total_points
+    loewner_run.inner_points = inner_points
     loewner_run.perform_loewner()
     create_csv(loewner_run)
     approx_results.append(loewner_run.results)
+    print(root_mean_squared_error(exact_sol,loewner_run.results))
 
-exact_sol = read_exact_sol()
-print(exact_sol[-5:])
 
-print("Root mean squared error:")
-for approx_run in approx_results:
-    print(root_mean_squared_error(exact_sol,approx_run))
 

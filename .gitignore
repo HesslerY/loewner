@@ -17,3 +17,6 @@ Test.F90
 misc/*
 misc
 *.sh
+quartic.f90
+cubictest.py
+compiletest.py

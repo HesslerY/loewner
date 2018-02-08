@@ -18,7 +18,7 @@ implicit none
    real(8) :: sqrt_param = 0.0
    complex, parameter :: i = complex(0,1)
    complex(8), parameter :: ZERO = complex(0,0)
-   integer, parameter :: a = 1
+   complex(8), parameter :: a = 1
 
 end module constants
 
@@ -188,7 +188,6 @@ implicit none
 end subroutine loewners_equation
 
 subroutine cubic_loewner(start_time, final_time, outer_n, inner_n, first_g_arr, secnd_g_arr, sqrt_driving)
-    use PolynomialRoots
     use constants
     implicit none
 
@@ -212,15 +211,15 @@ subroutine cubic_loewner(start_time, final_time, outer_n, inner_n, first_g_arr, 
     real(8) :: driving_value = 0
     real(8) :: total_change = 0
     real(8) :: driving_arg = 0
-    real(8) :: c = 0
 
+    complex(8) :: c = 0
     complex(8) :: first_g_t1 = 0
     complex(8) :: first_g_t2 = 0
     complex(8) :: secnd_g_t1 = 0
     complex(8) :: secnd_g_t2 = 0
 
-    complex(8), dimension(3) :: first_polym_coeffs
-    complex(8), dimension(3) :: secnd_polym_coeffs
+    complex(8), dimension(4) :: first_polym_coeffs
+    complex(8), dimension(4) :: secnd_polym_coeffs
 
     ! Function declarations
     complex(8) :: square
@@ -237,6 +236,9 @@ subroutine cubic_loewner(start_time, final_time, outer_n, inner_n, first_g_arr, 
     ! Determine the delta values
     delta_t = max_t_incr /  inner_n
     two_delta_t = delta_t * 2
+
+    first_polym_coeffs(1) = a
+    secnd_polym_coeffs(1) = a
 
     ! Compute g_0 outer_n times
     do j = 1, outer_n
@@ -261,15 +263,13 @@ subroutine cubic_loewner(start_time, final_time, outer_n, inner_n, first_g_arr, 
 
             c = two_delta_t * driving_value**2
 
-            first_polym_coeffs(1) = a
             first_polym_coeffs(2) = -first_g_t1
             first_polym_coeffs(3) = c
-            first_polym_coeffs(3) = -first_g_t1 * driving_value**2
+            first_polym_coeffs(4) = -first_g_t1 * driving_value**2
 
-            secnd_polym_coeffs(1) = a
             secnd_polym_coeffs(2) = -secnd_g_t1
             secnd_polym_coeffs(3) = c
-            secnd_polym_coeffs(3) = -secnd_g_t1 * driving_value**2
+            secnd_polym_coeffs(4) = -secnd_g_t1 * driving_value**2
 
             call CubicRoots(first_polym_coeffs,first_g_t2)
             call CubicRoots(secnd_polym_coeffs,secnd_g_t2)

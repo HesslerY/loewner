@@ -56,16 +56,16 @@ contains
     c = polym_coeffs(3)
 
     Q = (a*a - 3*b)/9
-    R = (2*a**3 - 9*a*b + 27*c)/54
+    R = (2*a**3 - 9*a*b + 27*c)/54.
 
     rootRQ = cdsqrt(R**2 - Q**3)
 
     signCheck = real(conjg(R)*rootRQ)
 
     if (signCheck > 0 .or. signCheck == 0) then
-        upperA = -(R + rootRQ)**(1/3)
+        upperA = -(R + rootRQ)**(1./3)
     else
-        upperA = -(R - rootRQ)**(1/3)
+        upperA = -(R - rootRQ)**(1./3)
     endif
 
     if (ComplexZero(upperA)) then
@@ -74,9 +74,9 @@ contains
         upperB = Q/upperA
     endif
 
-    poly3zeros(1) = (upperA + upperB) - (a/3)
-    poly3zeros(2) = -0.5*(upperA + upperB) - (a/3) + imUnit*sqrt(3.0)*0.5*(upperA - upperB)
-    poly3zeros(2) = -0.5*(upperA + upperB) - (a/3) - imUnit*sqrt(3.0)*0.5*(upperA - upperB)
+    poly3zeros(1) = (upperA + upperB) - (a/3.)
+    poly3zeros(2) = -0.5*(upperA + upperB) - (a/3.) + imUnit*sqrt(3.0)*0.5*(upperA - upperB)
+    poly3zeros(2) = -0.5*(upperA + upperB) - (a/3.) - imUnit*sqrt(3.0)*0.5*(upperA - upperB)
 
     CubicRoot = poly3zeros(1)
 
@@ -86,7 +86,7 @@ contains
         endif
     enddo
 
-    print *, "Is this zero?: ", CubicRoot**3 + a*CubicRoot**2 + b*CubicRoot + c
+    ! print *, "Is this zero?: ", CubicRoot**3 + a*CubicRoot**2 + b*CubicRoot + c
 
   end function CubicRoot
 
@@ -114,7 +114,7 @@ use constants
     real(8) :: driving_value
 
 #if CASE == 0
-    driving_value = 0.0
+    driving_value = 1.0
 
 #elif CASE == 1
     driving_value = t

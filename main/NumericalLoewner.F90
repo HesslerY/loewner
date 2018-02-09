@@ -14,7 +14,7 @@ end program test
 module Constants
 implicit none
 
-   real(8), parameter :: pi = 4. * atan(1.)
+   real(8), parameter :: pi = 4.*atan(1.)
    real(8) :: sqrt_param = 0.0
    complex, parameter :: i = complex(0,1)
    complex(8), parameter :: ZERO = complex(0,0)
@@ -25,28 +25,58 @@ end module Constants
 module CubicSolver
   implicit none
   public :: CubicRoot
-  real :: PI = 3.14159265359
-  real :: EPS = 1e-3
-  real :: DELTA = 1e-5
+  public :: ComplexZero
+  real(8), parameter :: tol = 1e-3
+  complex, parameter :: imUnit = complex(0,1)
 
 contains
+    function ComplexZero(z)
+    implicit none
+
+        logical :: ComplexZero
+        complex(8) :: z
+
+        if (abs(real(z)) < tol .and. abs(imag(z)) < tol) then
+            ComplexZero = .true.
+        else
+            ComplexZero = .false.
+        endif
+
+    end function ComplexZero
   function CubicRoot(polym_coeffs)
     implicit none
 
-    complex(8), dimension(4) :: polym_coeffs
-    complex(8), dimension(3) :: poly3zeros, As, Bs
-    complex(8) :: a, b, c, a1, b1, c1, d, p, q, qu, z, alpha, CubicRoot
-    real(8) :: AA, BB
-    integer :: i, j
+    complex(8), dimension(3) :: polym_coeffs, poly3zeros
+    complex(8) :: a, b, c, Q, R, rootRQ, upperA, upperB, CubicRoot
+    real(8) :: signCheck
+    integer :: i
 
     a = polym_coeffs(1)
     b = polym_coeffs(2)
     c = polym_coeffs(3)
 
-    p = -a*a/3 + b
-    q = 2*((a/3)**3) - a*b/3 + c
+    Q = (a*a - 3*b)/9
+    R = (2*a**3 - 9*a*b + 27*c)/54
 
-    qu = (p/3)**3 + (q/2)**2
+    rootRQ = cdsqrt(R**2 - Q**3)
+
+    signCheck = real(conjg(R)*rootRQ)
+
+    if (signCheck > 0 .or. signCheck == 0) then
+        upperA = -(R + rootRQ)**(1/3)
+    else
+        upperA = -(R - rootRQ)**(1/3)
+    endif
+
+    if (ComplexZero(upperA)) then
+        upperB = 0
+    else
+        upperB = Q/upperA
+    endif
+
+    poly3zeros(1) = (upperA + upperB) - (a/3)
+    poly3zeros(2) = -0.5*(upperA + upperB) - (a/3) + imUnit*sqrt(3.0)*0.5*(upperA - upperB)
+    poly3zeros(2) = -0.5*(upperA + upperB) - (a/3) - imUnit*sqrt(3.0)*0.5*(upperA - upperB)
 
     CubicRoot = poly3zeros(1)
 
@@ -56,13 +86,9 @@ contains
         endif
     enddo
 
-    print *, "Is this zero?"
-    print *, CubicRoot**3 + polym_coeffs(2)*CubicRoot**2 + polym_coeffs(3)*CubicRoot + polym_coeffs(4)
+    print *, "Is this zero?: ", CubicRoot**3 + a*CubicRoot**2 + b*CubicRoot + c
 
-    ! print *, "All roots: " , poly3zeros
-    ! print *, "Returned root: ", CubicRoot
-
-  end function
+  end function CubicRoot
 
 end module CubicSolver
 
@@ -233,7 +259,7 @@ end subroutine loewners_equation
 
 subroutine cubic_loewner(start_time, final_time, outer_n, inner_n, first_g_arr, secnd_g_arr, sqrt_driving)
     use constants
-    use poly3zerosmodule
+    use cubicsolver
     implicit none
 
     ! Argument declarations
@@ -264,11 +290,8 @@ subroutine cubic_loewner(start_time, final_time, outer_n, inner_n, first_g_arr, 
     complex(8) :: secnd_g_t1 = 0
     complex(8) :: secnd_g_t2 = 0
 
-    complex(8), dimension(4) :: first_polym_coeffs
-    complex(8), dimension(4) :: secnd_polym_coeffs
-
-    complex(8), dimension(3) :: first_polym_roots
-    complex(8), dimension(3) :: secnd_polym_roots
+    complex(8), dimension(3) :: first_polym_coeffs
+    complex(8), dimension(3) :: secnd_polym_coeffs
 
     ! Function declarations
     complex(8) :: square
@@ -296,9 +319,6 @@ subroutine cubic_loewner(start_time, final_time, outer_n, inner_n, first_g_arr, 
     delta_t = max_t_incr /  inner_n
     two_delta_t = delta_t * 2
 
-    first_polym_coeffs(1) = a
-    secnd_polym_coeffs(1) = a
-
     ! Compute g_0 outer_n times
     do j = 1, outer_n
 
@@ -323,13 +343,13 @@ subroutine cubic_loewner(start_time, final_time, outer_n, inner_n, first_g_arr, 
 
             c = two_delta_t * g1_driving_value**2
 
-            first_polym_coeffs(2) = -first_g_t1
-            first_polym_coeffs(3) = c
-            first_polym_coeffs(4) = first_g_t1 * g1_driving_value**2
+            first_polym_coeffs(1) = -first_g_t1
+            first_polym_coeffs(2) = c
+            first_polym_coeffs(3) = first_g_t1 * g1_driving_value**2
 
-            secnd_polym_coeffs(2) = -secnd_g_t1
-            secnd_polym_coeffs(3) = c
-            secnd_polym_coeffs(4) = secnd_g_t1 * g2_driving_value**2
+            secnd_polym_coeffs(1) = -secnd_g_t1
+            secnd_polym_coeffs(2) = c
+            secnd_polym_coeffs(3) = secnd_g_t1 * g2_driving_value**2
 
             first_g_t1 = CubicRoot(first_polym_coeffs)
             secnd_g_t1 = CubicRoot(secnd_polym_coeffs)

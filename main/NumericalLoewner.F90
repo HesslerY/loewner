@@ -23,7 +23,8 @@ implicit none
 end module Constants
 
 module CubicSolver
-  implicit none
+implicit none
+
   public :: CubicRoot
   public :: ComplexZero
   real(8), parameter :: tol = 1e-3
@@ -43,17 +44,17 @@ contains
         endif
 
     end function ComplexZero
-  function CubicRoot(polym_coeffs)
+  function CubicRoot(PolynCoeffs)
     implicit none
 
-    complex(8), dimension(3) :: polym_coeffs, poly3zeros
+    complex(8), dimension(3) :: PolynCoeffs, PolynRoots
     complex(8) :: a, b, c, Q, R, rootRQ, upperA, upperB, CubicRoot
     real(8) :: signCheck
     integer :: i
 
-    a = polym_coeffs(1)
-    b = polym_coeffs(2)
-    c = polym_coeffs(3)
+    a = PolynCoeffs(1)
+    b = PolynCoeffs(2)
+    c = PolynCoeffs(3)
 
     Q = (a*a - 3*b)/9
     R = (2*a**3 - 9*a*b + 27*c)/54.
@@ -74,15 +75,17 @@ contains
         upperB = Q/upperA
     endif
 
-    poly3zeros(1) = (upperA + upperB) - (a/3.)
-    poly3zeros(2) = -0.5*(upperA + upperB) - (a/3.) + imUnit*sqrt(3.0)*0.5*(upperA - upperB)
-    poly3zeros(2) = -0.5*(upperA + upperB) - (a/3.) - imUnit*sqrt(3.0)*0.5*(upperA - upperB)
+    PolynRoots(1) = (upperA + upperB) - (a/3.)
+    PolynRoots(2) = -0.5*(upperA + upperB) - (a/3.) + imUnit*sqrt(3.0)*0.5*(upperA - upperB)
+    PolynRoots(3) = -0.5*(upperA + upperB) - (a/3.) - imUnit*sqrt(3.0)*0.5*(upperA - upperB)
 
-    CubicRoot = poly3zeros(1)
+    print *, PolynRoots
+
+    CubicRoot = PolynRoots(1)
 
     do i = 2, 3
-        if (imag(poly3zeros(i)) > imag(CubicRoot)) then
-            CubicRoot = poly3zeros(i)
+        if (imag(PolynRoots(i)) > imag(CubicRoot)) then
+            CubicRoot = PolynRoots(i)
         endif
     enddo
 
@@ -279,8 +282,7 @@ subroutine cubic_loewner(start_time, final_time, outer_n, inner_n, first_g_arr, 
     real(8) :: two_delta_t = 0
     real(8) :: max_t = 0
     real(8) :: max_t_incr = 0
-    real(8) :: g1_driving_value = 0
-    real(8) :: g2_driving_value = 0
+    real(8) :: drivingValue = 0
     real(8) :: total_change = 0
     real(8) :: driving_arg = 0
 
@@ -338,18 +340,18 @@ subroutine cubic_loewner(start_time, final_time, outer_n, inner_n, first_g_arr, 
         do while (driving_arg > 0)
 
             ! Obtain the driving value
-            g1_driving_value = driving_function(driving_arg)
-            g2_driving_value = -g1_driving_value
+            drivingValue = driving_function(driving_arg)
+            drivingValue = -drivingValue
 
-            c = two_delta_t * g1_driving_value**2
+            c = -drivingValue**2 + two_delta_t
 
             first_polym_coeffs(1) = -first_g_t1
             first_polym_coeffs(2) = c
-            first_polym_coeffs(3) = first_g_t1 * g1_driving_value**2
+            first_polym_coeffs(3) = first_g_t1 * drivingValue**2
 
             secnd_polym_coeffs(1) = -secnd_g_t1
             secnd_polym_coeffs(2) = c
-            secnd_polym_coeffs(3) = secnd_g_t1 * g2_driving_value**2
+            secnd_polym_coeffs(3) = secnd_g_t1 * drivingValue**2
 
             first_g_t1 = CubicRoot(first_polym_coeffs)
             secnd_g_t1 = CubicRoot(secnd_polym_coeffs)
@@ -361,10 +363,6 @@ subroutine cubic_loewner(start_time, final_time, outer_n, inner_n, first_g_arr, 
             driving_arg = (max_t - (k * delta_t)) - delta_t
 
         end do
-
-        print *, ""
-        print *, "Final value g1:", first_g_t1
-        print *, "Final value g2:", secnd_g_t1
 
         ! Place the latest value in the arrays
         first_g_arr(j) = first_g_t1

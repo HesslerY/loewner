@@ -348,9 +348,8 @@ subroutine cubic_loewner(start_time, final_time, outer_n, inner_n, first_g_arr, 
 
             ! Obtain the driving value
             drivingValue = driving_function(driving_arg)
-            drivingValue = -drivingValue
 
-            c = -drivingValue**2 + two_delta_t
+            c = two_delta_t - drivingValue**2
 
             first_polym_coeffs(1) = -first_g_t1
             first_polym_coeffs(2) = c

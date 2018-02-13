@@ -17,8 +17,6 @@ implicit none
    real(8), parameter :: pi = 4.*atan(1.)
    real(8) :: sqrt_param = 0.0
    complex, parameter :: i = complex(0,1)
-   complex(8), parameter :: ZERO = complex(0,0)
-   complex(8), parameter :: a = 1
 
 end module Constants
 
@@ -31,21 +29,21 @@ implicit none
   complex, parameter :: imUnit = complex(0,1)
 
 contains
-    function ComplexZero(z)
-    implicit none
+function ComplexZero(z)
+implicit none
 
-        logical :: ComplexZero
-        complex(8) :: z
+    logical :: ComplexZero
+    complex(8) :: z
 
-        if (abs(real(z)) < tol .and. abs(imag(z)) < tol) then
-            ComplexZero = .true.
-        else
-            ComplexZero = .false.
-        endif
+    if (abs(real(z)) < tol .and. abs(imag(z)) < tol) then
+        ComplexZero = .true.
+    else
+        ComplexZero = .false.
+    endif
 
-    end function ComplexZero
-  function CubicRoot(PolynCoeffs)
-    implicit none
+end function ComplexZero
+function CubicRoot(PolynCoeffs)
+implicit none
 
     complex(8), dimension(3) :: PolynCoeffs, PolynRoots
     complex(8) :: a, b, c, Q, R, rootRQ, upperA, upperB, CubicRoot
@@ -75,24 +73,30 @@ contains
         upperB = Q/upperA
     endif
 
-    PolynRoots(1) = (upperA + upperB) - (a/3.)
-    PolynRoots(2) = -0.5*(upperA + upperB) - (a/3.) + imUnit*sqrt(3.0)*0.5*(upperA - upperB)
-    PolynRoots(3) = -0.5*(upperA + upperB) - (a/3.) - imUnit*sqrt(3.0)*0.5*(upperA - upperB)
+    ! Assign the roots
+    PolynRoots(1) = (upperA + upperB) - (a/3)
+    PolynRoots(2) = -0.5*(upperA + upperB) - (a/3) + imUnit*sqrt(3.0)*0.5*(upperA - upperB)
+    PolynRoots(3) = -0.5*(upperA + upperB) - (a/3) - imUnit*sqrt(3.0)*0.5*(upperA - upperB)
 
+#if TESTCUBIC == 1
     print *, PolynRoots
+#endif
 
+    ! Select the first cubic root
     CubicRoot = PolynRoots(1)
 
+    ! Iterate until the root with the highest imaginary part is found
     do i = 2, 3
         if (imag(PolynRoots(i)) > imag(CubicRoot)) then
             CubicRoot = PolynRoots(i)
         endif
     enddo
 
-    ! print *, "Is this zero?: ", CubicRoot**3 + a*CubicRoot**2 + b*CubicRoot + c
+#if TESTCUBIC == 1
+    print *, "Is this zero?: ", CubicRoot**3 + a*CubicRoot**2 + b*CubicRoot + c
+#endif
 
-  end function CubicRoot
-
+end function CubicRoot
 end module CubicSolver
 
 pure function square(x) result(y)
@@ -157,6 +161,9 @@ use constants
 
 #elif CASE == 13
     driving_value = mod(floor(t), 2)
+
+#elif CASE == 14
+    driving_value = sqrt(1 + t)
 
 #else
     stop "Error: Driving function not recognised."

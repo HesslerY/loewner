@@ -87,5 +87,3 @@ for inner_points in inner_res:
     approx_results.append(loewner_run.results)
     print(root_mean_squared_error(exact_sol,loewner_run.results))
 
-
-

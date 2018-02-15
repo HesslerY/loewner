@@ -163,7 +163,7 @@ use constants
     driving_value = mod(floor(t), 2)
 
 #elif CASE == 14
-    driving_value = sqrt(1 + t)
+    driving_value = dsqrt(1 + 2*t)
 
 #else
     stop "Error: Driving function not recognised."

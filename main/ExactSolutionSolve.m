@@ -41,7 +41,6 @@ for i = 1:N
 end
 
 plot(z_sol);
-hold
 
 fileID1 = fopen('../../writeuploewner/finalreport/data/14-0-10-500-1-Cubic-exact.csv','w');
 fileID2 = fopen('../../writeuploewner/finalreport/data/14-0-10-500-2-Cubic-exact.csv','w');
@@ -54,3 +53,25 @@ end
 fclose(fileID1);
 fclose(fileID2);
 
+N = 500;
+t_arr = linspace(0,10,N);
+
+% initial_guess = csvread(filename)
+
+altz_sol = zeros(N,1);
+
+a0 = 1;
+d0 = 2;
+
+for i = 1:N
+
+    t = t_arr(i);
+    f = @(z) 25*a0^4*z - 10*a0^2*z^3 + z^5 - 16*(a0^2 + d0*t)^(5/2);
+
+    altz_sol(i) = fsolve(f,z_sol(i));
+
+end
+
+figure
+plot(altz_sol);
+title('Gubiec and Symczak')

@@ -1,6 +1,9 @@
 N = 1000;
-t_arr = linspace(0,25,N);
-
+start_time = 0;
+end_time = 25;
+t_arr = linspace(start_time,end_time,N);
+df = 1;
+info = 'exact';
 initial_guess = @(t) 2 * 1i * sqrt(t) + (2/3) * t;
 
 z_sol = zeros(N,1);
@@ -16,13 +19,9 @@ end
 
 plot(z_sol);
 
-fileID = fopen('../../writeuploewner/finalreport/data/1-0-25-1000-exact.csv','w');
+FileWriter(N,z_sol,df,start_time,end_time,info)
 
-for i=1:N
-    fprintf(fileID,'%.18f %.18f\n',real(z_sol(i)), imag(z_sol(i)));
-end
-
-fclose(fileID);
+pause
 
 N = 500;
 t_arr = linspace(0,10,N);
@@ -53,7 +52,7 @@ end
 fclose(fileID1);
 fclose(fileID2);
 
-N = 500;
+N = 10;
 t_arr = linspace(0,10,N);
 
 % initial_guess = csvread(filename)

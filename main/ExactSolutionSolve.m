@@ -67,5 +67,7 @@ for i = 1:N
 end
 
 figure
-PlotCubic(altz_sol);
+PlotCubic(altz_sol,FileReader(N,df,start_time,end_time,'1-Cubic'));
 title('Exact Cubic Solution for \xi(t) = \surd(1 + 2t) (Gubiec and Symczak)','Interpreter','tex')
+PlotCubic(FileReader(N,df,start_time,end_time,'1-Cubic'));
+title('Numerical Cubic Solution for \xi(t) = \surd(1 + 2t)','Interpreter','tex')

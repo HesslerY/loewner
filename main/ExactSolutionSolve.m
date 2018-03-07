@@ -17,7 +17,7 @@ for i = 1:N
 
 end
 
-plot(z_sol);
+PlotCubic(z_sol)
 FileWriter(N,z_sol,df,start_time,end_time,info)
 
 pause
@@ -41,15 +41,16 @@ for i = 1:N
 
 end
 
-plot(z_sol);
-
+PlotCubic(z_sol)
 info = '1-Cubic-Exact';
 FileWriter(N,z_sol,df,start_time,end_time,info)
 info = '2-Cubic-Exact';
 FileWriter(N,NegativeReal(z_sol),df,start_time,end_time,info)
 
-N = 10;
-t_arr = linspace(0,10,N);
+N = 500;
+start_time = 0;
+end_time = 10;
+t_arr = linspace(start_time,end_time,N);
 
 % initial_guess = csvread(filename)
 

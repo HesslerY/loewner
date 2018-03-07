@@ -18,13 +18,15 @@ for i = 1:N
 end
 
 plot(z_sol);
-
 FileWriter(N,z_sol,df,start_time,end_time,info)
 
 pause
 
 N = 500;
-t_arr = linspace(0,10,N);
+start_time = 0;
+end_time = 10;
+t_arr = linspace(start_time,end_time,N);
+df = 14;
 
 initial_guess = @(t) 1 + 1i * sqrt(2*t) - (1/3) * t;
 
@@ -41,16 +43,10 @@ end
 
 plot(z_sol);
 
-fileID1 = fopen('../../writeuploewner/finalreport/data/14-0-10-500-1-Cubic-exact.csv','w');
-fileID2 = fopen('../../writeuploewner/finalreport/data/14-0-10-500-2-Cubic-exact.csv','w');
-
-for i=1:N
-    fprintf(fileID1,'%.18f %.18f\n',real(z_sol(i)), imag(z_sol(i)));
-    fprintf(fileID2,'%.18f %.18f\n',-real(z_sol(i)), imag(z_sol(i)));
-end
-
-fclose(fileID1);
-fclose(fileID2);
+info = '1-Cubic-Exact';
+FileWriter(N,z_sol,df,start_time,end_time,info)
+info = '2-Cubic-Exact';
+FileWriter(N,NegativeReal(z_sol),df,start_time,end_time,info)
 
 N = 10;
 t_arr = linspace(0,10,N);

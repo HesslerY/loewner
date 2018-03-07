@@ -57,17 +57,20 @@ altz_sol = zeros(N,1);
 a0 = 1;
 d0 = 2;
 
+num_sol = FileReader(N,df,start_time,end_time,'1-Cubic')
+p = [-1, 0, 10*a0^2, 0, -25*a0^4, 0];
+
 for i = 1:N
 
     t = t_arr(i);
-    f = @(z) 25*a0^4*z - 10*a0^2*z^3 + z^5 - 16*(a0^2 + d0*t)^(5/2);
-
-    altz_sol(i) = fsolve(f,z_sol(i));
+    p(6) = [16*(a0^2 + d0*t)^(5/2)];
+    r = roots(p);
+    altz_sol(i) = r(4);
 
 end
 
 figure
-PlotCubic(altz_sol,FileReader(N,df,start_time,end_time,'1-Cubic'));
+PlotCubic(altz_sol,num_sol);
 title('Exact Cubic Solution for \xi(t) = \surd(1 + 2t) (Gubiec and Symczak)','Interpreter','tex')
 PlotCubic(FileReader(N,df,start_time,end_time,'1-Cubic'));
 title('Numerical Cubic Solution for \xi(t) = \surd(1 + 2t)','Interpreter','tex')

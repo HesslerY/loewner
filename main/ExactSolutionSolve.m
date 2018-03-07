@@ -18,9 +18,8 @@ for i = 1:N
 end
 
 PlotCubic(z_sol)
+title('Exact Cubic Solution for \xi(t) = t','Interpreter','tex')
 FileWriter(N,z_sol,df,start_time,end_time,info)
-
-pause
 
 N = 500;
 start_time = 0;
@@ -42,6 +41,7 @@ for i = 1:N
 end
 
 PlotCubic(z_sol)
+title('Exact Cubic Solution for \xi(t) = 1','Interpreter','tex')
 info = '1-Cubic-Exact';
 FileWriter(N,z_sol,df,start_time,end_time,info)
 info = '2-Cubic-Exact';
@@ -51,8 +51,6 @@ N = 500;
 start_time = 0;
 end_time = 10;
 t_arr = linspace(start_time,end_time,N);
-
-% initial_guess = csvread(filename)
 
 altz_sol = zeros(N,1);
 
@@ -69,5 +67,5 @@ for i = 1:N
 end
 
 figure
-plot(altz_sol);
-title('Gubiec and Symczak')
+PlotCubic(altz_sol);
+title('Exact Cubic Solution for \xi(t) = \surd(1 + 2t) (Gubiec and Symczak)','Interpreter','tex')

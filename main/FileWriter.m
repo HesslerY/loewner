@@ -9,8 +9,8 @@ function FileWriter(N,z_sol,df,start_time,end_time,info)
         fileinfo=[df start_time end_time N];
     end
 
-    fileinfo = string(fileinfo)
-    fullfilename=strcat(outputdir,join(fileinfo,'-'),extension)
+    fileinfo = string(fileinfo);
+    fullfilename=strcat(outputdir,join(fileinfo,'-'),extension);
 
     fileID = fopen(fullfilename,'w');
 

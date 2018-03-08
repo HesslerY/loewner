@@ -39,7 +39,7 @@ def create_csv(loewner_run,label=None):
 
 def read_exact_sol():
 
-    exact_data = open("/home/dolica/Documents/writeuploewner/finalreport/data/1-0-25-1000-exact.csv","r")
+    exact_data = open("/home/dolica/Documents/writeuploewner/finalreport/data/1-0-25-1000-Exact.csv","r")
     exact_sol = empty(MAX_RES,dtype=complex128)
 
     i = 0
@@ -70,7 +70,7 @@ exact_results = []
 inner_res = [5, 10, 50, 100, 200, 300, 400, 500]
 
 df = 1
-loewner_run = LoewnerRun(1)
+loewner_run = LoewnerRun(df)
 loewner_run.start_time = 0
 loewner_run.final_time = 25
 loewner_run.outer_points = 1000
@@ -79,11 +79,14 @@ approx_results = []
 exact_sol = read_exact_sol()
 
 print("Root mean squared error:")
+
+rms_file = open(output_dir + str(df)+"-RMS.csv","w")
+
 for inner_points in inner_res:
 
     loewner_run.inner_points = inner_points
     loewner_run.perform_loewner()
     create_csv(loewner_run)
     approx_results.append(loewner_run.results)
-    print(root_mean_squared_error(exact_sol,loewner_run.results))
+    rms_file.write(str(inner_points) + " " + str(root_mean_squared_error(exact_sol,loewner_run.results)) + "\n")
 

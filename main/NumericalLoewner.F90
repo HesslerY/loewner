@@ -25,17 +25,40 @@ implicit none
 
   public :: CubicRoot
   public :: ComplexZero
-  real(8), parameter :: tol = 1e-3
+  real(8), parameter :: tol = 1e-5
   complex, parameter :: imUnit = complex(0,1)
 
 contains
+function f(z,a,b,c)
+implicit none
+
+    complex(8) :: f
+    complex(8) :: z
+    complex(8) :: a
+    complex(8) :: b
+    complex(8) :: c
+
+    f = z**3 + a*z**2 + b*z + c
+
+end function f
+function df(z,a,b)
+implicit none
+
+    complex(8) :: df
+    complex(8) :: z
+    complex(8) :: a
+    complex(8) :: b
+
+    df = 3*z**2 + 2*a*z + b
+
+end function df
 function ComplexZero(z)
 implicit none
 
     logical :: ComplexZero
     complex(8) :: z
 
-    if (abs(real(z)) < tol .and. abs(imag(z)) < tol) then
+    if (abs(real(z)) < 1e-9 .and. abs(imag(z)) < 1e-9) then
         ComplexZero = .true.
     else
         ComplexZero = .false.
@@ -50,6 +73,10 @@ implicit none
     real(8) :: signCheck
     integer :: i
 
+    ! Set initial value for root
+    CubicRoot = 0
+
+    ! Assign polynomial coefficients
     a = PolynCoeffs(1)
     b = PolynCoeffs(2)
     c = PolynCoeffs(3)
@@ -78,25 +105,38 @@ implicit none
     PolynRoots(2) = -0.5*(upperA + upperB) - (a/3) + imUnit*sqrt(3.0)*0.5*(upperA - upperB)
     PolynRoots(3) = -0.5*(upperA + upperB) - (a/3) - imUnit*sqrt(3.0)*0.5*(upperA - upperB)
 
-#if TESTCUBIC == 1
-    print *, PolynRoots
-#endif
-
-    ! Select the first cubic root
-    CubicRoot = PolynRoots(1)
-
-    ! Iterate until the root with the highest imaginary part is found
-    do i = 2, 3
-        if (imag(PolynRoots(i)) > imag(CubicRoot)) then
+    ! Iterate until the root with the largest imaginary part is found
+    do i = 1, 3
+        if (imag(PolynRoots(i)) > imag(CubicRoot) .and. real(PolynRoots(i)) >= 0) then
             CubicRoot = PolynRoots(i)
         endif
     enddo
 
+    ! Use Newton's Iteration to enhance accuracy of solution
+    CubicRoot = NewtonRoot(CubicRoot,a,b,c)
+
 #if TESTCUBIC == 1
-    print *, "Is this zero?: ", CubicRoot**3 + a*CubicRoot**2 + b*CubicRoot + c
+    print *, "Returning ", CubicRoot
+    print *, "f(z) = ", f(CubicRoot,a,b,c)
 #endif
 
 end function CubicRoot
+function NewtonRoot(z,a,b,c)
+implicit none
+
+    complex(8) :: NewtonRoot
+    complex(8) :: z
+    complex(8) :: a
+    complex(8) :: b
+    complex(8) :: c
+
+    do while (.not. ComplexZero(f(z,a,b,c)))
+        z = z - f(z,a,b,c)/df(z,a,b)
+    end do
+
+    NewtonRoot = z
+
+end function NewtonRoot
 end module CubicSolver
 
 pure function square(x) result(y)

@@ -62,15 +62,17 @@ p = [-1, 0, 10*a0^2, 0, -25*a0^4, 0];
 
 for i = 1:N
 
-    t = t_arr(i);
-    p(6) = [16*(a0^2 + d0*t)^(5/2)];
+    p(6) = 16*(a0^2 + d0*t_arr(i))^(5/2);
     r = roots(p);
     altz_sol(i) = r(4);
-
+    f = Evaluate(altz_sol(i),p)
+    nf = Evaluate(num_sol(i),p)
 end
 
-figure
 PlotCubic(altz_sol,num_sol);
 title('Exact Cubic Solution for \xi(t) = \surd(1 + 2t) (Gubiec and Symczak)','Interpreter','tex')
-PlotCubic(FileReader(N,df,start_time,end_time,'1-Cubic'));
+PlotCubic(num_sol);
 title('Numerical Cubic Solution for \xi(t) = \surd(1 + 2t)','Interpreter','tex')
+
+exact_ang = FindAngle(altz_sol,NegativeReal(altz_sol))
+nume_ang = FindAngle(num_sol,NegativeReal(num_sol))

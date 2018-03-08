@@ -25,7 +25,7 @@ implicit none
 
   public :: CubicRoot
   public :: ComplexZero
-  real(8), parameter :: tol = 1e-5
+  real(8), parameter :: tol = 1e-9
   complex, parameter :: imUnit = complex(0,1)
 
 contains
@@ -52,13 +52,26 @@ implicit none
     df = 3*z**2 + 2*a*z + b
 
 end function df
+function RealZero(x)
+implicit none
+
+    logical :: RealZero
+    real(8) :: x
+
+    if (abs(x) < tol) then
+        RealZero = .true.
+    else
+        RealZero = .false.
+    endif
+
+end function RealZero
 function ComplexZero(z)
 implicit none
 
     logical :: ComplexZero
     complex(8) :: z
 
-    if (abs(real(z)) < 1e-9 .and. abs(imag(z)) < 1e-9) then
+    if (abs(real(z)) < tol .and. abs(imag(z)) < tol) then
         ComplexZero = .true.
     else
         ComplexZero = .false.
@@ -88,7 +101,7 @@ implicit none
 
     signCheck = real(conjg(R)*rootRQ)
 
-    if (signCheck > 0 .or. signCheck == 0) then
+    if (RealZero(signCheck)) then
         upperA = -(R + rootRQ)**(1./3)
     else
         upperA = -(R - rootRQ)**(1./3)
@@ -107,7 +120,7 @@ implicit none
 
     ! Iterate until the root with the largest imaginary part is found
     do i = 1, 3
-        if (imag(PolynRoots(i)) > imag(CubicRoot) .and. real(PolynRoots(i)) >= 0) then
+        if (imag(PolynRoots(i)) > imag(CubicRoot)) then
             CubicRoot = PolynRoots(i)
         endif
     enddo

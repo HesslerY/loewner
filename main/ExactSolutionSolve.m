@@ -1,11 +1,15 @@
+%
+% xi(t) = t
+%
+
 N = 1000;
 start_time = 0;
 end_time = 25;
 t_arr = linspace(start_time,end_time,N);
 df = 1;
-info = 'exact';
 initial_guess = @(t) 2 * 1i * sqrt(t) + (2/3) * t;
 
+num_sol = FileReader(N,df,start_time,end_time)
 z_sol = zeros(N,1);
 
 for i = 1:N
@@ -17,15 +21,21 @@ for i = 1:N
 
 end
 
-PlotCubic(z_sol)
-title('Exact Cubic Solution for \xi(t) = t','Interpreter','tex')
+info = 'Exact';
+PlotRegular(z_sol,num_sol,'Exact','Numerical')
+title('Solution for \xi(t) = t','Interpreter','tex')
 FileWriter(N,z_sol,df,start_time,end_time,info)
+
+%
+% xi(t) = 1 (Cubic)
+%
 
 N = 500;
 start_time = 0;
 end_time = 10;
 t_arr = linspace(start_time,end_time,N);
-df = 14;
+df = 0;
+num_sol = FileReader(N,df,start_time,end_time,'1-Cubic')
 
 initial_guess = @(t) 1 + 1i * sqrt(2*t) - (1/3) * t;
 
@@ -41,12 +51,18 @@ for i = 1:N
 end
 
 PlotCubic(z_sol)
-title('Exact Cubic Solution for \xi(t) = 1','Interpreter','tex')
+PlotCubic(z_sol,num_sol,'Exact','Numerical')
+title('Cubic Solution for \xi(t) = 1','Interpreter','tex')
 info = '1-Cubic-Exact';
 FileWriter(N,z_sol,df,start_time,end_time,info)
 info = '2-Cubic-Exact';
 FileWriter(N,NegativeReal(z_sol),df,start_time,end_time,info)
 
+%
+% xi(t) = sqrt(1 + 2t) (Cubic)
+%
+
+df = 14;
 N = 500;
 start_time = 0;
 end_time = 10;
@@ -69,10 +85,16 @@ for i = 1:N
     nf = Evaluate(num_sol(i),p)
 end
 
-PlotCubic(altz_sol,num_sol);
-title('Exact Cubic Solution for \xi(t) = \surd(1 + 2t) (Gubiec and Symczak)','Interpreter','tex')
-PlotCubic(num_sol);
-title('Numerical Cubic Solution for \xi(t) = \surd(1 + 2t)','Interpreter','tex')
+label1 = 'Exact (Gubiec and Symczak)'
+label2 = 'Numerical'
+PlotCubic(altz_sol);
+PlotCubic(altz_sol,num_sol,label1,label2);
+title('Cubic Solution for \xi(t) = \surd(1 + 2t)','Interpreter','tex')
 
 exact_ang = FindAngle(altz_sol,NegativeReal(altz_sol))
 nume_ang = FindAngle(num_sol,NegativeReal(num_sol))
+
+info = '1-Cubic-Exact';
+FileWriter(N,z_sol,df,start_time,end_time,info)
+info = '2-Cubic-Exact';
+FileWriter(N,NegativeReal(z_sol),df,start_time,end_time,info)

@@ -50,7 +50,6 @@ for i = 1:N
 
 end
 
-PlotCubic(z_sol)
 PlotCubic(z_sol,num_sol,'Exact','Numerical')
 title('Cubic Solution for \xi(t) = 1','Interpreter','tex')
 info = '1-Cubic-Exact';
@@ -71,7 +70,7 @@ t_arr = linspace(start_time,end_time,N);
 altz_sol = zeros(N,1);
 
 a0 = 1;
-d0 = 2;
+d0 = 1;
 
 num_sol = FileReader(N,df,start_time,end_time,'1-Cubic')
 p = [-1, 0, 10*a0^2, 0, -25*a0^4, 0];
@@ -87,7 +86,6 @@ end
 
 label1 = 'Exact (Gubiec and Symczak)'
 label2 = 'Numerical'
-PlotCubic(altz_sol);
 PlotCubic(altz_sol,num_sol,label1,label2);
 title('Cubic Solution for \xi(t) = \surd(1 + 2t)','Interpreter','tex')
 
@@ -95,6 +93,6 @@ exact_ang = FindAngle(altz_sol,NegativeReal(altz_sol))
 nume_ang = FindAngle(num_sol,NegativeReal(num_sol))
 
 info = '1-Cubic-Exact';
-FileWriter(N,z_sol,df,start_time,end_time,info)
+FileWriter(N,z_sol,df,start_time,end_time,info);
 info = '2-Cubic-Exact';
-FileWriter(N,NegativeReal(z_sol),df,start_time,end_time,info)
+FileWriter(N,NegativeReal(z_sol),df,start_time,end_time,info);

@@ -26,6 +26,11 @@ PlotRegular(z_sol,num_sol,'Exact','Numerical')
 title('Solution for \xi(t) = t','Interpreter','tex')
 FileWriter(N,z_sol,df,start_time,end_time,info)
 
+innerNs = [5 10 50 100 200 300 400 500];
+filenameBase = ''
+infos = GenerateInfos(filenameBase,innerNs)
+CSVRootMeanSquaredError(z_sol,N,df,start_time,end_time,innerNs,infos)
+
 %
 % xi(t) = 1 (Cubic)
 %
@@ -57,6 +62,11 @@ FileWriter(N,z_sol,df,start_time,end_time,info)
 info = '2-Cubic-Exact';
 FileWriter(N,NegativeReal(z_sol),df,start_time,end_time,info)
 
+innerNs = [5 10 50 100 200 300 400 500];
+filenameBase = '1-Cubic-'
+infos = GenerateInfos(filenameBase,innerNs)
+CSVRootMeanSquaredError(z_sol,N,df,start_time,end_time,innerNs,infos)
+
 %
 % xi(t) = sqrt(1 + 2t) (Cubic)
 %
@@ -87,12 +97,19 @@ end
 label1 = 'Exact (Gubiec and Symczak)'
 label2 = 'Numerical'
 PlotCubic(altz_sol,num_sol,label1,label2);
-title('Cubic Solution for \xi(t) = \surd(1 + 2t)','Interpreter','tex')
+title('Cubic Solution for \xi(t) = \surd(1 + t)','Interpreter','tex')
 
 exact_ang = FindAngle(altz_sol,NegativeReal(altz_sol))
 nume_ang = FindAngle(num_sol,NegativeReal(num_sol))
 
 info = '1-Cubic-Exact';
-FileWriter(N,z_sol,df,start_time,end_time,info);
+FileWriter(N,altz_sol,df,start_time,end_time,info);
 info = '2-Cubic-Exact';
-FileWriter(N,NegativeReal(z_sol),df,start_time,end_time,info);
+FileWriter(N,NegativeReal(altz_sol),df,start_time,end_time,info);
+
+% Find Root Mean Squared Error
+
+innerNs = [5 10 50 100 200 300 400 500];
+filenameBase = '1-Cubic-'
+infos = GenerateInfos(filenameBase,innerNs)
+CSVRootMeanSquaredError(altz_sol,N,df,start_time,end_time,innerNs,infos)

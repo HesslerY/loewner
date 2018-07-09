@@ -15,7 +15,7 @@ piOverAlpha = pi/alpha;
 origLoewner = @(gt,gdt,drivingFunction) gt * gdt^(piOverAlpha) - gt * drivingFunction^(piOverAlpha) - gdt^(1 + piOverAlpha) + gdt*drivingFunction^(piOverAlpha) - 2*gdt*deltaT;
 
 % Define driving function
-xi = @(t) t*sin(t*pi);
+xi = @(t) t;
 
 % Set g_tFinal to driving function
 gResult = [xi(0)];

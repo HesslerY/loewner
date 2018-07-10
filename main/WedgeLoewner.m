@@ -10,7 +10,7 @@ alphas = [2 3 4 5];
 
 imageCounter = 1;
 
-for i = 1:10
+for i = 3:10
 
     for j = 1:length(alphas)
 
@@ -42,13 +42,13 @@ for i = 1:10
         plot(NegativeReal(gResult)+2)
         AddWedgeAngle(gResult,alpha)
         title(strcat(strcat(df.name,{' / \alpha = '},num2str(alpha))))
+        filename = strcat(num2str(imageCounter),'.pdf')
+        saveas(gcf,filename)
         hold off
 
         imageCounter = imageCounter + 1;
 
     end
-
-    pause
 
 end
 

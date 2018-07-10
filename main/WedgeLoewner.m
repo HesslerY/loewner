@@ -1,47 +1,54 @@
 % Discretise time interval
-N = 2000
+N = 1000
 tStart = 0
 tFinal = 25
 tRange = linspace(tStart,tFinal,N+1);
 deltaT = tFinal/N;
 
 % Set a value for alpha
-alpha = 4;
+alphas = [2 3 4 5];
 
-% Configure pi / alpha
-piOverAlpha = pi - pi/alpha;
+imageCounter = 1;
 
-% Set 'original' Loewner equation
-origLoewner = @(gt,gdt,drivingFunction) gt * gdt^(piOverAlpha) - gt * drivingFunction^(piOverAlpha) - gdt*gdt^(piOverAlpha) + gdt*drivingFunction^(piOverAlpha) - 2*gdt*deltaT;
+for i = 1:10
 
-% Select a driving function
-df = DrivingFunction(6);
+    for j = 1:length(alphas)
 
-% Set g_tFinal to driving function at time 0
-gResult = [df.xi(0)];
+        alpha = alphas(j);
 
-% Iterate to find solutions from g_tFinal-1 to g_0
-for i=2:length(tRange)
+        % Configure pi / alpha
+        piOverAlpha = pi/alpha;
 
-    % Obtain driving function for current value of t
-    drivingFunction = df.xi(tRange(i));
+        % piOverAlpha = 1;
 
-    % Set Loewner to be a function of g at previous time value
-    newLoewner = @(gdt) origLoewner(gResult(end),gdt,drivingFunction);
+        % Set 'original' Loewner equation
+        origLoewner = @(gt,gdt,drivingFunction) gt * gdt^(piOverAlpha) - gt * drivingFunction^(piOverAlpha) - gdt*gdt^(piOverAlpha) + gdt*drivingFunction^(piOverAlpha) - 2*gdt*deltaT;
 
-    % Solve equation for g at previous time value
-    [x,fval,exitflag,output] = fsolve(newLoewner,gResult(end) + 0.5j);
+        % origLoewner = @(gt,gdt,drivingFunction) gdt * gt^(piOverAlpha) - gdt * drivingFunction^(piOverAlpha) - gt*gt^(piOverAlpha) + gt*drivingFunction^(piOverAlpha) - 2*gt*deltaT;
 
-    % Break if fsolve fails (trace hits real axis)
-    if exitflag < 0
-        break;
+        % origLoewner = @(gt,gdt,drivingFunction) gdt*gdt^(piOverAlpha) - gdt*drivingFunction^piOverAlpha - gt*gdt^piOverAlpha + gt*drivingFunction^piOverAlpha - 2*deltaT*gdt;
+
+        % origLoewner = @(gt,gdt,drivingFunction) (gdt - gt)*(gt^piOverAlpha - drivingFunction^piOverAlpha) - 2*gt*deltaT;
+
+        % Select a driving function
+        df = DrivingFunction(i);
+
+        % Solve the Wedge Loewner Function
+        gResult = SolveWedgeLoewner(tRange,df,origLoewner);
+
+        % Plot result
+        figure
+        hold on
+        plot(NegativeReal(gResult)+2)
+        AddWedgeAngle(gResult,alpha)
+        title(strcat(strcat(df.name,{' / \alpha = '},num2str(alpha))))
+        hold off
+
+        imageCounter = imageCounter + 1;
+
     end
 
-    % Add latest solution to solution array
-    gResult = [gResult x];
+    pause
 
 end
 
-% Plot result
-plot(gResult)
-title(strcat(strcat(df.name,{' / \alpha = '},num2str(alpha))))

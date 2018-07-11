@@ -281,11 +281,11 @@ implicit none
 
     real(8) :: innerDeltaTime = 0
     real(8) :: twoInnerDeltaTime = 0
-    real(8) :: max_t = 0
-    real(8) :: max_t_incr = 0
-    real(8) :: driving_value = 0
+    real(8) :: innerFinalTime = 0
+    real(8) :: outerDeltaTime = 0
+    real(8) :: drivingValue = 0
     real(8) :: total_change = 0
-    real(8) :: driving_arg = 0
+    real(8) :: currentInnerTime = 0
 
     complex(8) :: g_t1 = 0
     complex(8) :: g_t2 = 0
@@ -308,46 +308,46 @@ implicit none
     total_change = outerFinalTime - outerStartTime
 
 #if CASE == 10
-    ! Find the value by which max_t is incremented after each iteration
-    max_t_incr = total_change / (outerN)
+    ! Find the value by which innerFinalTime is incremented after each iteration
+    outerDeltaTime = total_change / (outerN)
 #else
-    max_t_incr = total_change / (outerN - 1)
+    outerDeltaTime = total_change / (outerN - 1)
 #endif
 
     ! Determine the delta values
-    innerDeltaTime = max_t_incr /  innerN
+    innerDeltaTime = outerDeltaTime /  innerN
     twoInnerDeltaTime = innerDeltaTime * 2
 
     ! Compute g_0 outerN times
     do j = 1, outerN
 
-        ! Set max_t
-        max_t = outerStartTime + ((j - 1) * max_t_incr)
+        ! Set innerFinalTime
+        innerFinalTime = outerStartTime + ((j - 1) * outerDeltaTime)
 
         ! Find the initial value for g_1
-        g_t1 = complex(DrivingFunction(max_t),0)
+        g_t1 = complex(DrivingFunction(innerFinalTime),0)
 
         ! Reset the counter for the inner loop
         k = 0
 
         ! Determine the initial value for the driving function argument
-        driving_arg = max_t
+        currentInnerTime = innerFinalTime
 
-        do while (driving_arg > 0)
+        do while (currentInnerTime > 0)
 
             ! Obtain the driving value
-            driving_value = DrivingFunction(driving_arg)
+            drivingValue = DrivingFunction(currentInnerTime)
 
             ! Solve Loewner's equation
-            b_term = (driving_value + g_t1) * 0.5
-            c_term = (driving_value * g_t1) + twoInnerDeltaTime
+            b_term = (drivingValue + g_t1) * 0.5
+            c_term = (drivingValue * g_t1) + twoInnerDeltaTime
             g_t2 = b_term + cdsqrt(c_term - Square(b_term)) * IMUNIT
 
             ! S
             g_t1 = g_t2
 
             k = k + 1
-            driving_arg = (max_t - (k * innerDeltaTime)) - innerDeltaTime
+            currentInnerTime = (innerFinalTime - (k * innerDeltaTime)) - innerDeltaTime
 
         end do
 
@@ -378,11 +378,11 @@ implicit none
 
     real(8) :: innerDeltaTime = 0
     real(8) :: twoInnerDeltaTime = 0
-    real(8) :: max_t = 0
-    real(8) :: max_t_incr = 0
+    real(8) :: innerFinalTime = 0
+    real(8) :: outerDeltaTime = 0
     real(8) :: drivingValue = 0
     real(8) :: total_change = 0
-    real(8) :: driving_arg = 0
+    real(8) :: currentInnerTime = 0
 
     complex(8) :: c = 0
     complex(8) :: first_g_t1 = 0
@@ -409,36 +409,36 @@ implicit none
     total_change = outerFinalTime - outerStartTime
 
 #if CASE == 10
-    ! Find the value by which max_t is incremented after each iteration
-    max_t_incr = total_change / (outerN)
+    ! Find the value by which innerFinalTime is incremented after each iteration
+    outerDeltaTime = total_change / (outerN)
 #else
-    max_t_incr = total_change / (outerN - 1)
+    outerDeltaTime = total_change / (outerN - 1)
 #endif
 
     ! Determine the delta values
-    innerDeltaTime = max_t_incr /  innerN
+    innerDeltaTime = outerDeltaTime /  innerN
     twoInnerDeltaTime = innerDeltaTime * 2
 
     ! Compute g_0 outerN times
     do j = 1, outerN
 
         ! Set max time
-        max_t = outerStartTime + ((j - 1) * max_t_incr)
+        innerFinalTime = outerStartTime + ((j - 1) * outerDeltaTime)
 
         ! Find the initial values for g
-        first_g_t1 = complex(DrivingFunction(max_t),0)
+        first_g_t1 = complex(DrivingFunction(innerFinalTime),0)
         secnd_g_t1 = -first_g_t1
 
         ! Reset the counter for the inner loop
         k = 0
 
         ! Determine the initial value for the driving function argument
-        driving_arg = max_t
+        currentInnerTime = innerFinalTime
 
-        do while (driving_arg > 0)
+        do while (currentInnerTime > 0)
 
             ! Obtain the driving value
-            drivingValue = DrivingFunction(driving_arg)
+            drivingValue = DrivingFunction(currentInnerTime)
 
             c = twoInnerDeltaTime - drivingValue**2
 
@@ -457,7 +457,7 @@ implicit none
             k = k + 1
 
             ! Check driving value argument for next interation
-            driving_arg = (max_t - (k * innerDeltaTime)) - innerDeltaTime
+            currentInnerTime = (innerFinalTime - (k * innerDeltaTime)) - innerDeltaTime
 
         end do
 

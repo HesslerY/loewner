@@ -383,9 +383,9 @@ implicit none
 
 end subroutine QuadraticLoewner
 
-subroutine cubic_loewner(outerStartTime, outerFinalTime, outerN, innerN, first_g_arr, secnd_g_arr, sqrtDrivingArg)
-use constants
-use cubicsolver
+subroutine CubicLoewner(outerStartTime, outerFinalTime, outerN, innerN, first_g_arr, secnd_g_arr, sqrtDrivingArg)
+use Constants
+use CubicSolver
 implicit none
 
     ! Argument declarations
@@ -419,6 +419,7 @@ implicit none
     complex(8), dimension(3) :: secnd_polym_coeffs
 
     ! Function declarations
+    real(8) :: RealPower
     complex(8) :: ComplexPower
     real(8) :: DrivingFunction
 
@@ -465,15 +466,15 @@ implicit none
             ! Obtain the driving value
             drivingValue = DrivingFunction(currentInnerTime)
 
-            c = twoInnerDeltaTime - drivingValue**2
+            c = twoInnerDeltaTime - RealPower(drivingValue,2)
 
             first_polym_coeffs(1) = -first_g_t1
             first_polym_coeffs(2) = c
-            first_polym_coeffs(3) = first_g_t1 * drivingValue**2
+            first_polym_coeffs(3) = first_g_t1 * RealPower(drivingValue,2)
 
             secnd_polym_coeffs(1) = -secnd_g_t1
             secnd_polym_coeffs(2) = c
-            secnd_polym_coeffs(3) = secnd_g_t1 * drivingValue**2
+            secnd_polym_coeffs(3) = secnd_g_t1 * RealPower(drivingValue,2)
 
             first_g_t1 = CubicRoot(first_polym_coeffs)
             secnd_g_t1 = CubicRoot(secnd_polym_coeffs)
@@ -492,4 +493,4 @@ implicit none
 
     end do
 
-end subroutine cubic_loewner
+end subroutine CubicLoewner

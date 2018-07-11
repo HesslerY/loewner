@@ -530,19 +530,35 @@ end subroutine CubicLoewner
 program test
 implicit none
 
-    integer :: numPoints = 7
+    integer, parameter :: innerN = 4
+    integer, parameter :: outerN = 4
+    integer, parameter :: numPoints = innerN * outerN
 
-    real(8), dimension(7) :: a
+    integer :: i
+    integer :: j
+
+    real(8), dimension(numPoints) :: a
 
     real(8) :: startPoint
     real(8) :: endPoint
 
-    startPoint = 5
-    endPoint = 10
+    startPoint = 0
+    endPoint = 11
 
     call Linspace(a,startPoint,endPoint,numPoints)
 
-    print *, a
+    do i = 1,outerN
+
+        do j = i*innerN,1,-1
+
+        print *, a(j)
+
+        end do
+
+        print *, ""
+
+    end do
+
 
 end program test
 

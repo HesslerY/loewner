@@ -25,7 +25,7 @@ implicit none
    real(8) :: sqrtParam = 0.0
 
    ! Define imaginary unit
-   complex, parameter :: i = complex(0,1)
+   complex, parameter :: IMUNIT = complex(0,1)
 
 end module Constants
 
@@ -42,9 +42,6 @@ implicit none
 
   ! Tolerance for float comparisons
   real(8), parameter :: TOL = 1e-9
-
-  ! Define imaginary unit
-  complex, parameter :: imUnit = complex(0,1)
 
 contains
 
@@ -147,8 +144,8 @@ implicit none
 
     ! Assign the roots
     PolynRoots(1) = (upperA + upperB) - (a/3)
-    PolynRoots(2) = -0.5*(upperA + upperB) - (a/3) + imUnit*sqrt(3.0)*0.5*(upperA - upperB)
-    PolynRoots(3) = -0.5*(upperA + upperB) - (a/3) - imUnit*sqrt(3.0)*0.5*(upperA - upperB)
+    PolynRoots(2) = -0.5*(upperA + upperB) - (a/3) + IMUNIT*sqrt(3.0)*0.5*(upperA - upperB)
+    PolynRoots(3) = -0.5*(upperA + upperB) - (a/3) - IMUNIT*sqrt(3.0)*0.5*(upperA - upperB)
 
     ! Iterate until the root with the largest imaginary part is found
     do i = 1, 3
@@ -204,6 +201,7 @@ function Square(x)
 
 end function Square
 
+! Find the value of a particular driving function at time t
 function DrivingFunction(t)
 use Constants
 
@@ -343,7 +341,7 @@ implicit none
             ! Solve Loewner's equation
             b_term = (driving_value + g_t1) * 0.5
             c_term = (driving_value * g_t1) + two_delta_t
-            g_t2 = b_term + cdsqrt(c_term - Square(b_term)) * i
+            g_t2 = b_term + cdsqrt(c_term - Square(b_term)) * IMUNIT
 
             ! S
             g_t1 = g_t2

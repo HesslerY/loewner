@@ -280,7 +280,7 @@ implicit none
     integer :: k = 0
 
     real(8) :: delta_t = 0
-    real(8) :: two_delta_t = 0
+    real(8) :: twoInnerDeltaTime = 0
     real(8) :: max_t = 0
     real(8) :: max_t_incr = 0
     real(8) :: driving_value = 0
@@ -316,7 +316,7 @@ implicit none
 
     ! Determine the delta values
     delta_t = max_t_incr /  innerN
-    two_delta_t = delta_t * 2
+    twoInnerDeltaTime = delta_t * 2
 
     ! Compute g_0 outerN times
     do j = 1, outerN
@@ -340,7 +340,7 @@ implicit none
 
             ! Solve Loewner's equation
             b_term = (driving_value + g_t1) * 0.5
-            c_term = (driving_value * g_t1) + two_delta_t
+            c_term = (driving_value * g_t1) + twoInnerDeltaTime
             g_t2 = b_term + cdsqrt(c_term - Square(b_term)) * IMUNIT
 
             ! S
@@ -377,7 +377,7 @@ implicit none
     integer :: k = 0
 
     real(8) :: delta_t = 0
-    real(8) :: two_delta_t = 0
+    real(8) :: twoInnerDeltaTime = 0
     real(8) :: max_t = 0
     real(8) :: max_t_incr = 0
     real(8) :: drivingValue = 0
@@ -417,7 +417,7 @@ implicit none
 
     ! Determine the delta values
     delta_t = max_t_incr /  innerN
-    two_delta_t = delta_t * 2
+    twoInnerDeltaTime = delta_t * 2
 
     ! Compute g_0 outerN times
     do j = 1, outerN
@@ -440,7 +440,7 @@ implicit none
             ! Obtain the driving value
             drivingValue = DrivingFunction(driving_arg)
 
-            c = two_delta_t - drivingValue**2
+            c = twoInnerDeltaTime - drivingValue**2
 
             first_polym_coeffs(1) = -first_g_t1
             first_polym_coeffs(2) = c

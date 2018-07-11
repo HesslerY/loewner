@@ -288,7 +288,7 @@ implicit none
     real(8) :: currentInnerTime = 0
 
     complex(8) :: gCurrent = 0
-    complex(8) :: g_t2 = 0
+    complex(8) :: gPrevious = 0
     complex(8) :: bTerm = 0
     complex(8) :: cTerm = 0
 
@@ -341,10 +341,10 @@ implicit none
             ! Solve Loewner's equation
             bTerm = (drivingValue + gCurrent) * 0.5
             cTerm = (drivingValue * gCurrent) + twoInnerDeltaTime
-            g_t2 = bTerm + cdsqrt(cTerm - Square(bTerm)) * IMUNIT
+            gPrevious = bTerm + cdsqrt(cTerm - Square(bTerm)) * IMUNIT
 
             ! S
-            gCurrent = g_t2
+            gCurrent = gPrevious
 
             k = k + 1
             currentInnerTime = (innerFinalTime - (k * innerDeltaTime)) - innerDeltaTime

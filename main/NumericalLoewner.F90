@@ -176,7 +176,7 @@ implicit none
     ! Return value decleration
     complex(8) :: NewtonRoot
 
-    ! Carry out Newton's Iteration
+    ! Carry out Newton's Iteration until tolerance is achieved
     do while (.not. ComplexZero(f(z,a,b,c)))
         z = z - f(z,a,b,c)/df(z,a,b)
     end do
@@ -263,16 +263,16 @@ use Constants
 
 end function DrivingFunction
 
-subroutine loewners_equation(start_time, final_time, outer_n, inner_n, g_arr, sqrt_driving)
-use constants
+subroutine LoewnersEquation(startTime, finalTime, outerN, innerN, g_arr, sqrt_driving)
+use Constants
 implicit none
 
     ! Argument declarations
-    real(8) :: start_time
-    real(8) :: final_time
-    integer :: outer_n
-    integer :: inner_n
-    complex(8) :: g_arr(outer_n)
+    real(8) :: startTime
+    real(8) :: finalTime
+    integer :: outerN
+    integer :: innerN
+    complex(8) :: g_arr(outerN)
     real(8), optional :: sqrt_driving
 
     ! Local variable declarations
@@ -305,24 +305,24 @@ implicit none
     endif
 
     ! Find the difference between start time and final time
-    total_change = final_time - start_time
+    total_change = finalTime - startTime
 
 #if CASE == 10
     ! Find the value by which max_t is incremented after each iteration
-    max_t_incr = total_change / (outer_n)
+    max_t_incr = total_change / (outerN)
 #else
-    max_t_incr = total_change / (outer_n - 1)
+    max_t_incr = total_change / (outerN - 1)
 #endif
 
     ! Determine the delta values
-    delta_t = max_t_incr /  inner_n
+    delta_t = max_t_incr /  innerN
     two_delta_t = delta_t * 2
 
-    ! Compute g_0 outer_n times
-    do j = 1, outer_n
+    ! Compute g_0 outerN times
+    do j = 1, outerN
 
         ! Set max_t
-        max_t = start_time + ((j - 1) * max_t_incr)
+        max_t = startTime + ((j - 1) * max_t_incr)
 
         ! Find the initial value for g_1
         g_t1 = complex(DrivingFunction(max_t),0)
@@ -356,20 +356,20 @@ implicit none
 
     end do
 
-end subroutine loewners_equation
+end subroutine LoewnersEquation
 
-subroutine cubic_loewner(start_time, final_time, outer_n, inner_n, first_g_arr, secnd_g_arr, sqrt_driving)
-    use constants
-    use cubicsolver
-    implicit none
+subroutine cubic_loewner(startTime, finalTime, outerN, innerN, first_g_arr, secnd_g_arr, sqrt_driving)
+use constants
+use cubicsolver
+implicit none
 
     ! Argument declarations
-    real(8) :: start_time
-    real(8) :: final_time
-    integer :: outer_n
-    integer :: inner_n
-    complex(8) :: first_g_arr(outer_n)
-    complex(8) :: secnd_g_arr(outer_n)
+    real(8) :: startTime
+    real(8) :: finalTime
+    integer :: outerN
+    integer :: innerN
+    complex(8) :: first_g_arr(outerN)
+    complex(8) :: secnd_g_arr(outerN)
     real(8), optional :: sqrt_driving
 
     ! Local variable declarations
@@ -406,24 +406,24 @@ subroutine cubic_loewner(start_time, final_time, outer_n, inner_n, first_g_arr, 
     endif
 
     ! Find the difference between start time and final time
-    total_change = final_time - start_time
+    total_change = finalTime - startTime
 
 #if CASE == 10
     ! Find the value by which max_t is incremented after each iteration
-    max_t_incr = total_change / (outer_n)
+    max_t_incr = total_change / (outerN)
 #else
-    max_t_incr = total_change / (outer_n - 1)
+    max_t_incr = total_change / (outerN - 1)
 #endif
 
     ! Determine the delta values
-    delta_t = max_t_incr /  inner_n
+    delta_t = max_t_incr /  innerN
     two_delta_t = delta_t * 2
 
-    ! Compute g_0 outer_n times
-    do j = 1, outer_n
+    ! Compute g_0 outerN times
+    do j = 1, outerN
 
         ! Set max time
-        max_t = start_time + ((j - 1) * max_t_incr)
+        max_t = startTime + ((j - 1) * max_t_incr)
 
         ! Find the initial values for g
         first_g_t1 = complex(DrivingFunction(max_t),0)

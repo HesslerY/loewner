@@ -263,13 +263,13 @@ use Constants
 
 end function DrivingFunction
 
-subroutine LoewnersEquation(startTime, finalTime, outerN, innerN, g_arr, sqrt_driving)
+subroutine LoewnersEquation(outerStartTime, outerFinalTime, outerN, innerN, g_arr, sqrt_driving)
 use Constants
 implicit none
 
     ! Argument declarations
-    real(8) :: startTime
-    real(8) :: finalTime
+    real(8) :: outerStartTime
+    real(8) :: outerFinalTime
     integer :: outerN
     integer :: innerN
     complex(8) :: g_arr(outerN)
@@ -279,7 +279,7 @@ implicit none
     integer :: j = 0
     integer :: k = 0
 
-    real(8) :: delta_t = 0
+    real(8) :: innerDeltaTime = 0
     real(8) :: twoInnerDeltaTime = 0
     real(8) :: max_t = 0
     real(8) :: max_t_incr = 0
@@ -305,7 +305,7 @@ implicit none
     endif
 
     ! Find the difference between start time and final time
-    total_change = finalTime - startTime
+    total_change = outerFinalTime - outerStartTime
 
 #if CASE == 10
     ! Find the value by which max_t is incremented after each iteration
@@ -315,14 +315,14 @@ implicit none
 #endif
 
     ! Determine the delta values
-    delta_t = max_t_incr /  innerN
-    twoInnerDeltaTime = delta_t * 2
+    innerDeltaTime = max_t_incr /  innerN
+    twoInnerDeltaTime = innerDeltaTime * 2
 
     ! Compute g_0 outerN times
     do j = 1, outerN
 
         ! Set max_t
-        max_t = startTime + ((j - 1) * max_t_incr)
+        max_t = outerStartTime + ((j - 1) * max_t_incr)
 
         ! Find the initial value for g_1
         g_t1 = complex(DrivingFunction(max_t),0)
@@ -347,7 +347,7 @@ implicit none
             g_t1 = g_t2
 
             k = k + 1
-            driving_arg = (max_t - (k * delta_t)) - delta_t
+            driving_arg = (max_t - (k * innerDeltaTime)) - innerDeltaTime
 
         end do
 
@@ -358,14 +358,14 @@ implicit none
 
 end subroutine LoewnersEquation
 
-subroutine cubic_loewner(startTime, finalTime, outerN, innerN, first_g_arr, secnd_g_arr, sqrt_driving)
+subroutine cubic_loewner(outerStartTime, outerFinalTime, outerN, innerN, first_g_arr, secnd_g_arr, sqrt_driving)
 use constants
 use cubicsolver
 implicit none
 
     ! Argument declarations
-    real(8) :: startTime
-    real(8) :: finalTime
+    real(8) :: outerStartTime
+    real(8) :: outerFinalTime
     integer :: outerN
     integer :: innerN
     complex(8) :: first_g_arr(outerN)
@@ -376,7 +376,7 @@ implicit none
     integer :: j = 0
     integer :: k = 0
 
-    real(8) :: delta_t = 0
+    real(8) :: innerDeltaTime = 0
     real(8) :: twoInnerDeltaTime = 0
     real(8) :: max_t = 0
     real(8) :: max_t_incr = 0
@@ -406,7 +406,7 @@ implicit none
     endif
 
     ! Find the difference between start time and final time
-    total_change = finalTime - startTime
+    total_change = outerFinalTime - outerStartTime
 
 #if CASE == 10
     ! Find the value by which max_t is incremented after each iteration
@@ -416,14 +416,14 @@ implicit none
 #endif
 
     ! Determine the delta values
-    delta_t = max_t_incr /  innerN
-    twoInnerDeltaTime = delta_t * 2
+    innerDeltaTime = max_t_incr /  innerN
+    twoInnerDeltaTime = innerDeltaTime * 2
 
     ! Compute g_0 outerN times
     do j = 1, outerN
 
         ! Set max time
-        max_t = startTime + ((j - 1) * max_t_incr)
+        max_t = outerStartTime + ((j - 1) * max_t_incr)
 
         ! Find the initial values for g
         first_g_t1 = complex(DrivingFunction(max_t),0)
@@ -457,7 +457,7 @@ implicit none
             k = k + 1
 
             ! Check driving value argument for next interation
-            driving_arg = (max_t - (k * delta_t)) - delta_t
+            driving_arg = (max_t - (k * innerDeltaTime)) - innerDeltaTime
 
         end do
 

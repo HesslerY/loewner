@@ -11,33 +11,35 @@
 program test
 end program test
 
-! Function for finding the square of a real value
-function RealSquare(x)
+! Function for finding the base^expn with a real base
+function RealPower(base,expn)
 
     ! Argument decleration
-    complex(8) :: x
+    real(8) :: base
+    integer :: expn
 
     ! Return value decleration
-    complex(8) :: RealSquare
+    real(8) :: RealPower
 
     ! Find the square of x
-    RealSquare = x ** 2
+    RealPower = base ** expn
 
-end function RealSquare
+end function RealPower
 
-! Function for finding the square of a complex value
-function ComplexSquare(x)
+! Function for finding the base^expn with a complex base
+function ComplexPower(base,expn)
 
     ! Argument decleration
-    complex(8) :: x
+    complex(8) :: base
+    integer :: expn
 
     ! Return value decleration
-    complex(8) :: ComplexSquare
+    complex(8) :: ComplexPower
 
     ! Find the square of x
-    ComplexSquare = x ** 2
+    ComplexPower = base ** expn
 
-end function ComplexSquare
+end function ComplexPower
 
 ! Module for defining constants
 module Constants
@@ -83,8 +85,10 @@ implicit none
     complex(8) :: b
     complex(8) :: c
 
+    complex(8) :: ComplexPower
+
     ! Find the value of the function at z
-    f = z**3 + a*z**2 + b*z + c
+    f = ComplexPower(z,3) + a*ComplexPower(z,2) + b*z + c
 
 end function f
 
@@ -97,8 +101,10 @@ implicit none
     complex(8) :: a
     complex(8) :: b
 
+    complex(8) :: ComplexPower
+
     ! Find the value of the derivative at z
-    df = 3*z**2 + 2*a*z + b
+    df = 3*ComplexPower(z,2) + 2*a*z + b
 
 end function df
 
@@ -143,6 +149,8 @@ implicit none
     real(8) :: signCheck
     integer :: i
 
+    complex(8) :: ComplexPower
+
     ! Set initial value for root
     CubicRoot = 0
 
@@ -152,9 +160,9 @@ implicit none
     c = PolynCoeffs(3)
 
     Q = (a*a - 3*b)/9
-    R = (2*a**3 - 9*a*b + 27*c)/54.
+    R = (2*ComplexPower(a,3) - 9*a*b + 27*c)/54.
 
-    rootRQ = cdsqrt(R**2 - Q**3)
+    rootRQ = cdsqrt(ComplexPower(R,2) - ComplexPower(Q,3))
 
     signCheck = real(conjg(R)*rootRQ)
 
@@ -310,13 +318,13 @@ implicit none
 
     ! Function declarations
     real(8) :: DrivingFunction
-    complex(8) :: ComplexSquare
+    complex(8) :: ComplexPower
 
     if (present(sqrtDrivingArg)) then
 #if CASE == 10
         sqrtParam  = sqrtDrivingArg
 #elif CASE == 11
-        sqrtParam = (2 - 4 * sqrtDrivingArg) / cdsqrt(sqrtDrivingArg - ComplexSquare(sqrtDrivingArg))
+        sqrtParam = (2 - 4 * sqrtDrivingArg) / cdsqrt(sqrtDrivingArg - ComplexPower(sqrtDrivingArg,2))
 #endif
     endif
 
@@ -357,7 +365,7 @@ implicit none
             ! Solve Loewner's equation
             bTerm = (drivingValue + gCurrent) * 0.5
             cTerm = (drivingValue * gCurrent) + twoInnerDeltaTime
-            gPrevious = bTerm + cdsqrt(cTerm - ComplexSquare(bTerm)) * IMUNIT
+            gPrevious = bTerm + cdsqrt(cTerm - ComplexPower(bTerm,2)) * IMUNIT
 
             ! S
             gCurrent = gPrevious
@@ -411,14 +419,14 @@ implicit none
     complex(8), dimension(3) :: secnd_polym_coeffs
 
     ! Function declarations
-    complex(8) :: ComplexSquare
+    complex(8) :: ComplexPower
     real(8) :: DrivingFunction
 
     if (present(sqrtDrivingArg)) then
 #if CASE == 10
         sqrtParam  = sqrtDrivingArg
 #elif CASE == 11
-        sqrtParam = (2 - 4 * sqrtDrivingArg) / cdsqrt(sqrtDrivingArg - ComplexSquare(sqrtDrivingArg))
+        sqrtParam = (2 - 4 * sqrtDrivingArg) / cdsqrt(sqrtDrivingArg - ComplexPower(sqrtDrivingArg,2))
 #endif
     endif
 

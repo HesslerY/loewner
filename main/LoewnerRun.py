@@ -151,7 +151,7 @@ class SqrtLoewnerRun(LoewnerRun):
 
         # Compile and import the module if it does not already exist
         self.results = empty(self.outer_points, dtype=complex128)
-        NumericalLoewner.quadraticloewner(start_time=self.start_time, final_time=self.final_time, inner_n=self.inner_points, g_arr=self.results, sqrt_driving=self.sqrt_param)
+        NumericalLoewner.quadraticloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresult=self.results, sqrtdrivingarg=self.sqrt_param)
 
 class ExactLoewnerRun(LoewnerRun):
 

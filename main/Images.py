@@ -150,7 +150,6 @@ for run in loewner_runs:
 
     print("Finished driving function " + str(df))
 
-exit()
 constant_final_times = [1,4,9,16]
 constant_run = loewner_runs[0]
 

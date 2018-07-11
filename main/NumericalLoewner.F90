@@ -18,8 +18,11 @@ implicit none
    ! Define pi
    real(8), parameter :: PI = 4.*atan(1.)
 
+   ! 'Empty' parameter used for setting constant driving value
+   real(8) :: constantParam = 0.0
+
    ! 'Empty' parameter used for setting alpha/kappa
-   real(8) :: sqrt_param = 0.0
+   real(8) :: sqrtParam = 0.0
 
    ! Define imaginary unit
    complex, parameter :: i = complex(0,1)
@@ -28,12 +31,19 @@ end module Constants
 
 ! Module for solving cubic functions
 module CubicSolver
+use Constants
 implicit none
 
-  !
+  ! Function for finding a cube root
   public :: CubicRoot
+
+  ! Function for seeing if a complex number is close to zero
   public :: ComplexZero
+
+  ! Tolerance for float comparisons
   real(8), parameter :: TOL = 1e-9
+
+  ! Define imaginary unit
   complex, parameter :: imUnit = complex(0,1)
 
 contains
@@ -160,11 +170,14 @@ end function CubicRoot
 function NewtonRoot(z,a,b,c)
 implicit none
 
-    complex(8) :: NewtonRoot
+    ! Argument decleration
     complex(8) :: z
     complex(8) :: a
     complex(8) :: b
     complex(8) :: c
+
+    ! Return value decleration
+    complex(8) :: NewtonRoot
 
     ! Carry out Newton's Iteration
     do while (.not. ComplexZero(f(z,a,b,c)))
@@ -177,79 +190,80 @@ implicit none
 end function NewtonRoot
 end module CubicSolver
 
-! Function for finding the square of a real value
-pure function Square(x) result(y)
+! Function for finding the square of a complex value
+function Square(x)
 
-    ! Argument
-    complex(8), intent(in) :: x
+    ! Argument decleration
+    complex(8) :: x
 
-    ! Return value
-    complex(8) :: y
+    ! Return value decleration
+    complex(8) :: Square
 
-    y = x ** 2
+    ! Find the square of x
+    Square = x ** 2
 
-end function square
+end function Square
 
-function driving_function(t) result(driving_value)
-use constants
+function DrivingFunction(t)
+use Constants
 
-    ! Argument
+    ! Argument decleration
     real(8), intent(in) :: t
 
-    ! Return value
-    real(8) :: driving_value
+    ! Return value decleration
+    real(8) :: DrivingFunction
 
 #if CASE == 0
-    driving_value = 1.0
+    DrivingFunction = 1.0
 
 #elif CASE == 1
-    driving_value = t
+    DrivingFunction = t
 
 #elif CASE == 2
-    driving_value = cos(t)
+    DrivingFunction = cos(t)
 
 #elif CASE == 3
-    driving_value = t * cos(t)
+    DrivingFunction = t * cos(t)
 
 #elif CASE == 4
-    driving_value = cos(t * PI)
+    DrivingFunction = cos(t * PI)
 
 #elif CASE == 5
-    driving_value = t * cos(t * PI)
+    DrivingFunction = t * cos(t * PI)
 
 #elif CASE == 6
-    driving_value = sin(t)
+    DrivingFunction = sin(t)
 
 #elif CASE == 7
-    driving_value = t * sin(t)
+    DrivingFunction = t * sin(t)
 
 #elif CASE == 8
-    driving_value = sin(t * PI)
+    DrivingFunction = sin(t * PI)
 
 #elif CASE == 9
-    driving_value = t * sin(t * PI)
+    DrivingFunction = t * sin(t * PI)
 
 #elif CASE == 10
-    driving_value = 2 * dsqrt(sqrt_param * (1 - t))
+    DrivingFunction = 2 * dsqrt(sqrtParam * (1 - t))
 
 #elif CASE == 11
-    driving_value = dsqrt(t) * sqrt_param
+    DrivingFunction = dsqrt(t) * sqrtParam
 
 #elif CASE == 12
-    driving_value = floor(t)
+    DrivingFunction = floor(t)
 
 #elif CASE == 13
-    driving_value = mod(floor(t), 2)
+    DrivingFunction = mod(floor(t), 2)
 
 #elif CASE == 14
-    driving_value = dsqrt(1 + t)
+    DrivingFunction = dsqrt(1 + t)
 
 #else
     stop "Error: Driving function not recognised."
 
 #endif
 
-end function driving_function
+end function DrivingFunction
 
 subroutine loewners_equation(start_time, final_time, outer_n, inner_n, g_arr, sqrt_driving)
 use constants
@@ -281,14 +295,14 @@ implicit none
     complex(8) :: c_term = 0
 
     ! Function declarations
-    complex(8) :: square
-    real(8) :: driving_function
+    complex(8) :: Square
+    real(8) :: DrivingFunction
 
     if (present(sqrt_driving)) then
 #if CASE == 10
-        sqrt_param  = sqrt_driving
+        sqrtParam  = sqrt_driving
 #elif CASE == 11
-        sqrt_param = (2 - 4 * sqrt_driving) / cdsqrt(sqrt_driving - square(sqrt_driving))
+        sqrtParam = (2 - 4 * sqrt_driving) / cdsqrt(sqrt_driving - Square(sqrt_driving))
 #endif
     endif
 
@@ -313,7 +327,7 @@ implicit none
         max_t = start_time + ((j - 1) * max_t_incr)
 
         ! Find the initial value for g_1
-        g_t1 = complex(driving_function(max_t),0)
+        g_t1 = complex(DrivingFunction(max_t),0)
 
         ! Reset the counter for the inner loop
         k = 0
@@ -324,12 +338,12 @@ implicit none
         do while (driving_arg > 0)
 
             ! Obtain the driving value
-            driving_value = driving_function(driving_arg)
+            driving_value = DrivingFunction(driving_arg)
 
             ! Solve Loewner's equation
             b_term = (driving_value + g_t1) * 0.5
             c_term = (driving_value * g_t1) + two_delta_t
-            g_t2 = b_term + cdsqrt(c_term - square(b_term)) * i
+            g_t2 = b_term + cdsqrt(c_term - Square(b_term)) * i
 
             ! S
             g_t1 = g_t2
@@ -382,14 +396,14 @@ subroutine cubic_loewner(start_time, final_time, outer_n, inner_n, first_g_arr, 
     complex(8), dimension(3) :: secnd_polym_coeffs
 
     ! Function declarations
-    complex(8) :: square
-    real(8) :: driving_function
+    complex(8) :: Square
+    real(8) :: DrivingFunction
 
     if (present(sqrt_driving)) then
 #if CASE == 10
-        sqrt_param  = sqrt_driving
+        sqrtParam  = sqrt_driving
 #elif CASE == 11
-        sqrt_param = (2 - 4 * sqrt_driving) / cdsqrt(sqrt_driving - square(sqrt_driving))
+        sqrtParam = (2 - 4 * sqrt_driving) / cdsqrt(sqrt_driving - Square(sqrt_driving))
 #endif
     endif
 
@@ -414,7 +428,7 @@ subroutine cubic_loewner(start_time, final_time, outer_n, inner_n, first_g_arr, 
         max_t = start_time + ((j - 1) * max_t_incr)
 
         ! Find the initial values for g
-        first_g_t1 = complex(driving_function(max_t),0)
+        first_g_t1 = complex(DrivingFunction(max_t),0)
         secnd_g_t1 = -first_g_t1
 
         ! Reset the counter for the inner loop
@@ -426,7 +440,7 @@ subroutine cubic_loewner(start_time, final_time, outer_n, inner_n, first_g_arr, 
         do while (driving_arg > 0)
 
             ! Obtain the driving value
-            drivingValue = driving_function(driving_arg)
+            drivingValue = DrivingFunction(driving_arg)
 
             c = two_delta_t - drivingValue**2
 

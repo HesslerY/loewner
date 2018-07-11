@@ -11,6 +11,34 @@
 program test
 end program test
 
+! Function for finding the square of a real value
+function RealSquare(x)
+
+    ! Argument decleration
+    complex(8) :: x
+
+    ! Return value decleration
+    complex(8) :: RealSquare
+
+    ! Find the square of x
+    RealSquare = x ** 2
+
+end function RealSquare
+
+! Function for finding the square of a complex value
+function ComplexSquare(x)
+
+    ! Argument decleration
+    complex(8) :: x
+
+    ! Return value decleration
+    complex(8) :: ComplexSquare
+
+    ! Find the square of x
+    ComplexSquare = x ** 2
+
+end function ComplexSquare
+
 ! Module for defining constants
 module Constants
 implicit none
@@ -186,34 +214,6 @@ implicit none
 
 end function NewtonRoot
 end module CubicSolver
-
-! Function for finding the square of a real value
-function RealSquare(x)
-
-    ! Argument decleration
-    complex(8) :: x
-
-    ! Return value decleration
-    complex(8) :: RealSquare
-
-    ! Find the square of x
-    RealSquare = x ** 2
-
-end function RealSquare
-
-! Function for finding the square of a complex value
-function ComplexSquare(x)
-
-    ! Argument decleration
-    complex(8) :: x
-
-    ! Return value decleration
-    complex(8) :: ComplexSquare
-
-    ! Find the square of x
-    ComplexSquare = x ** 2
-
-end function ComplexSquare
 
 ! Find the value of a particular driving function at time t
 function DrivingFunction(t)

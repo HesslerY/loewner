@@ -148,6 +148,7 @@ for run in loewner_runs:
 
     inv_create_csv(time_arr,driving_arr,[df] + res)
 
+exit()
 constant_final_times = [1,4,9,16]
 constant_run = loewner_runs[0]
 

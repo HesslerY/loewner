@@ -285,6 +285,22 @@ use Constants
 
 end function DrivingFunction
 
+function ComputeCAlpha(alpha)
+implicit none
+
+    ! Argument declaration
+    real(8) :: alpha
+
+    ! Function declaration
+    real(8) :: RealPower
+
+    ! Return value declaration
+    real(8) :: ComputeCAlpha
+
+    ComputeCAlpha = (2 - 4 * alpha) / dsqrt(alpha - RealPower(alpha,2))
+
+end function ComputeCAlpha
+
 subroutine QuadraticLoewner(outerStartTime, outerFinalTime, outerN, innerN, gResult, sqrtDrivingArg)
 use Constants
 implicit none
@@ -317,6 +333,7 @@ implicit none
     complex(8) :: cTerm = 0
 
     ! Function declarations
+    real(8) :: ComputeCAlpha
     real(8) :: DrivingFunction
     complex(8) :: ComplexPower
 
@@ -324,7 +341,7 @@ implicit none
 #if CASE == 10
         sqrtParam  = sqrtDrivingArg
 #elif CASE == 11
-        sqrtParam = (2 - 4 * sqrtDrivingArg) / cdsqrt(sqrtDrivingArg - ComplexPower(sqrtDrivingArg,2))
+        sqrtParam = ComputeCAlpha(sqrtDrivingArg)
 #endif
     endif
 
@@ -419,6 +436,7 @@ implicit none
     complex(8), dimension(3) :: secnd_polym_coeffs
 
     ! Function declarations
+    real(8) :: ComputeCAlpha
     real(8) :: RealPower
     complex(8) :: ComplexPower
     real(8) :: DrivingFunction
@@ -427,7 +445,7 @@ implicit none
 #if CASE == 10
         sqrtParam  = sqrtDrivingArg
 #elif CASE == 11
-        sqrtParam = (2 - 4 * sqrtDrivingArg) / cdsqrt(sqrtDrivingArg - ComplexPower(sqrtDrivingArg,2))
+        sqrtParam = ComputeCAlpha(sqrtDrivingArg)
 #endif
     endif
 

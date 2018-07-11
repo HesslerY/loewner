@@ -263,7 +263,7 @@ use Constants
 
 end function DrivingFunction
 
-subroutine LoewnersEquation(outerStartTime, outerFinalTime, outerN, innerN, g_arr, sqrt_driving)
+subroutine LoewnersEquation(outerStartTime, outerFinalTime, outerN, innerN, gResult, sqrtDrivingArg)
 use Constants
 implicit none
 
@@ -272,8 +272,8 @@ implicit none
     real(8) :: outerFinalTime
     integer :: outerN
     integer :: innerN
-    complex(8) :: g_arr(outerN)
-    real(8), optional :: sqrt_driving
+    complex(8) :: gResult(outerN)
+    real(8), optional :: sqrtDrivingArg
 
     ! Local variable declarations
     integer :: j = 0
@@ -284,34 +284,34 @@ implicit none
     real(8) :: innerFinalTime = 0
     real(8) :: outerDeltaTime = 0
     real(8) :: drivingValue = 0
-    real(8) :: total_change = 0
+    real(8) :: totalOuterChange = 0
     real(8) :: currentInnerTime = 0
 
-    complex(8) :: g_t1 = 0
+    complex(8) :: gCurrent = 0
     complex(8) :: g_t2 = 0
-    complex(8) :: b_term = 0
-    complex(8) :: c_term = 0
+    complex(8) :: bTerm = 0
+    complex(8) :: cTerm = 0
 
     ! Function declarations
     complex(8) :: Square
     real(8) :: DrivingFunction
 
-    if (present(sqrt_driving)) then
+    if (present(sqrtDrivingArg)) then
 #if CASE == 10
-        sqrtParam  = sqrt_driving
+        sqrtParam  = sqrtDrivingArg
 #elif CASE == 11
-        sqrtParam = (2 - 4 * sqrt_driving) / cdsqrt(sqrt_driving - Square(sqrt_driving))
+        sqrtParam = (2 - 4 * sqrtDrivingArg) / cdsqrt(sqrtDrivingArg - Square(sqrtDrivingArg))
 #endif
     endif
 
     ! Find the difference between start time and final time
-    total_change = outerFinalTime - outerStartTime
+    totalOuterChange = outerFinalTime - outerStartTime
 
 #if CASE == 10
     ! Find the value by which innerFinalTime is incremented after each iteration
-    outerDeltaTime = total_change / (outerN)
+    outerDeltaTime = totalOuterChange / (outerN)
 #else
-    outerDeltaTime = total_change / (outerN - 1)
+    outerDeltaTime = totalOuterChange / (outerN - 1)
 #endif
 
     ! Determine the delta values
@@ -325,7 +325,7 @@ implicit none
         innerFinalTime = outerStartTime + ((j - 1) * outerDeltaTime)
 
         ! Find the initial value for g_1
-        g_t1 = complex(DrivingFunction(innerFinalTime),0)
+        gCurrent = complex(DrivingFunction(innerFinalTime),0)
 
         ! Reset the counter for the inner loop
         k = 0
@@ -339,12 +339,12 @@ implicit none
             drivingValue = DrivingFunction(currentInnerTime)
 
             ! Solve Loewner's equation
-            b_term = (drivingValue + g_t1) * 0.5
-            c_term = (drivingValue * g_t1) + twoInnerDeltaTime
-            g_t2 = b_term + cdsqrt(c_term - Square(b_term)) * IMUNIT
+            bTerm = (drivingValue + gCurrent) * 0.5
+            cTerm = (drivingValue * gCurrent) + twoInnerDeltaTime
+            g_t2 = bTerm + cdsqrt(cTerm - Square(bTerm)) * IMUNIT
 
             ! S
-            g_t1 = g_t2
+            gCurrent = g_t2
 
             k = k + 1
             currentInnerTime = (innerFinalTime - (k * innerDeltaTime)) - innerDeltaTime
@@ -352,13 +352,13 @@ implicit none
         end do
 
         ! Place the latest value in the array
-        g_arr(j) = g_t1
+        gResult(j) = gCurrent
 
     end do
 
 end subroutine LoewnersEquation
 
-subroutine cubic_loewner(outerStartTime, outerFinalTime, outerN, innerN, first_g_arr, secnd_g_arr, sqrt_driving)
+subroutine cubic_loewner(outerStartTime, outerFinalTime, outerN, innerN, first_g_arr, secnd_g_arr, sqrtDrivingArg)
 use constants
 use cubicsolver
 implicit none
@@ -370,7 +370,7 @@ implicit none
     integer :: innerN
     complex(8) :: first_g_arr(outerN)
     complex(8) :: secnd_g_arr(outerN)
-    real(8), optional :: sqrt_driving
+    real(8), optional :: sqrtDrivingArg
 
     ! Local variable declarations
     integer :: j = 0
@@ -381,7 +381,7 @@ implicit none
     real(8) :: innerFinalTime = 0
     real(8) :: outerDeltaTime = 0
     real(8) :: drivingValue = 0
-    real(8) :: total_change = 0
+    real(8) :: totalOuterChange = 0
     real(8) :: currentInnerTime = 0
 
     complex(8) :: c = 0
@@ -397,22 +397,22 @@ implicit none
     complex(8) :: Square
     real(8) :: DrivingFunction
 
-    if (present(sqrt_driving)) then
+    if (present(sqrtDrivingArg)) then
 #if CASE == 10
-        sqrtParam  = sqrt_driving
+        sqrtParam  = sqrtDrivingArg
 #elif CASE == 11
-        sqrtParam = (2 - 4 * sqrt_driving) / cdsqrt(sqrt_driving - Square(sqrt_driving))
+        sqrtParam = (2 - 4 * sqrtDrivingArg) / cdsqrt(sqrtDrivingArg - Square(sqrtDrivingArg))
 #endif
     endif
 
     ! Find the difference between start time and final time
-    total_change = outerFinalTime - outerStartTime
+    totalOuterChange = outerFinalTime - outerStartTime
 
 #if CASE == 10
     ! Find the value by which innerFinalTime is incremented after each iteration
-    outerDeltaTime = total_change / (outerN)
+    outerDeltaTime = totalOuterChange / (outerN)
 #else
-    outerDeltaTime = total_change / (outerN - 1)
+    outerDeltaTime = totalOuterChange / (outerN - 1)
 #endif
 
     ! Determine the delta values

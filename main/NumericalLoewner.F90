@@ -263,21 +263,23 @@ use Constants
 
 end function DrivingFunction
 
-subroutine LoewnersEquation(outerStartTime, outerFinalTime, outerN, innerN, gResult, sqrtDrivingArg)
+subroutine QuadraticLoewner(outerStartTime, outerFinalTime, outerN, innerN, gResult, sqrtDrivingArg)
 use Constants
 implicit none
 
     ! Argument declarations
-    real(8) :: outerStartTime
-    real(8) :: outerFinalTime
     integer :: outerN
     integer :: innerN
-    complex(8) :: gResult(outerN)
+
+    real(8) :: outerStartTime
+    real(8) :: outerFinalTime
     real(8), optional :: sqrtDrivingArg
+
+    complex(8) :: gResult(outerN)
 
     ! Local variable declarations
     integer :: i = 0
-    integer :: k = 0
+    integer :: j = 0
 
     real(8) :: innerDeltaTime = 0
     real(8) :: twoInnerDeltaTime = 0
@@ -293,8 +295,8 @@ implicit none
     complex(8) :: cTerm = 0
 
     ! Function declarations
-    complex(8) :: Square
     real(8) :: DrivingFunction
+    complex(8) :: Square
 
     if (present(sqrtDrivingArg)) then
 #if CASE == 10
@@ -328,7 +330,7 @@ implicit none
         gCurrent = complex(DrivingFunction(innerFinalTime),0)
 
         ! Reset the counter for the inner loop
-        k = 0
+        j = 0
 
         ! Determine the initial value for the driving function argument
         currentInnerTime = innerFinalTime
@@ -346,8 +348,9 @@ implicit none
             ! S
             gCurrent = gPrevious
 
-            k = k + 1
-            currentInnerTime = (innerFinalTime - (k * innerDeltaTime)) - innerDeltaTime
+            j = j + 1
+
+            currentInnerTime = (innerFinalTime - (j * innerDeltaTime)) - innerDeltaTime
 
         end do
 
@@ -356,7 +359,7 @@ implicit none
 
     end do
 
-end subroutine LoewnersEquation
+end subroutine QuadraticLoewner
 
 subroutine cubic_loewner(outerStartTime, outerFinalTime, outerN, innerN, first_g_arr, secnd_g_arr, sqrtDrivingArg)
 use constants
@@ -374,7 +377,7 @@ implicit none
 
     ! Local variable declarations
     integer :: i = 0
-    integer :: k = 0
+    integer :: j = 0
 
     real(8) :: innerDeltaTime = 0
     real(8) :: twoInnerDeltaTime = 0
@@ -430,7 +433,7 @@ implicit none
         secnd_g_t1 = -first_g_t1
 
         ! Reset the counter for the inner loop
-        k = 0
+        j = 0
 
         ! Determine the initial value for the driving function argument
         currentInnerTime = innerFinalTime
@@ -454,10 +457,10 @@ implicit none
             secnd_g_t1 = CubicRoot(secnd_polym_coeffs)
 
             ! Increment counter
-            k = k + 1
+            j = j + 1
 
             ! Check driving value argument for next interation
-            currentInnerTime = (innerFinalTime - (k * innerDeltaTime)) - innerDeltaTime
+            currentInnerTime = (innerFinalTime - (j * innerDeltaTime)) - innerDeltaTime
 
         end do
 

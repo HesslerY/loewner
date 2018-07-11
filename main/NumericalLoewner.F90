@@ -276,7 +276,7 @@ implicit none
     real(8), optional :: sqrtDrivingArg
 
     ! Local variable declarations
-    integer :: j = 0
+    integer :: i = 0
     integer :: k = 0
 
     real(8) :: innerDeltaTime = 0
@@ -319,10 +319,10 @@ implicit none
     twoInnerDeltaTime = innerDeltaTime * 2
 
     ! Compute g_0 outerN times
-    do j = 1, outerN
+    do i = 1, outerN
 
         ! Set innerFinalTime
-        innerFinalTime = outerStartTime + ((j - 1) * outerDeltaTime)
+        innerFinalTime = outerStartTime + ((i - 1) * outerDeltaTime)
 
         ! Find the initial value for g_1
         gCurrent = complex(DrivingFunction(innerFinalTime),0)
@@ -352,7 +352,7 @@ implicit none
         end do
 
         ! Place the latest value in the array
-        gResult(j) = gCurrent
+        gResult(i) = gCurrent
 
     end do
 
@@ -373,7 +373,7 @@ implicit none
     real(8), optional :: sqrtDrivingArg
 
     ! Local variable declarations
-    integer :: j = 0
+    integer :: i = 0
     integer :: k = 0
 
     real(8) :: innerDeltaTime = 0
@@ -420,10 +420,10 @@ implicit none
     twoInnerDeltaTime = innerDeltaTime * 2
 
     ! Compute g_0 outerN times
-    do j = 1, outerN
+    do i = 1, outerN
 
         ! Set max time
-        innerFinalTime = outerStartTime + ((j - 1) * outerDeltaTime)
+        innerFinalTime = outerStartTime + ((i - 1) * outerDeltaTime)
 
         ! Find the initial values for g
         first_g_t1 = complex(DrivingFunction(innerFinalTime),0)
@@ -462,8 +462,8 @@ implicit none
         end do
 
         ! Place the latest value in the arrays
-        first_g_arr(j) = first_g_t1
-        secnd_g_arr(j) = secnd_g_t1
+        first_g_arr(i) = first_g_t1
+        secnd_g_arr(i) = secnd_g_t1
 
     end do
 

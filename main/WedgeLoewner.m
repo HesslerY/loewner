@@ -8,18 +8,19 @@ deltaT = tFinal/N;
 % Set a value for alpha
 alphas = [2 3 4 5];
 
+totalDrivingFunctions = 10;
 imageCounter = 1;
 
-for i = 3:10
+for i = 1:totalDrivingFunctions
 
     for j = 1:length(alphas)
 
         alpha = alphas(j);
 
         % Configure pi / alpha
-        piOverAlpha = pi/alpha;
+        % piOverAlpha = pi/alpha;
 
-        % piOverAlpha = 1;
+        piOverAlpha = 1;
 
         % Set 'original' Loewner equation
         origLoewner = @(gt,gdt,drivingFunction) gt * gdt^(piOverAlpha) - gt * drivingFunction^(piOverAlpha) - gdt*gdt^(piOverAlpha) + gdt*drivingFunction^(piOverAlpha) - 2*gdt*deltaT;
@@ -43,7 +44,7 @@ for i = 3:10
         AddWedgeAngle(gResult,alpha)
         title(strcat(strcat(df.name,{' / \alpha = '},num2str(alpha))))
         filename = strcat(num2str(imageCounter),'.pdf')
-        saveas(gcf,filename)
+        % saveas(gcf,filename)
         hold off
 
         imageCounter = imageCounter + 1;

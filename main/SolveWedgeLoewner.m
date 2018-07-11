@@ -1,13 +1,13 @@
 function gResult = SolveWedgeLoewner(tRange,df,origLoewner)
 
     % Set g_tFinal to driving function at time 0
-    gResult = [1];
+    gResult = [df.xi(0)];
 
     % Iterate to find solutions from g_tFinal-1 to g_0
-    for i=2:length(tRange)
+    for i=2:length(tRange) - 1
 
         % Obtain driving function for current value of t
-        drivingFunction = df.xi(tRange(i));
+        drivingFunction = df.xi(tRange(i + 1));
 
         % Set Loewner to be a function of g at previous time value
         newLoewner = @(gdt) origLoewner(gResult(end),gdt,drivingFunction);

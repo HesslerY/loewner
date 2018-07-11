@@ -11,24 +11,34 @@
 program test
 end program test
 
+! Module for defining constants
 module Constants
 implicit none
 
-   real(8), parameter :: pi = 4.*atan(1.)
+   ! Define pi
+   real(8), parameter :: PI = 4.*atan(1.)
+
+   ! 'Empty' parameter used for setting alpha/kappa
    real(8) :: sqrt_param = 0.0
+
+   ! Define imaginary unit
    complex, parameter :: i = complex(0,1)
 
 end module Constants
 
+! Module for solving cubic functions
 module CubicSolver
 implicit none
 
+  !
   public :: CubicRoot
   public :: ComplexZero
-  real(8), parameter :: tol = 1e-9
+  real(8), parameter :: TOL = 1e-9
   complex, parameter :: imUnit = complex(0,1)
 
 contains
+
+! Function for evaluating f(z) = z^3 + a*z^2 + b*z + c
 function f(z,a,b,c)
 implicit none
 
@@ -38,9 +48,12 @@ implicit none
     complex(8) :: b
     complex(8) :: c
 
+    ! Find the value of the function at z
     f = z**3 + a*z**2 + b*z + c
 
 end function f
+
+! Function for evaluating derivative of f'(z)
 function df(z,a,b)
 implicit none
 
@@ -49,35 +62,44 @@ implicit none
     complex(8) :: a
     complex(8) :: b
 
+    ! Find the value of the derivative at z
     df = 3*z**2 + 2*a*z + b
 
 end function df
+
+! Function for seeing if a real number is close to zero within a certain tolerance
 function RealZero(x)
 implicit none
 
     logical :: RealZero
     real(8) :: x
 
-    if (abs(x) < tol) then
+    ! Check if the absolute value of the number is beneath the tolerance
+    if (abs(x) < TOL) then
         RealZero = .true.
     else
         RealZero = .false.
     endif
 
 end function RealZero
+
+! Function for seeing if a complex number is close to zero within a certain tolerance
 function ComplexZero(z)
 implicit none
 
     logical :: ComplexZero
     complex(8) :: z
 
-    if (abs(real(z)) < tol .and. abs(imag(z)) < tol) then
+    ! Check if the absolute values of both the real and imaginary components are beneath the tolerance
+    if (abs(real(z)) < TOL .and. abs(imag(z)) < TOL) then
         ComplexZero = .true.
     else
         ComplexZero = .false.
     endif
 
 end function ComplexZero
+
+! Function for identifying the roots of a cubic function
 function CubicRoot(PolynCoeffs)
 implicit none
 
@@ -133,6 +155,7 @@ implicit none
     print *, "f(z) = ", f(CubicRoot,a,b,c)
 #endif
 
+! Perform Newton's Iteration to refine the accuracy of the cubic root
 end function CubicRoot
 function NewtonRoot(z,a,b,c)
 implicit none
@@ -143,16 +166,19 @@ implicit none
     complex(8) :: b
     complex(8) :: c
 
+    ! Carry out Newton's Iteration
     do while (.not. ComplexZero(f(z,a,b,c)))
         z = z - f(z,a,b,c)/df(z,a,b)
     end do
 
+    ! Return more accurate root
     NewtonRoot = z
 
 end function NewtonRoot
 end module CubicSolver
 
-pure function square(x) result(y)
+! Function for finding the square of a real value
+pure function Square(x) result(y)
 
     ! Argument
     complex(8), intent(in) :: x
@@ -186,10 +212,10 @@ use constants
     driving_value = t * cos(t)
 
 #elif CASE == 4
-    driving_value = cos(t * pi)
+    driving_value = cos(t * PI)
 
 #elif CASE == 5
-    driving_value = t * cos(t * pi)
+    driving_value = t * cos(t * PI)
 
 #elif CASE == 6
     driving_value = sin(t)
@@ -198,10 +224,10 @@ use constants
     driving_value = t * sin(t)
 
 #elif CASE == 8
-    driving_value = sin(t * pi)
+    driving_value = sin(t * PI)
 
 #elif CASE == 9
-    driving_value = t * sin(t * pi)
+    driving_value = t * sin(t * PI)
 
 #elif CASE == 10
     driving_value = 2 * dsqrt(sqrt_param * (1 - t))

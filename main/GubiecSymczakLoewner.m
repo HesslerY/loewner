@@ -5,28 +5,34 @@ d = 1
 halfPi = pi/2
 
 % Discretise time interval
-N = 2000
+N = 1000
 tStart = 0
 tFinal = 25
-tRange = linspace(tStart,tFinal,N);
-deltaT = tRange(2);
+tRange = linspace(tStart,tFinal,N+1);
+deltaT = tFinal/N;
 
 % Define Loewner's Equation
 origLoewner = @(gt,gdt,drivingFunction) deltaT * d * halfPi * cos(halfPi * gdt) + (gdt - gt)*(sin(halfPi * gdt) - sin(halfPi * drivingFunction));
 
-% Define a driving function
-drivingFunction = 0.5;
+for i = 1:10
 
-% Solve for the trace with a positive driving function
-firstGResult = GubiecSzymczakEquation32(drivingFunction,N,origLoewner);
+    % Define a driving function
+    df = DrivingFunction(i);
 
-% Define a driving function
-drivingFunction = -0.5;
+    % Solve for the trace with a positive driving function
+    firstGResult = GubiecSzymczakEquation32(df,N,origLoewner,tRange);
 
-% Solve for the trace with a negative driving function
-secondGResult = GubiecSzymczakEquation32(drivingFunction,N,origLoewner);
+    % Change sign of driving function
+    df.xi = @(t) -df.xi(t);
 
-% Plot the result
-plot(firstGResult)
-hold on
-plot(secondGResult)
+    % Solve for the trace with a negative driving function
+    secondGResult = GubiecSzymczakEquation32(df,N,origLoewner,tRange);
+
+    % Plot the result
+    figure
+    plot(firstGResult)
+    hold on
+    plot(secondGResult)
+    hold off
+
+end

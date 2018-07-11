@@ -307,11 +307,10 @@ subroutine Linspace(timeRange,startPoint,endPoint,numPoints)
 
     real(8) :: delta
 
-    delta  = (endPoint - startPoint)/(numPoints-1)
+    delta  = (endPoint - startPoint)/(numPoints - 1)
 
-    timeRange = (/((i * delta), i = 0, numPoints)/)
-
-    ! Return value declaration
+    timeRange = (/((i * delta), i = 0, numPoints - 1)/)
+    timeRange = timeRange(:) + startPoint
 
 end subroutine Linspace
 
@@ -538,7 +537,7 @@ implicit none
     real(8) :: startPoint
     real(8) :: endPoint
 
-    startPoint = 0
+    startPoint = 5
     endPoint = 10
 
     call Linspace(a,startPoint,endPoint,numPoints)

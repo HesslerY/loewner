@@ -187,19 +187,33 @@ implicit none
 end function NewtonRoot
 end module CubicSolver
 
-! Function for finding the square of a complex value
-function Square(x)
+! Function for finding the square of a real value
+function RealSquare(x)
 
     ! Argument decleration
     complex(8) :: x
 
     ! Return value decleration
-    complex(8) :: Square
+    complex(8) :: RealSquare
 
     ! Find the square of x
-    Square = x ** 2
+    RealSquare = x ** 2
 
-end function Square
+end function RealSquare
+
+! Function for finding the square of a complex value
+function ComplexSquare(x)
+
+    ! Argument decleration
+    complex(8) :: x
+
+    ! Return value decleration
+    complex(8) :: ComplexSquare
+
+    ! Find the square of x
+    ComplexSquare = x ** 2
+
+end function ComplexSquare
 
 ! Find the value of a particular driving function at time t
 function DrivingFunction(t)
@@ -296,13 +310,13 @@ implicit none
 
     ! Function declarations
     real(8) :: DrivingFunction
-    complex(8) :: Square
+    complex(8) :: ComplexSquare
 
     if (present(sqrtDrivingArg)) then
 #if CASE == 10
         sqrtParam  = sqrtDrivingArg
 #elif CASE == 11
-        sqrtParam = (2 - 4 * sqrtDrivingArg) / cdsqrt(sqrtDrivingArg - Square(sqrtDrivingArg))
+        sqrtParam = (2 - 4 * sqrtDrivingArg) / cdsqrt(sqrtDrivingArg - ComplexSquare(sqrtDrivingArg))
 #endif
     endif
 
@@ -343,7 +357,7 @@ implicit none
             ! Solve Loewner's equation
             bTerm = (drivingValue + gCurrent) * 0.5
             cTerm = (drivingValue * gCurrent) + twoInnerDeltaTime
-            gPrevious = bTerm + cdsqrt(cTerm - Square(bTerm)) * IMUNIT
+            gPrevious = bTerm + cdsqrt(cTerm - ComplexSquare(bTerm)) * IMUNIT
 
             ! S
             gCurrent = gPrevious
@@ -397,14 +411,14 @@ implicit none
     complex(8), dimension(3) :: secnd_polym_coeffs
 
     ! Function declarations
-    complex(8) :: Square
+    complex(8) :: ComplexSquare
     real(8) :: DrivingFunction
 
     if (present(sqrtDrivingArg)) then
 #if CASE == 10
         sqrtParam  = sqrtDrivingArg
 #elif CASE == 11
-        sqrtParam = (2 - 4 * sqrtDrivingArg) / cdsqrt(sqrtDrivingArg - Square(sqrtDrivingArg))
+        sqrtParam = (2 - 4 * sqrtDrivingArg) / cdsqrt(sqrtDrivingArg - ComplexSquare(sqrtDrivingArg))
 #endif
     endif
 

@@ -7,10 +7,6 @@
 !                                                                              !
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-! Empty program to aid with identifying compilation errors should f2py fail
-program test
-end program test
-
 ! Function for finding the base^expn with a real base
 function RealPower(base,expn)
 
@@ -301,6 +297,24 @@ implicit none
 
 end function ComputeCAlpha
 
+subroutine Linspace(timeRange,startPoint,endPoint,numPoints)
+
+    ! Argument declaration
+    real(8), dimension(numPoints) :: timeRange
+    real(8) :: startPoint
+    real(8) :: endPoint
+    integer :: numPoints
+
+    real(8) :: delta
+
+    delta  = (endPoint - startPoint)/(numPoints-1)
+
+    timeRange = (/((i * delta), i = 0, numPoints)/)
+
+    ! Return value declaration
+
+end subroutine Linspace
+
 subroutine QuadraticLoewner(outerStartTime, outerFinalTime, outerN, innerN, gResult, sqrtDrivingArg)
 use Constants
 implicit none
@@ -512,3 +526,24 @@ implicit none
     end do
 
 end subroutine CubicLoewner
+
+! Empty program to aid with identifying compilation errors should f2py fail
+program test
+implicit none
+
+    integer :: numPoints = 7
+
+    real(8), dimension(7) :: a
+
+    real(8) :: startPoint
+    real(8) :: endPoint
+
+    startPoint = 0
+    endPoint = 10
+
+    call Linspace(a,startPoint,endPoint,numPoints)
+
+    print *, a
+
+end program test
+

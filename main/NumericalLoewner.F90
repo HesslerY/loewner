@@ -337,10 +337,7 @@ implicit none
     integer :: j = 0
 
     real(8) :: twoInnerDeltaTime = 0
-    real(8) :: innerFinalTime = 0
-    real(8) :: outerDeltaTime = 0
     real(8) :: drivingValue = 0
-    real(8) :: totalOuterChange = 0
     real(8) :: currentInnerTime = 0
 
     complex(8) :: gCurrent = 0
@@ -357,6 +354,7 @@ implicit none
     real(8) :: DrivingFunction
     complex(8) :: ComplexPower
 
+#if CASE == 10 || CASE == 11
     if (present(sqrtDrivingArg)) then
 #if CASE == 10
         sqrtParam  = sqrtDrivingArg
@@ -364,19 +362,13 @@ implicit none
         sqrtParam = ComputeCAlpha(sqrtDrivingArg)
 #endif
     endif
+#endif
 
     totalN = innerN * outerN
 
     Allocate(timeRange(1:totalN))
 
     call Linspace(timeRange,outerStartTime,outerFinalTime,totalN)
-
-#if CASE == 10
-    ! Find the value by which innerFinalTime is incremented after each iteration
-    outerDeltaTime = totalOuterChange / (outerN)
-#else
-    outerDeltaTime = totalOuterChange / (outerN - 1)
-#endif
 
     ! Determine the delta values
     twoInnerDeltaTime = timeRange(2) * 2

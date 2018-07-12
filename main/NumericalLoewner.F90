@@ -307,7 +307,11 @@ subroutine Linspace(timeRange,startPoint,endPoint,numPoints)
 
     real(8) :: delta
 
+#if CASE == 10
+    delta  = (endPoint - startPoint)/numPoints
+#else
     delta  = (endPoint - startPoint)/(numPoints - 1)
+#endif
 
     timeRange = (/((i * delta), i = 0, numPoints - 1)/)
     timeRange = timeRange(:) + startPoint
@@ -332,7 +336,6 @@ implicit none
     integer :: i = 0
     integer :: j = 0
 
-    real(8) :: innerDeltaTime = 0
     real(8) :: twoInnerDeltaTime = 0
     real(8) :: innerFinalTime = 0
     real(8) :: outerDeltaTime = 0
@@ -368,9 +371,6 @@ implicit none
 
     call Linspace(timeRange,outerStartTime,outerFinalTime,totalN)
 
-    ! Find the difference between start time and final time
-    totalOuterChange = outerFinalTime - outerStartTime
-
 #if CASE == 10
     ! Find the value by which innerFinalTime is incremented after each iteration
     outerDeltaTime = totalOuterChange / (outerN)
@@ -379,16 +379,13 @@ implicit none
 #endif
 
     ! Determine the delta values
-    innerDeltaTime = timeRange(2)
-    twoInnerDeltaTime = innerDeltaTime * 2
+    twoInnerDeltaTime = timeRange(2) * 2
 
     ! Compute g_0 outerN times
     do i = 1, outerN
 
         ! Find the initial value for g_1
         gCurrent = complex(DrivingFunction(timeRange(i*innerN)),0)
-
-        ! Determine the initial value for the driving function argument
 
         do j = i*innerN,2,-1
 

@@ -379,7 +379,7 @@ implicit none
 #endif
 
     ! Determine the delta values
-    innerDeltaTime = outerDeltaTime /  innerN
+    innerDeltaTime = timeRange(2)
     twoInnerDeltaTime = innerDeltaTime * 2
 
     ! Compute g_0 outerN times

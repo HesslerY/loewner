@@ -345,6 +345,10 @@ implicit none
     complex(8) :: bTerm = 0
     complex(8) :: cTerm = 0
 
+    integer :: totalN
+
+    real(8), dimension(:), allocatable :: timeRange
+
     ! Function declarations
     real(8) :: ComputeCAlpha
     real(8) :: DrivingFunction
@@ -357,6 +361,12 @@ implicit none
         sqrtParam = ComputeCAlpha(sqrtDrivingArg)
 #endif
     endif
+
+    totalN = innerN * outerN
+
+    Allocate(timeRange(1:totalN))
+
+    call Linspace(timeRange,outerStartTime,outerFinalTime,totalN)
 
     ! Find the difference between start time and final time
     totalOuterChange = outerFinalTime - outerStartTime
@@ -375,19 +385,14 @@ implicit none
     ! Compute g_0 outerN times
     do i = 1, outerN
 
-        ! Set innerFinalTime
-        innerFinalTime = outerStartTime + ((i - 1) * outerDeltaTime)
-
         ! Find the initial value for g_1
-        gCurrent = complex(DrivingFunction(innerFinalTime),0)
-
-        ! Reset the counter for the inner loop
-        j = 0
+        gCurrent = complex(DrivingFunction(timeRange(i*innerN)),0)
 
         ! Determine the initial value for the driving function argument
-        currentInnerTime = innerFinalTime
 
-        do while (currentInnerTime > 0)
+        do j = i*innerN,2,-1
+
+            currentInnerTime = timeRange(j)
 
             ! Obtain the driving value
             drivingValue = DrivingFunction(currentInnerTime)
@@ -399,10 +404,6 @@ implicit none
 
             ! S
             gCurrent = gPrevious
-
-            j = j + 1
-
-            currentInnerTime = (innerFinalTime - (j * innerDeltaTime)) - innerDeltaTime
 
         end do
 

@@ -33,7 +33,7 @@ def create_loewner_runs():
             loewner_runs[-1].final_time = 25
             loewner_runs[-1].start_time = 0
             loewner_runs[-1].outer_points = 1000
-            loewner_runs[-1].inner_points = 100
+            loewner_runs[-1].inner_points = 10
 
     return loewner_runs
 
@@ -47,7 +47,7 @@ def create_kappa_runs():
         loewner_runs[-1].final_time = 1
         loewner_runs[-1].start_time = 0
         loewner_runs[-1].outer_points = 1000
-        loewner_runs[-1].inner_points = 100
+        loewner_runs[-1].inner_points = 10
         loewner_runs[-1].sqrt_param = kappa
 
     return loewner_runs
@@ -62,7 +62,7 @@ def create_calpha_runs():
         loewner_runs[-1].final_time = 25
         loewner_runs[-1].start_time = 0
         loewner_runs[-1].outer_points = 1000
-        loewner_runs[-1].inner_points = 100
+        loewner_runs[-1].inner_points = 10
         loewner_runs[-1].sqrt_param = alpha
 
     return loewner_runs

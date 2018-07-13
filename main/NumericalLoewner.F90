@@ -330,6 +330,7 @@ implicit none
 
     real(8) :: outerStartTime
     real(8) :: outerFinalTime
+
     real(8), optional :: sqrtDrivingArg
     real(8), optional :: constantDrivingArg
 
@@ -343,14 +344,13 @@ implicit none
 
     real(8) :: twoInnerDeltaTime = 0
     real(8) :: drivingValue = 0
-    real(8) :: currentInnerTime = 0
+
+    real(8), dimension(:), allocatable :: timeRange
 
     complex(8) :: gCurrent = 0
     complex(8) :: gPrevious = 0
     complex(8) :: bTerm = 0
     complex(8) :: cTerm = 0
-
-    real(8), dimension(:), allocatable :: timeRange
 
     ! Function declarations
 
@@ -387,26 +387,26 @@ implicit none
     ! Compute g_0 outerN times
     do i = 1, outerN
 
-        ! Find the initial value for g_1
+        ! Find the value of g at t = inner max time
         gCurrent = complex(DrivingFunction(timeRange(i*innerN)),0)
 
-        ! Iterate from the highest time value to zero
+        ! Iterate backwards from the highest time value to zero
         do j = i*innerN,1,-1
 
-            ! Obtain the driving value
+            ! Obtain the current driving value
             drivingValue = DrivingFunction(timeRange(j))
 
             ! Solve Loewner's equation for the previous time value
             bTerm = (drivingValue + gCurrent) * 0.5
             cTerm = (drivingValue * gCurrent) + twoInnerDeltaTime
-            gPrevious = bTerm + cdsqrt(cTerm - ComplexPower(bTerm,2)) * IMUNIT
+            gCurrent = bTerm + cdsqrt(cTerm - ComplexPower(bTerm,2)) * IMUNIT
 
             ! Replace the current value of g with previous
-            gCurrent = gPrevious
+            ! gCurrent = gPrevious
 
         end do
 
-        ! Place the g(0) value in the array
+        ! Place the g_0 value in the array
         gResult(i) = gCurrent
 
     end do
@@ -419,22 +419,29 @@ use CubicSolver
 implicit none
 
     ! Argument declarations
-    real(8) :: outerStartTime
-    real(8) :: outerFinalTime
+
     integer :: outerN
     integer :: innerN
-    complex(8) :: first_g_arr(outerN)
-    complex(8) :: secnd_g_arr(outerN)
+
+    real(8) :: outerStartTime
+    real(8) :: outerFinalTime
+
     real(8), optional :: sqrtDrivingArg
     real(8), optional :: constDrivingArg
 
+    complex(8) :: first_g_arr(outerN)
+    complex(8) :: secnd_g_arr(outerN)
+
     ! Local variable declarations
+
+    integer :: totalN
     integer :: i = 0
     integer :: j = 0
 
     real(8) :: twoInnerDeltaTime = 0
     real(8) :: drivingValue = 0
-    real(8) :: currentInnerTime = 0
+
+    real(8), dimension(:), allocatable :: timeRange
 
     complex(8) :: c = 0
     complex(8) :: first_g_t1 = 0
@@ -446,14 +453,13 @@ implicit none
     complex(8), dimension(3) :: secnd_polym_coeffs
 
     ! Function declarations
+
     real(8) :: ComputeCAlpha
+    real(8) :: DrivingFunction
     real(8) :: RealPower
     complex(8) :: ComplexPower
-    real(8) :: DrivingFunction
 
-    integer :: totalN
-    real(8), dimension(:), allocatable :: timeRange
-
+    ! Define kappa or calpha in the case of square-root driving
     if (present(sqrtDrivingArg)) then
 #if CASE == 10
         sqrtParam  = sqrtDrivingArg
@@ -462,48 +468,55 @@ implicit none
 #endif
     endif
 
+    ! Define the constant-value in the case of constant driving
     if (present(constDrivingArg)) then
         constantParam  = constDrivingArg
     endif
 
+    ! Find the total number of points in the time interval
     totalN = innerN * outerN
+
+    ! Initialise the time-value array
     Allocate(timeRange(1:totalN))
+
+    ! Use linspace to obtain the time-value array
     call Linspace(timeRange,outerStartTime,outerFinalTime,totalN)
 
-    ! Determine the delta values
+    ! Determine two * delta
     twoInnerDeltaTime = timeRange(2) * 2
 
     ! Compute g_0 outerN times
     do i = 1, outerN
 
-        ! Find the initial values for g
+        ! Find the value of g at t = inner max time
         first_g_t1 = complex(DrivingFunction(timeRange(i*innerN)),0)
         secnd_g_t1 = -first_g_t1
 
+        ! Iterate backwards from the highest time value to zero
         do j = i*innerN,1,-1
 
-            ! Determine the initial value for the driving function argument
-            currentInnerTime = timeRange(j)
-
-            ! Obtain the driving value
-            drivingValue = DrivingFunction(currentInnerTime)
+            ! Obtain the current driving value
+            drivingValue = DrivingFunction(timeRange(j))
 
             c = twoInnerDeltaTime - RealPower(drivingValue,2)
 
+            ! Define the coefficients of the cubic equation for the first trace
             first_polym_coeffs(1) = -first_g_t1
             first_polym_coeffs(2) = c
             first_polym_coeffs(3) = first_g_t1 * RealPower(drivingValue,2)
 
+            ! Define the coefficients of the cubic equation for the second trace
             secnd_polym_coeffs(1) = -secnd_g_t1
             secnd_polym_coeffs(2) = c
             secnd_polym_coeffs(3) = secnd_g_t1 * RealPower(drivingValue,2)
 
+            ! Use the Cubic Solver to find the cube roots for both traces
             first_g_t1 = CubicRoot(first_polym_coeffs)
             secnd_g_t1 = CubicRoot(secnd_polym_coeffs)
 
         end do
 
-        ! Place the latest value in the arrays
+        ! Place the g_0 values in the arrays
         first_g_arr(i) = first_g_t1
         secnd_g_arr(i) = secnd_g_t1
 

@@ -35,9 +35,7 @@ CSVRootMeanSquaredError(z_sol,N,df,start_time,end_time,innerNs,infos)
 % xi(t) = 1 (Cubic)
 %
 
-N = 500;
-start_time = 0;
-end_time = 10;
+N = 1000;
 t_arr = linspace(start_time,end_time,N);
 df = 0;
 num_sol = FileReader(N,df,start_time,end_time,'1-Cubic')
@@ -68,13 +66,11 @@ infos = GenerateInfos(filenameBase,innerNs)
 CSVRootMeanSquaredError(z_sol,N,df,start_time,end_time,innerNs,infos)
 
 %
-% xi(t) = sqrt(1 + 2t) (Cubic)
+% xi(t) = sqrt(1 + t) (Cubic)
 %
 
 df = 14;
-N = 500;
-start_time = 0;
-end_time = 10;
+N = 1000;
 t_arr = linspace(start_time,end_time,N);
 
 altz_sol = zeros(N,1);

@@ -1,13 +1,18 @@
 function RMSFileWriter(df,rms,innerNs)
 
-    outputdir='../../writeuploewner/finalreport/data/'
     extension='.csv'
     runs = length(innerNs)
+
+    if df == 1
+        outputdir='../../writeuploewner/finalreport/data/RMS/Quadratic/'
+    else
+        outputdir='../../writeuploewner/finalreport/data/RMS/Cubic/'
+    end
 
     fileinfo=[string(df) 'RMS'];
 
     fileinfo = string(fileinfo);
-    fullfilename=strcat(outputdir,join(fileinfo,'-'),extension);
+    fullfilename=strcat(outputdir,join(fileinfo,'-'),extension)
 
     fileID = fopen(fullfilename,'w');
 

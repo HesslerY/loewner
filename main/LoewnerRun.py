@@ -30,6 +30,9 @@ class LoewnerRun:
         # Create a results attribute
         self.results = None
 
+        #
+        self.constantParam = 0
+
     def driving_string(self):
 
         # Return a string containing the name of the driving function in square
@@ -122,7 +125,10 @@ class LoewnerRun:
         self.results = empty(self.outer_points, dtype=complex128)
 
         # Solve Loewner's equation with the given parameters
-        NumericalLoewner.quadraticloewner(self.start_time, self.final_time, self.inner_points, self.results)
+        if self.driving_function == 0:
+            NumericalLoewner.quadraticloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresult=self.results, constantdrivingarg=self.constantParam)
+        else:
+            NumericalLoewner.quadraticloewner(self.start_time, self.final_time, self.inner_points, self.results)
 
 class SqrtLoewnerRun(LoewnerRun):
 

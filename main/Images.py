@@ -4,55 +4,73 @@ import Constants
 from Plot import Plot, MultiPlot, InversePlot, MiniPlot, InverseMultiPlot
 from numpy import savetxt, column_stack, full_like, linspace
 
+# Output directory for the CSV files
 output_dir = "/home/dolica/Documents/writeuploewner/finalreport/data/"
+
+# Declare extension for data filename string
+filename_end = ".csv"
+
+# Declare final time for Loewner runs
 final_time = 25
 
-def root_mean_squared_error(exact_sol, approx_sol):
-
-    approx_res = len(approx_sol)
-    approx_t = linspace(0,final_time,approx_res)
-
-    rms = 0
-
-    for i in range(approx_res):
-
-        rms += (approx_sol[i] - exact_sol[i * int(1000/approx_res)])
-        print(i * int(1000/approx_res))
-
-    return sqrt(rms/approx_res)
-
-
+# Create a list of LoewnerRun objects for the different driving functions
 def create_loewner_runs():
 
+    # Create an empty list for LoewnerRun objects
     loewner_runs = []
 
+    # Iterate through the driving functions
     for driving_function in range(Constants.TOTAL_DRIVING_FUNCTIONS):
 
+        # Check that the driving function is not kappa or c_alpha
         if not Constants.squareroot_driving(driving_function):
+
+            # Add a LoewnerRun object to the list that corresponds with the current driving function
             loewner_runs.append(LoewnerRun(driving_function))
+
+            # Set the properties of the LoewnerRun
             loewner_runs[-1].final_time = 25
             loewner_runs[-1].start_time = 0
             loewner_runs[-1].outer_points = 1000
             loewner_runs[-1].inner_points = 10
 
+    # Return list
     return loewner_runs
 
+# Create a list of SqrtLoewnerRun objects for kappa-driving
 def create_kappa_runs():
 
+    # Define the kappa driving index
+    kappa_driving = 10
+
+    # Create an empty list for LoewnerRun objects
     loewner_runs = []
+
+    # Create a list of different kappa values
     kappas = [i + 0.5 for i in range(1,10)]
 
+    # Ireate through the possible kappa values
     for kappa in kappas:
-        loewner_runs.append(SqrtLoewnerRun(10))
+
+        # Add a new LoewnerRun object to the list
+        loewner_runs.append(SqrtLoewnerRun(kappa_driving))
+
+        # Set the LoewnerRun properties
         loewner_runs[-1].final_time = 1
         loewner_runs[-1].start_time = 0
         loewner_runs[-1].outer_points = 1000
         loewner_runs[-1].inner_points = 10
+
+        # Set the kappa value for the LoewnerRun
         loewner_runs[-1].sqrt_param = kappa
 
+    # Return the list
     return loewner_runs
 
+# Create a list of SqrtLoewnerRun objects for calpha-driving
 def create_calpha_runs():
+
+    calpha_driving = 11
 
     loewner_runs = []
     alphas = [i * 0.1 for i in range(1,10)]
@@ -67,11 +85,10 @@ def create_calpha_runs():
 
     return loewner_runs
 
+# Create three lists of LoewnerRuns
 loewner_runs = create_loewner_runs()
 kappa_runs = create_kappa_runs()
 calpha_runs = create_calpha_runs()
-
-filename_end = ".csv"
 
 def sqrt_to_string(sqrt):
 
@@ -89,7 +106,11 @@ def properties_string(properties):
 def create_csv(loewner_run):
 
     data = loewner_run.results
-    filename = output_dir + properties_string(generate_properties(loewner_run)) + filename_end
+
+    if loewner_run.driving_function == 1:
+        filename = output_dir + properties_string(generate_properties(loewner_run)) + "-" + str(loewner_run.inner_points) + filename_end
+    else:
+        filename = output_dir + properties_string(generate_properties(loewner_run)) + filename_end
 
     real_vals = data.real
     imag_vals = data.imag
@@ -149,6 +170,17 @@ for run in loewner_runs:
     inv_create_csv(time_arr,driving_arr,[df] + res)
 
     print("Finished driving function " + str(df))
+
+exact_sol_res = [5,50,100,200,300,400,500]
+run = loewner_runs[1]
+
+for res in exact_sol_res:
+
+    run.inner_points = res
+    run.perform_loewner()
+    res = [run.start_time, run.final_time, run.outer_points]
+    points = run.results
+    create_csv(run)
 
 constant_final_times = [1,4,9,16]
 constant_run = loewner_runs[0]

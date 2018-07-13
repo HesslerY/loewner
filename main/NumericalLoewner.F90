@@ -7,6 +7,24 @@
 !                                                                              !
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+! Module for defining constants
+module Constants
+implicit none
+
+   ! Define pi
+   real(8), parameter :: PI = 4.*atan(1.)
+
+   ! 'Empty' parameter used for setting constant driving value
+   real(8) :: constantParam = 0.0
+
+   ! 'Empty' parameter used for setting alpha/kappa
+   real(8) :: sqrtParam = 0.0
+
+   ! Define imaginary unit
+   complex, parameter :: IMUNIT = complex(0,1)
+
+end module Constants
+
 ! Function for finding the base^expn with a real base
 function RealPower(base,expn)
 
@@ -36,24 +54,6 @@ function ComplexPower(base,expn)
     ComplexPower = base ** expn
 
 end function ComplexPower
-
-! Module for defining constants
-module Constants
-implicit none
-
-   ! Define pi
-   real(8), parameter :: PI = 4.*atan(1.)
-
-   ! 'Empty' parameter used for setting constant driving value
-   real(8) :: constantParam = 0.0
-
-   ! 'Empty' parameter used for setting alpha/kappa
-   real(8) :: sqrtParam = 0.0
-
-   ! Define imaginary unit
-   complex, parameter :: IMUNIT = complex(0,1)
-
-end module Constants
 
 ! Module for solving cubic functions
 module CubicSolver
@@ -230,7 +230,7 @@ use Constants
     real(8) :: DrivingFunction
 
 #if CASE == 0
-    DrivingFunction = 1.0
+    DrivingFunction = constantParam
 
 #elif CASE == 1
     DrivingFunction = t
@@ -305,6 +305,7 @@ subroutine Linspace(timeRange,startPoint,endPoint,numPoints)
     real(8) :: endPoint
     integer :: numPoints
 
+    ! Local variable declaration
     real(8) :: delta
 
 #if CASE == 10
@@ -318,21 +319,25 @@ subroutine Linspace(timeRange,startPoint,endPoint,numPoints)
 
 end subroutine Linspace
 
-subroutine QuadraticLoewner(outerStartTime, outerFinalTime, outerN, innerN, gResult, sqrtDrivingArg)
+subroutine QuadraticLoewner(outerStartTime, outerFinalTime, outerN, innerN, gResult, sqrtDrivingArg, constantDrivingArg)
 use Constants
 implicit none
 
     ! Argument declarations
+
     integer :: outerN
     integer :: innerN
 
     real(8) :: outerStartTime
     real(8) :: outerFinalTime
     real(8), optional :: sqrtDrivingArg
+    real(8), optional :: constantDrivingArg
 
     complex(8) :: gResult(outerN)
 
     ! Local variable declarations
+
+    integer :: totalN
     integer :: i = 0
     integer :: j = 0
 
@@ -345,16 +350,15 @@ implicit none
     complex(8) :: bTerm = 0
     complex(8) :: cTerm = 0
 
-    integer :: totalN
-
     real(8), dimension(:), allocatable :: timeRange
 
     ! Function declarations
+
     real(8) :: ComputeCAlpha
     real(8) :: DrivingFunction
     complex(8) :: ComplexPower
 
-#if CASE == 10 || CASE == 11
+    ! Define kappa or calpha in the case of square-root driving
     if (present(sqrtDrivingArg)) then
 #if CASE == 10
         sqrtParam  = sqrtDrivingArg
@@ -362,15 +366,22 @@ implicit none
         sqrtParam = ComputeCAlpha(sqrtDrivingArg)
 #endif
     endif
-#endif
 
+    ! Define the constant-value in the case of constant driving
+    if (present(constantDrivingArg)) then
+        constantParam  = constantDrivingArg
+    endif
+
+    ! Find the total number of points in the time interval
     totalN = innerN * outerN
 
+    ! Initialise the time-value array
     Allocate(timeRange(1:totalN))
 
+    ! Use linspace to obtain the time-value array
     call Linspace(timeRange,outerStartTime,outerFinalTime,totalN)
 
-    ! Determine the delta values
+    ! Determine two * delta
     twoInnerDeltaTime = timeRange(2) * 2
 
     ! Compute g_0 outerN times
@@ -379,31 +390,30 @@ implicit none
         ! Find the initial value for g_1
         gCurrent = complex(DrivingFunction(timeRange(i*innerN)),0)
 
-        do j = i*innerN,2,-1
-
-            currentInnerTime = timeRange(j)
+        ! Iterate from the highest time value to zero
+        do j = i*innerN,1,-1
 
             ! Obtain the driving value
-            drivingValue = DrivingFunction(currentInnerTime)
+            drivingValue = DrivingFunction(timeRange(j))
 
-            ! Solve Loewner's equation
+            ! Solve Loewner's equation for the previous time value
             bTerm = (drivingValue + gCurrent) * 0.5
             cTerm = (drivingValue * gCurrent) + twoInnerDeltaTime
             gPrevious = bTerm + cdsqrt(cTerm - ComplexPower(bTerm,2)) * IMUNIT
 
-            ! S
+            ! Replace the current value of g with previous
             gCurrent = gPrevious
 
         end do
 
-        ! Place the latest value in the array
+        ! Place the g(0) value in the array
         gResult(i) = gCurrent
 
     end do
 
 end subroutine QuadraticLoewner
 
-subroutine CubicLoewner(outerStartTime, outerFinalTime, outerN, innerN, first_g_arr, secnd_g_arr, sqrtDrivingArg)
+subroutine CubicLoewner(outerStartTime, outerFinalTime, outerN, innerN, first_g_arr, secnd_g_arr, sqrtDrivingArg,constDrivingArg)
 use Constants
 use CubicSolver
 implicit none
@@ -416,17 +426,14 @@ implicit none
     complex(8) :: first_g_arr(outerN)
     complex(8) :: secnd_g_arr(outerN)
     real(8), optional :: sqrtDrivingArg
+    real(8), optional :: constDrivingArg
 
     ! Local variable declarations
     integer :: i = 0
     integer :: j = 0
 
-    real(8) :: innerDeltaTime = 0
     real(8) :: twoInnerDeltaTime = 0
-    real(8) :: innerFinalTime = 0
-    real(8) :: outerDeltaTime = 0
     real(8) :: drivingValue = 0
-    real(8) :: totalOuterChange = 0
     real(8) :: currentInnerTime = 0
 
     complex(8) :: c = 0
@@ -444,6 +451,9 @@ implicit none
     complex(8) :: ComplexPower
     real(8) :: DrivingFunction
 
+    integer :: totalN
+    real(8), dimension(:), allocatable :: timeRange
+
     if (present(sqrtDrivingArg)) then
 #if CASE == 10
         sqrtParam  = sqrtDrivingArg
@@ -452,37 +462,28 @@ implicit none
 #endif
     endif
 
-    ! Find the difference between start time and final time
-    totalOuterChange = outerFinalTime - outerStartTime
+    if (present(constDrivingArg)) then
+        constantParam  = constDrivingArg
+    endif
 
-#if CASE == 10
-    ! Find the value by which innerFinalTime is incremented after each iteration
-    outerDeltaTime = totalOuterChange / (outerN)
-#else
-    outerDeltaTime = totalOuterChange / (outerN - 1)
-#endif
+    totalN = innerN * outerN
+    Allocate(timeRange(1:totalN))
+    call Linspace(timeRange,outerStartTime,outerFinalTime,totalN)
 
     ! Determine the delta values
-    innerDeltaTime = outerDeltaTime /  innerN
-    twoInnerDeltaTime = innerDeltaTime * 2
+    twoInnerDeltaTime = timeRange(2) * 2
 
     ! Compute g_0 outerN times
     do i = 1, outerN
 
-        ! Set max time
-        innerFinalTime = outerStartTime + ((i - 1) * outerDeltaTime)
-
         ! Find the initial values for g
-        first_g_t1 = complex(DrivingFunction(innerFinalTime),0)
+        first_g_t1 = complex(DrivingFunction(timeRange(i*innerN)),0)
         secnd_g_t1 = -first_g_t1
 
-        ! Reset the counter for the inner loop
-        j = 0
+        do j = i*innerN,1,-1
 
-        ! Determine the initial value for the driving function argument
-        currentInnerTime = innerFinalTime
-
-        do while (currentInnerTime > 0)
+            ! Determine the initial value for the driving function argument
+            currentInnerTime = timeRange(j)
 
             ! Obtain the driving value
             drivingValue = DrivingFunction(currentInnerTime)
@@ -499,12 +500,6 @@ implicit none
 
             first_g_t1 = CubicRoot(first_polym_coeffs)
             secnd_g_t1 = CubicRoot(secnd_polym_coeffs)
-
-            ! Increment counter
-            j = j + 1
-
-            ! Check driving value argument for next interation
-            currentInnerTime = (innerFinalTime - (j * innerDeltaTime)) - innerDeltaTime
 
         end do
 

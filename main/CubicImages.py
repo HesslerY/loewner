@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 import subprocess
 
 start_time = 0
-final_time = 10
-outer_n = 500
-inner_n = 100
+final_time = 25
+outer_n = 1000
+inner_n = 10
 
 first_g_arr = empty(outer_n, dtype=complex128)
 second_g_arr = empty(outer_n,  dtype=complex128)
@@ -73,9 +73,16 @@ def runCubicLoewner(i):
     subprocess.check_output(module_test)
     module_name = "modules.NumericalLoewner_" + str(i)
     CubicLoewner = import_module(module_name)
-    CubicLoewner.cubicloewner(start_time=start_time, final_time=final_time, inner_n=inner_n, first_g_arr=first_g_arr, secnd_g_arr=second_g_arr)
 
-    createCubicCSV(i,[first_g_arr,second_g_arr])
+    if i == 0:
+        CubicLoewner.cubicloewner(outerstarttime=start_time, outerfinaltime=final_time, innern=inner_n, first_g_arr=first_g_arr, secnd_g_arr=second_g_arr, constdrivingarg=1)
+    else:
+        CubicLoewner.cubicloewner(outerstarttime=start_time, outerfinaltime=final_time, innern=inner_n, first_g_arr=first_g_arr, secnd_g_arr=second_g_arr)
+
+    if i == 0 or i == 14:
+        createCubicCSV(i,[first_g_arr,second_g_arr],inner_n)
+    else:
+        createCubicCSV(i,[first_g_arr,second_g_arr])
 
 def createCSVFilename(df,root):
 
@@ -127,7 +134,7 @@ def runSquareRootCubicLoewner(i,sqrtparam):
     subprocess.check_output(module_test)
     module_name = "modules.NumericalLoewner_" + str(i)
     CubicLoewner = import_module(module_name)
-    CubicLoewner.cubicloewner(start_time=start_time, final_time=final_time, inner_n=inner_n, first_g_arr=first_g_arr, secnd_g_arr=second_g_arr,sqrt_driving=sqrtparam)
+    CubicLoewner.cubicloewner(outerstarttime=start_time, outerfinaltime=final_time, innern=inner_n, first_g_arr=first_g_arr, secnd_g_arr=second_g_arr,sqrtdrivingarg=sqrtparam)
 
     createSquareRootCubicCSV(i,sqrtparam,[first_g_arr,second_g_arr])
 
@@ -146,15 +153,23 @@ def RMSCubicLoewner(i):
 
     for inner_n in inner_res:
 
-        CubicLoewner.cubicloewner(start_time=start_time, final_time=final_time, inner_n=inner_n, first_g_arr=first_g_arr, secnd_g_arr=second_g_arr)
+        CubicLoewner.cubicloewner(outerstarttime=start_time, outerfinaltime=final_time, innern=inner_n, first_g_arr=first_g_arr, secnd_g_arr=second_g_arr)
         createCubicCSV(i,[first_g_arr,second_g_arr],inner_n)
 
-RMSCubicLoewner(0)
-exit()
-RMSCubicLoewner(14)
+# RMSCubicLoewner(0)
+# RMSCubicLoewner(14)
 
 for drivingFunction in nonSquareRootDriving:
     runCubicLoewner(drivingFunction)
+    print("Completed driving function " + str(drivingFunction))
+
+exact_res = [5,10,50,100,200,300,400,500]
+error_runs = [0,14]
+
+for df in error_runs:
+    for res in exact_res:
+        inner_n = res
+        runCubicLoewner(df)
 
 final_time = 1
 print("Doing square root stuff.")

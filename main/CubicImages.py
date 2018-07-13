@@ -31,10 +31,7 @@ def sqrtToString(sqrt):
 
 def runCubicLoewner(i):
 
-    if i == 14:
-        module_test = ["f2py", "-c", "-DCASE="+str(i), "NumericalLoewner.F90", "-m", "modules.NumericalLoewner_"+str(i)]
-    else:
-        module_test = ["f2py", "-c", "-DCASE="+str(i), "NumericalLoewner.F90", "-m", "modules.NumericalLoewner_"+str(i)]
+    module_test = ["f2py", "-c", "-DCASE="+str(i), "NumericalLoewner.F90", "-m", "modules.NumericalLoewner_"+str(i)]
 
     subprocess.check_output(module_test)
     module_name = "modules.NumericalLoewner_" + str(i)
@@ -45,10 +42,7 @@ def runCubicLoewner(i):
     else:
         CubicLoewner.cubicloewner(outerstarttime=start_time, outerfinaltime=final_time, innern=inner_n, first_g_arr=first_g_arr, secnd_g_arr=second_g_arr)
 
-    if i == 0 or i == 14:
-        createCubicCSV(i,[first_g_arr,second_g_arr],inner_n)
-    else:
-        createCubicCSV(i,[first_g_arr,second_g_arr])
+    createCubicCSV(i,[first_g_arr,second_g_arr])
 
 def createCSVFilename(df,root):
 
@@ -121,14 +115,17 @@ def RMSCubicLoewner(i):
 
         CubicLoewner.cubicloewner(outerstarttime=start_time, outerfinaltime=final_time, innern=inner_n, first_g_arr=first_g_arr, secnd_g_arr=second_g_arr)
         createCubicCSV(i,[first_g_arr,second_g_arr],inner_n)
-        print("Completed driving function " + str(drivingFunction) + " with inner resolution of " +str(inner_n))
+        print("Completed driving function " + str(i) + " with inner resolution of " +str(inner_n))
 
 for drivingFunction in nonSquareRootDriving:
     runCubicLoewner(drivingFunction)
     print("Completed driving function " + str(drivingFunction))
 
-# RMSCubicLoewner(0)
-# RMSCubicLoewner(14)
+RMSCubicLoewner(0)
+RMSCubicLoewner(14)
+
+exit()
+
 inner_n = 10
 
 final_time = 1

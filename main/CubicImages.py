@@ -17,43 +17,9 @@ alphas = [i * 0.1 for i in range(1,10)]
 nonSquareRootDriving = [i for i in range(10)] + [i for i in range(12,15)]
 
 output_dir = "/home/dolica/Documents/writeuploewner/finalreport/data/"
-MAX_RES = 500
-
-def read_exact_sol():
-
-    exact_data = []
-    exact_data.append(open("/home/dolica/Documents/writeuploewner/finalreport/data/14-0-10-500-1-Cubic-Exact.csv","r"))
-    exact_data.append(open("/home/dolica/Documents/writeuploewner/finalreport/data/14-0-10-500-2-Cubic-Exact.csv","r"))
-
-    exact_sols = [empty(MAX_RES,dtype=complex128),empty(MAX_RES,dtype=complex128)]
-
-    for j in range(2):
-
-        data = exact_data[j]
-        i = 0
-
-        for line in data.readlines():
-
-            values = line.split()
-            exact_sols[j][i] = float(values[0]) + (float(values[1]) * 1j)
-
-            i += 1
-
-    return exact_sols
 
 def plot_me(data):
     plt.plot(data.real, data.imag)
-
-def root_mean_squared_error(exact_sol, approx_sol):
-
-    rms = 0
-
-    for i in range(MAX_RES):
-
-        diff = (absolute(approx_sol[i]) - absolute(exact_sol[i]))
-        rms += diff ** 2
-
-    return (1/MAX_RES) * sqrt(rms)
 
 def sqrtToString(sqrt):
 
@@ -155,29 +121,24 @@ def RMSCubicLoewner(i):
 
         CubicLoewner.cubicloewner(outerstarttime=start_time, outerfinaltime=final_time, innern=inner_n, first_g_arr=first_g_arr, secnd_g_arr=second_g_arr)
         createCubicCSV(i,[first_g_arr,second_g_arr],inner_n)
-
-# RMSCubicLoewner(0)
-# RMSCubicLoewner(14)
+        print("Completed driving function " + str(drivingFunction) + " with inner resolution of " +str(inner_n))
 
 for drivingFunction in nonSquareRootDriving:
     runCubicLoewner(drivingFunction)
     print("Completed driving function " + str(drivingFunction))
 
-exact_res = [5,10,50,100,200,300,400,500]
-error_runs = [0,14]
-
-for df in error_runs:
-    for res in exact_res:
-        inner_n = res
-        runCubicLoewner(df)
+# RMSCubicLoewner(0)
+# RMSCubicLoewner(14)
+inner_n = 10
 
 final_time = 1
-print("Doing square root stuff.")
 
 for kappa in kappas:
     runSquareRootCubicLoewner(10,kappa)
+    print("Compled kappa " + str(kappa))
 
-final_time = 10
+final_time = 25
 
 for alpha in alphas:
     runSquareRootCubicLoewner(11,alpha)
+    print("Compled calpha " + str(alpha))

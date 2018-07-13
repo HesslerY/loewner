@@ -300,10 +300,12 @@ end function ComputeCAlpha
 subroutine Linspace(timeRange,startPoint,endPoint,numPoints)
 
     ! Argument declaration
-    real(8), dimension(numPoints) :: timeRange
+    integer :: numPoints
+
     real(8) :: startPoint
     real(8) :: endPoint
-    integer :: numPoints
+
+    real(8), dimension(numPoints) :: timeRange
 
     ! Local variable declaration
     real(8) :: delta

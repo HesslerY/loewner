@@ -9,7 +9,7 @@ t_arr = linspace(start_time,end_time,N);
 df = 1;
 initial_guess = @(t) 2 * 1i * sqrt(t) + (2/3) * t;
 
-num_sol = FileReader(N,df,start_time,end_time)
+num_sol = FileReader(N,df,start_time,end_time,'10')
 z_sol = zeros(N,1);
 
 for i = 1:N
@@ -38,7 +38,7 @@ CSVRootMeanSquaredError(z_sol,N,df,start_time,end_time,innerNs,infos)
 N = 1000;
 t_arr = linspace(start_time,end_time,N);
 df = 0;
-num_sol = FileReader(N,df,start_time,end_time,'1-Cubic')
+num_sol = FileReader(N,df,start_time,end_time,'1-Cubic-10')
 
 initial_guess = @(t) 1 + 1i * sqrt(2*t) - (1/3) * t;
 
@@ -78,7 +78,7 @@ altz_sol = zeros(N,1);
 a0 = 1;
 d0 = 1;
 
-num_sol = FileReader(N,df,start_time,end_time,'1-Cubic')
+num_sol = FileReader(N,df,start_time,end_time,'1-Cubic-10')
 p = [-1, 0, 10*a0^2, 0, -25*a0^4, 0];
 
 for i = 1:N

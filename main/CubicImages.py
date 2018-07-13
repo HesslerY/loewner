@@ -14,7 +14,7 @@ second_g_arr = empty(outer_n,  dtype=complex128)
 
 kappas = [i + 0.5 for i in range(10)]
 alphas = [i * 0.1 for i in range(1,10)]
-nonSquareRootDriving = [i for i in range(10)] + [i for i in range(12,15)]
+nonSquareRootDriving = [i for i in range(1,10)] + [i for i in range(12,13)]
 
 output_dir = "/home/dolica/Documents/writeuploewner/finalreport/data/"
 
@@ -98,7 +98,7 @@ def runSquareRootCubicLoewner(i,sqrtparam):
 
     createSquareRootCubicCSV(i,sqrtparam,[first_g_arr,second_g_arr])
 
-def RMSCubicLoewner(i):
+def RMSCubicLoewner(i,const=None):
 
     inner_res = [5, 10, 50, 100, 200, 300, 400, 500]
     module_test = ["f2py", "-c", "-DCASE="+str(i), "NumericalLoewner.F90", "-m", "modules.NumericalLoewner_"+str(i)]
@@ -113,7 +113,11 @@ def RMSCubicLoewner(i):
 
     for inner_n in inner_res:
 
-        CubicLoewner.cubicloewner(outerstarttime=start_time, outerfinaltime=final_time, innern=inner_n, first_g_arr=first_g_arr, secnd_g_arr=second_g_arr)
+        if const is None:
+            CubicLoewner.cubicloewner(outerstarttime=start_time, outerfinaltime=final_time, innern=inner_n, first_g_arr=first_g_arr, secnd_g_arr=second_g_arr)
+        else:
+            CubicLoewner.cubicloewner(outerstarttime=start_time, outerfinaltime=final_time, innern=inner_n, first_g_arr=first_g_arr, secnd_g_arr=second_g_arr, constdrivingarg=1)
+
         createCubicCSV(i,[first_g_arr,second_g_arr],inner_n)
         print("Completed driving function " + str(i) + " with inner resolution of " +str(inner_n))
 
@@ -121,7 +125,7 @@ for drivingFunction in nonSquareRootDriving:
     runCubicLoewner(drivingFunction)
     print("Completed driving function " + str(drivingFunction))
 
-RMSCubicLoewner(0)
+RMSCubicLoewner(0,1)
 RMSCubicLoewner(14)
 
 exit()

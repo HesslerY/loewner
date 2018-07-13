@@ -475,7 +475,7 @@ implicit none
     endif
 
     ! Find the total number of points in the time interval
-    totalN = innerN * outerN
+    totalN = innerN * (outerN - 1)
 
     ! Initialise the time-value array
     Allocate(timeRange(1:totalN))
@@ -486,8 +486,12 @@ implicit none
     ! Determine two * delta
     twoInnerDeltaTime = timeRange(2) * 2
 
+    ! Set the first elements to be +/-ve value of driving function at t = 0
+    first_g_arr(1) = complex(DrivingFunction(timeRange(1)),0)
+    secnd_g_arr(1) = -first_g_arr(1)
+
     ! Compute g_0 outerN times
-    do i = 1, outerN
+    do i = 1, outerN - 1
 
         ! Find the value of g at t = inner max time
         first_g_t1 = complex(DrivingFunction(timeRange(i*innerN)),0)
@@ -518,8 +522,8 @@ implicit none
         end do
 
         ! Place the g_0 values in the arrays
-        first_g_arr(i) = first_g_t1
-        secnd_g_arr(i) = secnd_g_t1
+        first_g_arr(i + 1) = first_g_t1
+        secnd_g_arr(i + 1) = secnd_g_t1
 
     end do
 

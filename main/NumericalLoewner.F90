@@ -350,7 +350,6 @@ implicit none
     real(8), dimension(:), allocatable :: timeRange
 
     complex(8) :: gCurrent = 0
-    complex(8) :: gPrevious = 0
     complex(8) :: bTerm = 0
     complex(8) :: cTerm = 0
 
@@ -375,7 +374,7 @@ implicit none
     endif
 
     ! Find the total number of points in the time interval
-    totalN = innerN * outerN
+    totalN = innerN * (outerN - 1)
 
     ! Initialise the time-value array
     Allocate(timeRange(1:totalN))
@@ -386,8 +385,11 @@ implicit none
     ! Determine two * delta
     twoInnerDeltaTime = timeRange(2) * 2
 
-    ! Compute g_0 outerN times
-    do i = 1, outerN
+    ! Set the first element to be the driving function at t = 0
+    gResult(1) = complex(DrivingFunction(timeRange(1)),0)
+
+    ! Compute g_0 outerN  - 1 times
+    do i = 1, outerN - 1
 
         ! Find the value of g at t = inner max time
         gCurrent = complex(DrivingFunction(timeRange(i*innerN)),0)
@@ -403,13 +405,10 @@ implicit none
             cTerm = (drivingValue * gCurrent) + twoInnerDeltaTime
             gCurrent = bTerm + cdsqrt(cTerm - ComplexPower(bTerm,2)) * IMUNIT
 
-            ! Replace the current value of g with previous
-            ! gCurrent = gPrevious
-
         end do
 
         ! Place the g_0 value in the array
-        gResult(i) = gCurrent
+        gResult(i + 1) = gCurrent
 
     end do
 

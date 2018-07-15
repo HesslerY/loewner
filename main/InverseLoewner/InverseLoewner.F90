@@ -6,9 +6,6 @@
 !                                                                              !
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-program test
-end program test
-
 pure function compute_h(z,lower_delta,upper_delta) result(h)
 
     complex(8), intent(in) :: z ! Argument
@@ -73,3 +70,7 @@ subroutine inverse_loewner(g_arr, total_points, driving_arr, time_arr)
     enddo
 
 end subroutine inverse_loewner
+
+program test
+end program test
+

@@ -1,3 +1,6 @@
+% Add the WedgeLoewner path in order to use DrivingFunction.m
+addpath('../WedgeLoewner')
+
 % Set the weight to 1
 d = 1
 

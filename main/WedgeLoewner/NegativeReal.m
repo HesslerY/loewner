@@ -1,1 +1,0 @@
-ExactSolutions/NegativeReal.m

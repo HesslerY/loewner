@@ -1,3 +1,6 @@
+% Add the ExactSolution path in order to use the NegativeReal function
+addpath('../ExactSolutions')
+
 % Discretise time interval
 N = 1000
 tStart = 0

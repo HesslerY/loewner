@@ -3,7 +3,7 @@ import Constants
 import sys
 sys.path.append('../')
 
-from LoewnerRun import LoewnerRun, SqrtLoewnerRun, ExactLoewnerRun
+from ForwardRun import ForwardRun, SqrtForwardRun, ExactForwardRun
 from InverseRun import InverseRun
 from Plot import Plot, MultiPlot, InversePlot, MiniPlot, InverseMultiPlot
 from numpy import savetxt, column_stack, full_like, linspace
@@ -17,10 +17,10 @@ filename_end = ".csv"
 # Declare final time for Loewner runs
 final_time = 25
 
-# Create a list of LoewnerRun objects for the different driving functions
+# Create a list of ForwardRun objects for the different driving functions
 def create_loewner_runs():
 
-    # Create an empty list for LoewnerRun objects
+    # Create an empty list for ForwardRun objects
     loewner_runs = []
 
     # Iterate through the driving functions
@@ -29,10 +29,10 @@ def create_loewner_runs():
         # Check that the driving function is not kappa or c_alpha
         if not Constants.squareroot_driving(driving_function):
 
-            # Add a LoewnerRun object to the list that corresponds with the current driving function
-            loewner_runs.append(LoewnerRun(driving_function))
+            # Add a ForwardRun object to the list that corresponds with the current driving function
+            loewner_runs.append(ForwardRun(driving_function))
 
-            # Set the properties of the LoewnerRun
+            # Set the properties of the ForwardRun
             loewner_runs[-1].final_time = 25
             loewner_runs[-1].start_time = 0
             loewner_runs[-1].outer_points = 1000
@@ -41,13 +41,13 @@ def create_loewner_runs():
     # Return list
     return loewner_runs
 
-# Create a list of SqrtLoewnerRun objects for kappa-driving
+# Create a list of SqrtForwardRun objects for kappa-driving
 def create_kappa_runs():
 
     # Define the kappa driving index
     kappa_driving = 10
 
-    # Create an empty list for LoewnerRun objects
+    # Create an empty list for ForwardRun objects
     loewner_runs = []
 
     # Create a list of different kappa values
@@ -56,22 +56,22 @@ def create_kappa_runs():
     # Ireate through the possible kappa values
     for kappa in kappas:
 
-        # Add a new LoewnerRun object to the list
-        loewner_runs.append(SqrtLoewnerRun(kappa_driving))
+        # Add a new ForwardRun object to the list
+        loewner_runs.append(SqrtForwardRun(kappa_driving))
 
-        # Set the LoewnerRun properties
+        # Set the ForwardRun properties
         loewner_runs[-1].final_time = 1
         loewner_runs[-1].start_time = 0
         loewner_runs[-1].outer_points = 1000
         loewner_runs[-1].inner_points = 10
 
-        # Set the kappa value for the LoewnerRun
+        # Set the kappa value for the ForwardRun
         loewner_runs[-1].sqrt_param = kappa
 
     # Return the list
     return loewner_runs
 
-# Create a list of SqrtLoewnerRun objects for calpha-driving
+# Create a list of SqrtForwardRun objects for calpha-driving
 def create_calpha_runs():
 
     calpha_driving = 11
@@ -80,7 +80,7 @@ def create_calpha_runs():
     alphas = [i * 0.1 for i in range(1,10)]
 
     for alpha in alphas:
-        loewner_runs.append(SqrtLoewnerRun(11))
+        loewner_runs.append(SqrtForwardRun(11))
         loewner_runs[-1].final_time = 25
         loewner_runs[-1].start_time = 0
         loewner_runs[-1].outer_points = 1000
@@ -89,7 +89,7 @@ def create_calpha_runs():
 
     return loewner_runs
 
-# Create three lists of LoewnerRuns
+# Create three lists of ForwardRuns
 loewner_runs = create_loewner_runs()
 kappa_runs = create_kappa_runs()
 calpha_runs = create_calpha_runs()

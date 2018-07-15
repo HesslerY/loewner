@@ -4,7 +4,7 @@ from subprocess import CalledProcessError
 from numpy import empty, delete, complex128
 from importlib import import_module
 
-class LoewnerRun:
+class ForwardRun:
 
     def __init__(self, driving_function, filename = "ForwardLoewner"):
 
@@ -130,11 +130,11 @@ class LoewnerRun:
         else:
             ForwardLoewner.quadraticloewner(self.start_time, self.final_time, self.inner_points, self.results)
 
-class SqrtLoewnerRun(LoewnerRun):
+class SqrtForwardRun(ForwardRun):
 
     def __init__(self, driving_function):
 
-        LoewnerRun.__init__(self, driving_function)
+        ForwardRun.__init__(self, driving_function)
         self.sqrt_param = None
 
     def sqrt_param_string(self, param_name, param_val):
@@ -159,11 +159,11 @@ class SqrtLoewnerRun(LoewnerRun):
         self.results = empty(self.outer_points, dtype=complex128)
         ForwardLoewner.quadraticloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresult=self.results, sqrtdrivingarg=self.sqrt_param)
 
-class ExactLoewnerRun(LoewnerRun):
+class ExactForwardRun(ForwardRun):
 
     def __init__(self, driving_function):
 
-        LoewnerRun.__init__(self, driving_function, "ExactLoewner")
+        ForwardRun.__init__(self, driving_function, "ExactLoewner")
         self.module_name = "modules.ExactLoewner"
 
     def driving_string(self):

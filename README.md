@@ -7,9 +7,17 @@
 - [x] ~~Double check the `implicit none`'s in `NumericalLoewner.F90`~~ 
 - [x] ~~Tidy `InverseLoewner.F90` and refine comments~~
 - [ ] Make sure style is consistent across files 
+- [ ] Remove input things from `ForwardRun.py` and related files 
+- [ ] Create `CubicRun` class 
+- [ ] Deal with `pass` statements 
+- [ ] Commentify `InverseRun.py` 
+- [ ] Commentify `QuadraticImages.py` 
 - [x] Organise files into separate folders 
 - [ ] Enhance Matlab's float output for root-mean-squared files 
 ## Get Around To It
+- [ ] Create script that setups file output directory across all files 
+    - [ ] Place output directory in `Constants.py` 
+- [ ] Create plot/save data option 
 - [ ] Tidy cubic image plot script 
 - [ ] Examine ApproxLoewner 
 - [ ] Setup something for the alternative xi(t) = t exact solution (script, tidying, etc) 
@@ -18,6 +26,7 @@
 - [ ] Add detailed input/output explanation to every function 
 ## Towards The End
 - [ ] Replace this file with instructions for use, explanation of overall structure, etc (and describe this in report) 
+    - [ ] Add appropriate `README`s in subfolders 
 ## Ongoing 
 - [ ] Differentiate between cubic and quadratic, forward and inverse, etc 
 # Marking Scheme

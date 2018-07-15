@@ -49,7 +49,6 @@ end function ComplexSquare
 
 ! Function for computing H from which the driving function values are derived
 function ComputeH(z,lowerDelta,upperDelta)
-use Constants
 implicit none
 
     ! Argument declarations
@@ -64,7 +63,7 @@ implicit none
     complex(8) :: ComplexSquare
 
     ! Obtain the value of h
-    ComputeH = ComplexSquare(cdsqrt((z - lowerDelta))) + (4 * upperDelta)
+    ComputeH = cdsqrt(ComplexSquare(z - lowerDelta) + (4 * upperDelta))
 
     ! Change sign of the imaginary component of h is negative
     if (imagpart(ComputeH) < 0) then

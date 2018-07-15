@@ -36,7 +36,7 @@ implicit none
     ! Return value declaration
     real(8) :: RealPower
 
-    ! Find the square of x
+    ! Find the square of the base
     RealPower = base ** expn
 
 end function RealPower
@@ -52,7 +52,7 @@ implicit none
     ! Return value declaration
     complex(8) :: ComplexPower
 
-    ! Find the square of x
+    ! Find the square of the base
     ComplexPower = base ** expn
 
 end function ComplexPower

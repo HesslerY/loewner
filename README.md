@@ -4,7 +4,7 @@
 ## Really Important Things
 - [x] ~~Change final time for cubic plots again~~  
 - [x] ~~Tidy `NumericalLoewner.F90` and refine comments~~
-- [x] ~~Double check the `implicit none`'s in `NumericalLoewner.F90` ~~ 
+- [x] ~~Double check the `implicit none`'s in `NumericalLoewner.F90`~~ 
 - [ ] Tidy `InverseLoewner.F90` and refine comments
 - [ ] Differentiate between cubic and quadratic, forward and inverse, etc 
 - [ ] Tidy cubic image plot script 

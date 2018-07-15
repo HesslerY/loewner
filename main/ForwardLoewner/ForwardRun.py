@@ -14,7 +14,7 @@ class ForwardRun:
         # Assign the module code
         self.module_code = str(driving_function)
 
-        self.fortran_filename = filename + ".F90"
+        self.fortran_filename = "../" + filename + "/" + filename + ".F90"
 
         self.module_name = "modules." + filename + "_"  + self.module_code
 
@@ -50,8 +50,10 @@ class ForwardRun:
         # Compile the module with f2py
         try:
             check_output(self.compile_command)
+
         except CalledProcessError:
             print(self.compile_command)
+            call(["ls","-l"])
             print("Error: Could not compile module.")
             exit()
 

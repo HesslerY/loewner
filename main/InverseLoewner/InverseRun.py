@@ -13,7 +13,7 @@ class InverseRun:
 
         filename = "InverseLoewner"
 
-        self.fortran_filename = filename + ".F90"
+        self.fortran_filename = "../" + filename + "/" + filename + ".F90"
 
         self.module_name = "modules." + filename + "_"
 
@@ -23,7 +23,7 @@ class InverseRun:
         # Obtain the time and resolution parameters
         self.start_time = res_params[0]
         self.final_time = res_params[1]
-        self.total_points = res_params[2]
+        self.numpoints = res_params[2]
 
         # Create a results attribute
         self.results = results
@@ -68,9 +68,9 @@ class InverseRun:
             self.compile_inverse()
             InverseLoewner = self.import_inverse()
 
-        driving_arr = empty(self.total_points, dtype=float)
-        time_arr = empty(self.total_points, dtype=float)
-        InverseLoewner.inverse_loewner(self.results, driving_arr, time_arr, self.total_points)
+        driving_arr = empty(self.numpoints, dtype=float)
+        time_arr = empty(self.numpoints, dtype=float)
+        InverseLoewner.inverseloewner(self.results, driving_arr, time_arr, self.numpoints)
 
         self.driving_arr = driving_arr
         self.time_arr = time_arr

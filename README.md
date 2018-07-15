@@ -6,7 +6,7 @@
 - [ ] Make sure style is consistent across files 
 - [ ] Organise files into separate folders 
 ## Get Around To It
-- [ ] Tidy `CubicLoewner.F90` and refine comments
+- [ ] Tidy `InverseLoewner.F90` and refine comments
 - [ ] Enhance Matlab's float output for root-mean-squared files 
 ## Maybe 
 - [ ] Overhaul interface/running script 

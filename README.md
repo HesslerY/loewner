@@ -2,6 +2,7 @@
 - [ ] `fsolve` stalling for `GubiecSymczakLoewner.m`
 # To-Do
 ## Really Important Things
+- [ ] Change final time for cubic plots again 
 - [ ] Tidy `NumericalLoewner.F90` and refine comments
 - [ ] Double check the `implicit none`'s 
 - [ ] Differentiate between cubic and quadratic, forward and inverse, etc 

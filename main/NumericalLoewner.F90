@@ -333,6 +333,7 @@ implicit none
 
     ! Local variable declaration
     real(8) :: delta
+    integer :: i
 
     ! Compute the value of delta
 #if CASE == 10

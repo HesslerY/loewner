@@ -6,7 +6,7 @@
 - [x] ~~Tidy `NumericalLoewner.F90` and refine comments~~
 - [ ] Tidy `InverseLoewner.F90` and refine comments
 - [x] ~~Double check the `implicit none`'s in `NumericalLoewner.F90` ~~ 
-- [ ] Double check the `implicit none`'s in `CubicLoewner.F90`  
+- [ ] Double check the `implicit none`'s in `InverseLoewner.F90`  
 - [ ] Differentiate between cubic and quadratic, forward and inverse, etc 
 - [ ] Make sure style is consistent across files 
 - [ ] Organise files into separate folders 

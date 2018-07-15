@@ -131,8 +131,6 @@ for drivingFunction in nonSquareRootDriving:
 RMSCubicLoewner(0,1)
 RMSCubicLoewner(14)
 
-exit()
-
 inner_n = 10
 
 final_time = 1

@@ -5,17 +5,19 @@
 - [x] ~~Change final time for cubic plots again~~  
 - [x] ~~Tidy `NumericalLoewner.F90` and refine comments~~
 - [x] ~~Double check the `implicit none`'s in `NumericalLoewner.F90`~~ 
-- [ ] Tidy `InverseLoewner.F90` and refine comments
-- [ ] Differentiate between cubic and quadratic, forward and inverse, etc 
+- [x] ~~Tidy `InverseLoewner.F90` and refine comments~~
+- [ ] (Attempted) Differentiate between cubic and quadratic, forward and inverse, etc 
 - [ ] Tidy cubic image plot script 
 - [ ] Make sure style is consistent across files 
 - [ ] Organise files into separate folders 
 ## Get Around To It
 - [ ] Enhance Matlab's float output for root-mean-squared files 
 ## Maybe 
+- [ ] Setup something for the alternative xi(t) = t exact solution (script, tidying, etc) 
 - [ ] Overhaul interface/running script 
 - [ ] Examine ApproxLoewner 
 - [ ] Merge image scripts 
+- [ ] Add detailed input/output explanation to every function 
 ## Towards The End
 - [ ] Replace this file with instructions for use, explanation of overall structure, etc (and describe this in report) 
 # Marking Scheme

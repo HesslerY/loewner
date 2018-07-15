@@ -23,6 +23,12 @@ implicit none
    ! Define imaginary unit
    complex, parameter :: IMUNIT = complex(0,1)
 
+   ! Define 1/3 
+   real(8), parameter :: THIRD = 1./3
+
+   ! Define 1/2 
+   real(8), parameter :: HALF = 1./2
+
 end module Constants
 
 ! Function for finding the base^expn with a real base
@@ -176,7 +182,7 @@ implicit none
     b = PolynCoeffs(2)
     c = PolynCoeffs(3)
 
-    Q = (a*a - 3*b)/9
+    Q = (ComplexPower(a,2) - 3*b)/9
     R = (2*ComplexPower(a,3) - 9*a*b + 27*c)/54.
 
     rootRQ = cdsqrt(ComplexPower(R,2) - ComplexPower(Q,3))
@@ -184,9 +190,9 @@ implicit none
     signCheck = real(conjg(R)*rootRQ)
 
     if (RealZero(signCheck)) then
-        upperA = -(R + rootRQ)**(1./3)
+        upperA = -(R + rootRQ)**THIRD
     else
-        upperA = -(R - rootRQ)**(1./3)
+        upperA = -(R - rootRQ)**THIRD
     endif
 
     if (ComplexZero(upperA)) then
@@ -196,9 +202,9 @@ implicit none
     endif
 
     ! Assign the roots
-    PolynRoots(1) = (upperA + upperB) - (a/3)
-    PolynRoots(2) = -0.5*(upperA + upperB) - (a/3) + IMUNIT*sqrt(3.0)*0.5*(upperA - upperB)
-    PolynRoots(3) = -0.5*(upperA + upperB) - (a/3) - IMUNIT*sqrt(3.0)*0.5*(upperA - upperB)
+    PolynRoots(1) = (upperA + upperB) - (a*THIRD)
+    PolynRoots(2) = -HALF*(upperA + upperB) - (a*THIRD) + IMUNIT*sqrt(3.0)*HALF*(upperA - upperB)
+    PolynRoots(3) = -HALF*(upperA + upperB) - (a*THIRD) - IMUNIT*sqrt(3.0)*HALF*(upperA - upperB)
 
     ! Iterate until the root with the largest imaginary part is found
     do i = 1, 3
@@ -432,7 +438,7 @@ implicit none
             drivingValue = DrivingFunction(timeRange(j))
 
             ! Solve Loewner's equation for the previous time value
-            bTerm = (drivingValue + gCurrent) * 0.5
+            bTerm = (drivingValue + gCurrent) * HALF 
             cTerm = (drivingValue * gCurrent) + twoInnerDeltaTime
             gCurrent = bTerm + cdsqrt(cTerm - ComplexPower(bTerm,2)) * IMUNIT
 
@@ -446,7 +452,7 @@ implicit none
 end subroutine QuadraticLoewner
 
 ! Solve Loewner's equation in the cubic case
-subroutine CubicLoewner(outerStartTime, outerFinalTime, outerN, innerN, first_g_arr, secnd_g_arr, sqrtDrivingArg,constDrivingArg)
+subroutine CubicLoewner(outerStartTime, outerFinalTime, outerN, innerN, firstGResult, secndGResult, sqrtDrivingArg,constDrivingArg)
 use Constants
 use CubicSolver
 implicit none
@@ -462,8 +468,8 @@ implicit none
     real(8), optional :: sqrtDrivingArg
     real(8), optional :: constDrivingArg
 
-    complex(8) :: first_g_arr(outerN)
-    complex(8) :: secnd_g_arr(outerN)
+    complex(8) :: firstGResult(outerN)
+    complex(8) :: secndGResult(outerN)
 
     ! Local variable declarations
 
@@ -476,14 +482,12 @@ implicit none
 
     real(8), dimension(:), allocatable :: timeRange
 
-    complex(8) :: c = 0
-    complex(8) :: first_g_t1 = 0
-    complex(8) :: first_g_t2 = 0
-    complex(8) :: secnd_g_t1 = 0
-    complex(8) :: secnd_g_t2 = 0
+    complex(8) :: secondCoeff = 0
+    complex(8) :: firstGCurrent = 0
+    complex(8) :: secndGCurrent = 0
 
-    complex(8), dimension(3) :: first_polym_coeffs
-    complex(8), dimension(3) :: secnd_polym_coeffs
+    complex(8), dimension(3) :: firstPolymCoeffs
+    complex(8), dimension(3) :: secndPolymCoeffs
 
     ! Function declarations
 
@@ -519,15 +523,15 @@ implicit none
     twoInnerDeltaTime = timeRange(2) * 2
 
     ! Set the first elements to be +/-ve value of driving function at t = 0
-    first_g_arr(1) = complex(DrivingFunction(timeRange(1)),0)
-    secnd_g_arr(1) = -first_g_arr(1)
+    firstGResult(1) = complex(DrivingFunction(timeRange(1)),0)
+    secndGResult(1) = -firstGResult(1)
 
     ! Compute g_0 outerN times
     do i = 1, outerN - 1
 
         ! Find the value of g at t = inner max time
-        first_g_t1 = complex(DrivingFunction(timeRange(i*innerN)),0)
-        secnd_g_t1 = -first_g_t1
+        firstGCurrent = complex(DrivingFunction(timeRange(i*innerN)),0)
+        secndGCurrent = -firstGCurrent
 
         ! Iterate backwards from the highest time value to zero
         do j = i*innerN,1,-1
@@ -536,27 +540,27 @@ implicit none
             drivingValue = DrivingFunction(timeRange(j))
 
             ! Obtain the value of the second coefficient
-            c = twoInnerDeltaTime - RealPower(drivingValue,2)
+            secondCoeff = twoInnerDeltaTime - RealPower(drivingValue,2)
 
             ! Define the coefficients of the cubic equation for the first trace
-            first_polym_coeffs(1) = -first_g_t1
-            first_polym_coeffs(2) = c
-            first_polym_coeffs(3) = first_g_t1 * RealPower(drivingValue,2)
+            firstPolymCoeffs(1) = -firstGCurrent
+            firstPolymCoeffs(2) = secondCoeff
+            firstPolymCoeffs(3) = firstGCurrent * RealPower(drivingValue,2)
 
             ! Define the coefficients of the cubic equation for the second trace
-            secnd_polym_coeffs(1) = -secnd_g_t1
-            secnd_polym_coeffs(2) = c
-            secnd_polym_coeffs(3) = secnd_g_t1 * RealPower(drivingValue,2)
+            secndPolymCoeffs(1) = -secndGCurrent
+            secndPolymCoeffs(2) = secondCoeff
+            secndPolymCoeffs(3) = secndGCurrent * RealPower(drivingValue,2)
 
             ! Use the Cubic Solver to find the cube roots for both traces
-            first_g_t1 = CubicRoot(first_polym_coeffs)
-            secnd_g_t1 = CubicRoot(secnd_polym_coeffs)
+            firstGCurrent = CubicRoot(firstPolymCoeffs)
+            secndGCurrent = CubicRoot(secndPolymCoeffs)
 
         end do
 
         ! Place the g_0 values in the arrays
-        first_g_arr(i + 1) = first_g_t1
-        secnd_g_arr(i + 1) = secnd_g_t1
+        firstGResult(i + 1) = firstGCurrent
+        secndGResult(i + 1) = secndGCurrent
 
     end do
 

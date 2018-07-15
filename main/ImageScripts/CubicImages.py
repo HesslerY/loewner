@@ -34,16 +34,16 @@ def sqrtToString(sqrt):
 
 def runCubicLoewner(i):
 
-    module_test = ["f2py", "-c", "-DCASE="+str(i), "../ForwardLoewner.F90", "-m", "modules.ForwardLoewner_"+str(i)]
+    module_test = ["f2py", "-c", "-DCASE="+str(i), "../ForwardLoewner/ForwardLoewner.F90", "-m", "modules.ForwardLoewner_"+str(i)]
 
     subprocess.check_output(module_test)
     module_name = "modules.ForwardLoewner_" + str(i)
     CubicLoewner = import_module(module_name)
 
     if i == 0:
-        CubicLoewner.cubicloewner(outerstarttime=start_time, outerfinaltime=final_time, innern=inner_n, first_g_arr=first_g_arr, secnd_g_arr=second_g_arr, constdrivingarg=1)
+        CubicLoewner.cubicloewner(outerstarttime=start_time, outerfinaltime=final_time, innern=inner_n, firstgresult=first_g_arr, secndgresult=second_g_arr, constdrivingarg=1)
     else:
-        CubicLoewner.cubicloewner(outerstarttime=start_time, outerfinaltime=final_time, innern=inner_n, first_g_arr=first_g_arr, secnd_g_arr=second_g_arr)
+        CubicLoewner.cubicloewner(outerstarttime=start_time, outerfinaltime=final_time, innern=inner_n, firstgresult=first_g_arr, secndgresult=second_g_arr)
 
     createCubicCSV(i,[first_g_arr,second_g_arr])
 
@@ -93,18 +93,18 @@ def createSquareRootCubicCSV(df, sqrt, results):
 
 def runSquareRootCubicLoewner(i,sqrtparam):
 
-    module_test = ["f2py", "-c", "-DCASE="+str(i), "../ForwardLoewner.F90", "-m", "modules.ForwardLoewner_"+str(i)]
+    module_test = ["f2py", "-c", "-DCASE="+str(i), "../ForwardLoewner/ForwardLoewner.F90", "-m", "modules.ForwardLoewner_"+str(i)]
     subprocess.check_output(module_test)
     module_name = "modules.ForwardLoewner_" + str(i)
     CubicLoewner = import_module(module_name)
-    CubicLoewner.cubicloewner(outerstarttime=start_time, outerfinaltime=final_time, innern=inner_n, first_g_arr=first_g_arr, secnd_g_arr=second_g_arr,sqrtdrivingarg=sqrtparam)
+    CubicLoewner.cubicloewner(outerstarttime=start_time, outerfinaltime=final_time, innern=inner_n, firstgresult=first_g_arr, secndgresult=second_g_arr,sqrtdrivingarg=sqrtparam)
 
     createSquareRootCubicCSV(i,sqrtparam,[first_g_arr,second_g_arr])
 
 def RMSCubicLoewner(i,const=None):
 
     inner_res = [5, 10, 50, 100, 200, 300, 400, 500]
-    module_test = ["f2py", "-c", "-DCASE="+str(i), "../ForwardLoewner.F90", "-m", "modules.ForwardLoewner_"+str(i)]
+    module_test = ["f2py", "-c", "-DCASE="+str(i), "../ForwardLoewner/ForwardLoewner.F90", "-m", "modules.ForwardLoewner_"+str(i)]
     subprocess.check_output(module_test)
     module_name = "modules.ForwardLoewner_" + str(i)
     CubicLoewner = import_module(module_name)
@@ -117,9 +117,9 @@ def RMSCubicLoewner(i,const=None):
     for inner_n in inner_res:
 
         if const is None:
-            CubicLoewner.cubicloewner(outerstarttime=start_time, outerfinaltime=final_time, innern=inner_n, first_g_arr=first_g_arr, secnd_g_arr=second_g_arr)
+            CubicLoewner.cubicloewner(outerstarttime=start_time, outerfinaltime=final_time, innern=inner_n, firstgresult=first_g_arr, secndgresult=second_g_arr)
         else:
-            CubicLoewner.cubicloewner(outerstarttime=start_time, outerfinaltime=final_time, innern=inner_n, first_g_arr=first_g_arr, secnd_g_arr=second_g_arr, constdrivingarg=1)
+            CubicLoewner.cubicloewner(outerstarttime=start_time, outerfinaltime=final_time, innern=inner_n, firstgresult=first_g_arr, secndgresult=second_g_arr, constdrivingarg=1)
 
         createCubicCSV(i,[first_g_arr,second_g_arr],inner_n)
         print("Completed driving function " + str(i) + " with inner resolution of " +str(inner_n))

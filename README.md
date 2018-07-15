@@ -4,17 +4,17 @@
 ## Really Important Things
 - [x] ~~Change final time for cubic plots again~~  
 - [x] ~~Tidy `NumericalLoewner.F90` and refine comments~~
-- [ ] Tidy `InverseLoewner.F90` and refine comments
 - [x] ~~Double check the `implicit none`'s in `NumericalLoewner.F90` ~~ 
-- [ ] Double check the `implicit none`'s in `InverseLoewner.F90`  
+- [ ] Tidy `InverseLoewner.F90` and refine comments
 - [ ] Differentiate between cubic and quadratic, forward and inverse, etc 
+- [ ] Tidy cubic image plot script 
 - [ ] Make sure style is consistent across files 
 - [ ] Organise files into separate folders 
 ## Get Around To It
-- [ ] Tidy `InverseLoewner.F90` and refine comments
 - [ ] Enhance Matlab's float output for root-mean-squared files 
 ## Maybe 
 - [ ] Overhaul interface/running script 
+- [ ] Examine ApproxLoewner 
 - [ ] Merge image scripts 
 ## Towards The End
 - [ ] Replace this file with instructions for use, explanation of overall structure, etc (and describe this in report) 

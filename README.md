@@ -1,5 +1,4 @@
 # To-Do
----
 ## Really Important Things
 - [] Tidy `NumericalLoewner.F90` and refine comments
 - [] Double check the `implicit none`'s 
@@ -14,9 +13,7 @@
 - [] Merge image scripts 
 ## Towards The End
 - [] Replace this file with instructions for use, explanation of overall structure, etc (and describe this in report) 
----
 # Marking Scheme
----
 ## 1. Background, Aims and Organisation (25%)
 * Student has understood project aims
 * Student has _stated_ project aims
@@ -39,9 +36,7 @@
     * There is critical analysis of method
     * There is a critical analysis of the results
     * Weaknesses and possible extensions are discussed
----
 # Dissertation Talk (Highlights)
----
 ## Justification of Project
 * The project findings are interesting and/or useful to a certain community of researchers (or will be in the future)
 * Make motivation clear in preamble/thesis overview (marker can see why research is being pursued easily)

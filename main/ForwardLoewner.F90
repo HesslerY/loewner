@@ -1,6 +1,6 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !                                                                              !
-! Program: NumericalLoewner.F90                                                !
+! Program: ForwardLoewner.F90                                                  !
 ! Purpose: Obtain numerical solutions for solving the quadratic and cubic form !
 !          of Loewner's equation for a variety of driving functions.           !
 ! Author:  Dolica Akello-Egwel                                                 !

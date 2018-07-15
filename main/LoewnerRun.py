@@ -6,7 +6,7 @@ from importlib import import_module
 
 class LoewnerRun:
 
-    def __init__(self, driving_function, filename = "NumericalLoewner"):
+    def __init__(self, driving_function, filename = "ForwardLoewner"):
 
         # Assign the driving function index
         self.driving_function = driving_function
@@ -112,23 +112,23 @@ class LoewnerRun:
         try:
 
             # Check if the module can be imported successfully
-            NumericalLoewner = self.import_loewner()
+            ForwardLoewner = self.import_loewner()
 
         except ModuleNotFoundError:
 
             # Compile and import the module if it does not already exist
             self.set_compile_command()
             self.compile_loewner()
-            NumericalLoewner = self.import_loewner()
+            ForwardLoewner = self.import_loewner()
 
         # Declare an empty complex array for the results
         self.results = empty(self.outer_points, dtype=complex128)
 
         # Solve Loewner's equation with the given parameters
         if self.driving_function == 0:
-            NumericalLoewner.quadraticloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresult=self.results, constantdrivingarg=self.constantParam)
+            ForwardLoewner.quadraticloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresult=self.results, constantdrivingarg=self.constantParam)
         else:
-            NumericalLoewner.quadraticloewner(self.start_time, self.final_time, self.inner_points, self.results)
+            ForwardLoewner.quadraticloewner(self.start_time, self.final_time, self.inner_points, self.results)
 
 class SqrtLoewnerRun(LoewnerRun):
 
@@ -147,17 +147,17 @@ class SqrtLoewnerRun(LoewnerRun):
         try:
 
             # Check if the module can be imported successfully
-            NumericalLoewner = self.import_loewner()
+            ForwardLoewner = self.import_loewner()
 
         except ModuleNotFoundError:
 
             self.set_compile_command()
             self.compile_loewner()
-            NumericalLoewner = self.import_loewner()
+            ForwardLoewner = self.import_loewner()
 
         # Compile and import the module if it does not already exist
         self.results = empty(self.outer_points, dtype=complex128)
-        NumericalLoewner.quadraticloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresult=self.results, sqrtdrivingarg=self.sqrt_param)
+        ForwardLoewner.quadraticloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresult=self.results, sqrtdrivingarg=self.sqrt_param)
 
 class ExactLoewnerRun(LoewnerRun):
 

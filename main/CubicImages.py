@@ -31,10 +31,10 @@ def sqrtToString(sqrt):
 
 def runCubicLoewner(i):
 
-    module_test = ["f2py", "-c", "-DCASE="+str(i), "NumericalLoewner.F90", "-m", "modules.NumericalLoewner_"+str(i)]
+    module_test = ["f2py", "-c", "-DCASE="+str(i), "ForwardLoewner.F90", "-m", "modules.ForwardLoewner_"+str(i)]
 
     subprocess.check_output(module_test)
-    module_name = "modules.NumericalLoewner_" + str(i)
+    module_name = "modules.ForwardLoewner_" + str(i)
     CubicLoewner = import_module(module_name)
 
     if i == 0:
@@ -90,9 +90,9 @@ def createSquareRootCubicCSV(df, sqrt, results):
 
 def runSquareRootCubicLoewner(i,sqrtparam):
 
-    module_test = ["f2py", "-c", "-DCASE="+str(i), "NumericalLoewner.F90", "-m", "modules.NumericalLoewner_"+str(i)]
+    module_test = ["f2py", "-c", "-DCASE="+str(i), "ForwardLoewner.F90", "-m", "modules.ForwardLoewner_"+str(i)]
     subprocess.check_output(module_test)
-    module_name = "modules.NumericalLoewner_" + str(i)
+    module_name = "modules.ForwardLoewner_" + str(i)
     CubicLoewner = import_module(module_name)
     CubicLoewner.cubicloewner(outerstarttime=start_time, outerfinaltime=final_time, innern=inner_n, first_g_arr=first_g_arr, secnd_g_arr=second_g_arr,sqrtdrivingarg=sqrtparam)
 
@@ -101,9 +101,9 @@ def runSquareRootCubicLoewner(i,sqrtparam):
 def RMSCubicLoewner(i,const=None):
 
     inner_res = [5, 10, 50, 100, 200, 300, 400, 500]
-    module_test = ["f2py", "-c", "-DCASE="+str(i), "NumericalLoewner.F90", "-m", "modules.NumericalLoewner_"+str(i)]
+    module_test = ["f2py", "-c", "-DCASE="+str(i), "ForwardLoewner.F90", "-m", "modules.ForwardLoewner_"+str(i)]
     subprocess.check_output(module_test)
-    module_name = "modules.NumericalLoewner_" + str(i)
+    module_name = "modules.ForwardLoewner_" + str(i)
     CubicLoewner = import_module(module_name)
 
     first_g_arr = empty(outer_n, dtype=complex128)

@@ -1,8 +1,7 @@
-import Constants
-
 import sys
 sys.path.append('../')
 
+import Constants
 from ForwardRun import ForwardRun, SqrtForwardRun, ExactForwardRun
 from InverseRun import InverseRun
 from Plot import Plot, MultiPlot, InversePlot, MiniPlot, InverseMultiPlot

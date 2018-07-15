@@ -34,7 +34,7 @@ def sqrtToString(sqrt):
 
 def runCubicLoewner(i):
 
-    module_test = ["f2py", "-c", "-DCASE="+str(i), "ForwardLoewner.F90", "-m", "modules.ForwardLoewner_"+str(i)]
+    module_test = ["f2py", "-c", "-DCASE="+str(i), "../ForwardLoewner.F90", "-m", "modules.ForwardLoewner_"+str(i)]
 
     subprocess.check_output(module_test)
     module_name = "modules.ForwardLoewner_" + str(i)
@@ -93,7 +93,7 @@ def createSquareRootCubicCSV(df, sqrt, results):
 
 def runSquareRootCubicLoewner(i,sqrtparam):
 
-    module_test = ["f2py", "-c", "-DCASE="+str(i), "ForwardLoewner.F90", "-m", "modules.ForwardLoewner_"+str(i)]
+    module_test = ["f2py", "-c", "-DCASE="+str(i), "../ForwardLoewner.F90", "-m", "modules.ForwardLoewner_"+str(i)]
     subprocess.check_output(module_test)
     module_name = "modules.ForwardLoewner_" + str(i)
     CubicLoewner = import_module(module_name)
@@ -104,7 +104,7 @@ def runSquareRootCubicLoewner(i,sqrtparam):
 def RMSCubicLoewner(i,const=None):
 
     inner_res = [5, 10, 50, 100, 200, 300, 400, 500]
-    module_test = ["f2py", "-c", "-DCASE="+str(i), "ForwardLoewner.F90", "-m", "modules.ForwardLoewner_"+str(i)]
+    module_test = ["f2py", "-c", "-DCASE="+str(i), "../ForwardLoewner.F90", "-m", "modules.ForwardLoewner_"+str(i)]
     subprocess.check_output(module_test)
     module_name = "modules.ForwardLoewner_" + str(i)
     CubicLoewner = import_module(module_name)

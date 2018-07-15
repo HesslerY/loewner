@@ -1,6 +1,6 @@
 function FileWriter(N,z_sol,df,start_time,end_time,info)
 
-    outputdir='../../writeuploewner/finalreport/data/'
+    outputdir='/home/dolica/Documents/writeuploewner/finalreport/data/'
     extension='.csv'
 
     if exist('info','var')

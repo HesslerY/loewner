@@ -4,9 +4,9 @@ function RMSFileWriter(df,rms,innerNs)
     runs = length(innerNs)
 
     if df == 1
-        outputdir='../../writeuploewner/finalreport/data/RMS/Quadratic/'
+        outputdir='/home/dolica/Documents/writeuploewner/finalreport/data/RMS/Quadratic/';
     else
-        outputdir='../../writeuploewner/finalreport/data/RMS/Cubic/'
+        outputdir='/home/dolica/Documents/writeuploewner/finalreport/data/RMS/Cubic/';
     end
 
     fileinfo=[string(df) 'RMS'];

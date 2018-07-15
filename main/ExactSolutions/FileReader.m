@@ -1,6 +1,6 @@
 function z = FileReader(N,df,start_time,end_time,info)
 
-    inputdir='../../writeuploewner/finalreport/data/';
+    inputdir='/home/dolica/Documents/writeuploewner/finalreport/data/';
     extension='.csv';
 
     if exist('info','var')

@@ -1,8 +1,8 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !                                                                              !
 ! Program: NumericalLoewner.F90                                                !
-! Purpose: Obtain numerical solutions for Loewner's equation with a variety    !
-!          of driving functions.                                               !
+! Purpose: Obtain numerical solutions for solving the quadratic and cubic form !
+!          of Loewner's equation for a variety of driving functions.           !
 ! Author:  Dolica Akello-Egwel                                                 !
 !                                                                              !
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -27,12 +27,13 @@ end module Constants
 
 ! Function for finding the base^expn with a real base
 function RealPower(base,expn)
+implicit none
 
-    ! Argument decleration
+    ! Argument declarations
     real(8) :: base
     integer :: expn
 
-    ! Return value decleration
+    ! Return value declaration
     real(8) :: RealPower
 
     ! Find the square of x
@@ -42,12 +43,13 @@ end function RealPower
 
 ! Function for finding the base^expn with a complex base
 function ComplexPower(base,expn)
+implicit none
 
-    ! Argument decleration
+    ! Argument declarations
     complex(8) :: base
     integer :: expn
 
-    ! Return value decleration
+    ! Return value declaration
     complex(8) :: ComplexPower
 
     ! Find the square of x
@@ -75,12 +77,16 @@ contains
 function f(z,a,b,c)
 implicit none
 
-    complex(8) :: f
+    ! Argument declarations
     complex(8) :: z
     complex(8) :: a
     complex(8) :: b
     complex(8) :: c
 
+    ! Return value declaration
+    complex(8) :: f
+    
+    ! Function declaration
     complex(8) :: ComplexPower
 
     ! Find the value of the function at z
@@ -92,11 +98,15 @@ end function f
 function df(z,a,b)
 implicit none
 
-    complex(8) :: df
+    ! Argument declarations
     complex(8) :: z
     complex(8) :: a
     complex(8) :: b
 
+    ! Return value declaration
+    complex(8) :: df
+
+    ! Function declarations
     complex(8) :: ComplexPower
 
     ! Find the value of the derivative at z
@@ -108,8 +118,11 @@ end function df
 function RealZero(x)
 implicit none
 
-    logical :: RealZero
+    ! Argument declaration
     real(8) :: x
+
+    ! Return value declaration
+    logical :: RealZero
 
     ! Check if the absolute value of the number is beneath the tolerance
     if (abs(x) < TOL) then
@@ -124,8 +137,11 @@ end function RealZero
 function ComplexZero(z)
 implicit none
 
-    logical :: ComplexZero
+    ! Argument declaration
     complex(8) :: z
+    
+    ! Return value declarations
+    logical :: ComplexZero
 
     ! Check if the absolute values of both the real and imaginary components are beneath the tolerance
     if (abs(real(z)) < TOL .and. abs(imag(z)) < TOL) then
@@ -140,11 +156,16 @@ end function ComplexZero
 function CubicRoot(PolynCoeffs)
 implicit none
 
-    complex(8), dimension(3) :: PolynCoeffs, PolynRoots
-    complex(8) :: a, b, c, Q, R, rootRQ, upperA, upperB, CubicRoot
-    real(8) :: signCheck
+    ! Argument declaration
+    complex(8), dimension(3) :: PolynCoeffs
+    
+    ! Local variable declarations
     integer :: i
+    real(8) :: signCheck
+    complex(8) :: a, b, c, Q, R, rootRQ, upperA, upperB, CubicRoot
+    complex(8), dimension(3) :: PolynRoots
 
+    ! Function declaration
     complex(8) :: ComplexPower
 
     ! Set initial value for root
@@ -186,7 +207,7 @@ implicit none
         endif
     enddo
 
-    ! Use Newton's Iteration to enhance accuracy of solution
+    ! Use Newton's method to enhance accuracy of solution
     CubicRoot = NewtonRoot(CubicRoot,a,b,c)
 
 #if TESTCUBIC == 1
@@ -194,21 +215,22 @@ implicit none
     print *, "f(z) = ", f(CubicRoot,a,b,c)
 #endif
 
-! Perform Newton's Iteration to refine the accuracy of the cubic root
 end function CubicRoot
+
+! Perform Newton's method to refine the accuracy of the cubic root
 function NewtonRoot(z,a,b,c)
 implicit none
 
-    ! Argument decleration
+    ! Argument declaration
     complex(8) :: z
     complex(8) :: a
     complex(8) :: b
     complex(8) :: c
 
-    ! Return value decleration
+    ! Return value declaration
     complex(8) :: NewtonRoot
 
-    ! Carry out Newton's Iteration until tolerance is achieved
+    ! Carry out Newton's method until desired tolerance is achieved
     do while (.not. ComplexZero(f(z,a,b,c)))
         z = z - f(z,a,b,c)/df(z,a,b)
     end do
@@ -222,11 +244,12 @@ end module CubicSolver
 ! Find the value of a particular driving function at time t
 function DrivingFunction(t)
 use Constants
+implicit none
 
-    ! Argument decleration
-    real(8), intent(in) :: t
+    ! Argument declaration
+    real(8) :: t
 
-    ! Return value decleration
+    ! Return value declaration
     real(8) :: DrivingFunction
 
 #if CASE == 0
@@ -281,46 +304,53 @@ use Constants
 
 end function DrivingFunction
 
+! Find the value for the c_alpha parameter
 function ComputeCAlpha(alpha)
 implicit none
 
     ! Argument declaration
     real(8) :: alpha
 
-    ! Function declaration
-    real(8) :: RealPower
-
     ! Return value declaration
     real(8) :: ComputeCAlpha
+
+    ! Function declaration
+    real(8) :: RealPower
 
     ComputeCAlpha = (2 - 4 * alpha) / dsqrt(alpha - RealPower(alpha,2))
 
 end function ComputeCAlpha
 
+! Generate an array of numPoints time values between a user-defined starting point and end point
 subroutine Linspace(timeRange,startPoint,endPoint,numPoints)
+implicit none
 
     ! Argument declaration
     integer :: numPoints
-
     real(8) :: startPoint
     real(8) :: endPoint
-
     real(8), dimension(numPoints) :: timeRange
 
     ! Local variable declaration
     real(8) :: delta
 
+    ! Compute the value of delta
 #if CASE == 10
+    ! Make the time range stop short of one for the kappa driving function
     delta  = (endPoint - startPoint)/numPoints
 #else
     delta  = (endPoint - startPoint)/(numPoints - 1)
 #endif
 
+    ! Create an array that starts at zero and ends at delta*(numPoints - 1) 
     timeRange = (/((i * delta), i = 0, numPoints - 1)/)
+
+    ! Add the starting point to all values in the array
     timeRange = timeRange(:) + startPoint
 
 end subroutine Linspace
 
+! Solve Loewner's equation in the quadratic case
 subroutine QuadraticLoewner(outerStartTime, outerFinalTime, outerN, innerN, gResult, sqrtDrivingArg, constantDrivingArg)
 use Constants
 implicit none
@@ -359,7 +389,7 @@ implicit none
     real(8) :: DrivingFunction
     complex(8) :: ComplexPower
 
-    ! Define kappa or calpha in the case of square-root driving
+    ! Define kappa or c_alpha in the case of square-root driving
     if (present(sqrtDrivingArg)) then
 #if CASE == 10
         sqrtParam  = sqrtDrivingArg
@@ -379,7 +409,7 @@ implicit none
     ! Initialise the time-value array
     Allocate(timeRange(1:totalN))
 
-    ! Use linspace to obtain the time-value array
+    ! Use Linspace to obtain the time-value array
     call Linspace(timeRange,outerStartTime,outerFinalTime,totalN)
 
     ! Determine two * delta
@@ -388,7 +418,7 @@ implicit none
     ! Set the first element to be the driving function at t = 0
     gResult(1) = complex(DrivingFunction(timeRange(1)),0)
 
-    ! Compute g_0 outerN  - 1 times
+    ! Compute g_0 outerN - 1 times
     do i = 1, outerN - 1
 
         ! Find the value of g at t = inner max time
@@ -414,6 +444,7 @@ implicit none
 
 end subroutine QuadraticLoewner
 
+! Solve Loewner's equation in the cubic case
 subroutine CubicLoewner(outerStartTime, outerFinalTime, outerN, innerN, first_g_arr, secnd_g_arr, sqrtDrivingArg,constDrivingArg)
 use Constants
 use CubicSolver
@@ -503,6 +534,7 @@ implicit none
             ! Obtain the current driving value
             drivingValue = DrivingFunction(timeRange(j))
 
+            ! Obtain the value of the second coefficient
             c = twoInnerDeltaTime - RealPower(drivingValue,2)
 
             ! Define the coefficients of the cubic equation for the first trace
@@ -531,37 +563,5 @@ end subroutine CubicLoewner
 
 ! Empty program to aid with identifying compilation errors should f2py fail
 program test
-implicit none
-
-    integer, parameter :: innerN = 4
-    integer, parameter :: outerN = 4
-    integer, parameter :: numPoints = innerN * outerN
-
-    integer :: i
-    integer :: j
-
-    real(8), dimension(numPoints) :: a
-
-    real(8) :: startPoint
-    real(8) :: endPoint
-
-    startPoint = 0
-    endPoint = 11
-
-    call Linspace(a,startPoint,endPoint,numPoints)
-
-    do i = 1,outerN
-
-        do j = i*innerN,1,-1
-
-        print *, a(j)
-
-        end do
-
-        print *, ""
-
-    end do
-
-
 end program test
 

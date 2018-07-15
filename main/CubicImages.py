@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import subprocess
 
 start_time = 0
-final_time = 25
+final_time = 10
 outer_n = 1000
 inner_n = 10
 

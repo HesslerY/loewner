@@ -14,10 +14,8 @@ z_sol = zeros(N,1);
 
 for i = 1:N
 
-    t = t_arr(i);
-    f = @(z) z + 2 * log(2 - z) - 2 * log(2) - t;
-
-    z_sol(i) = fsolve(f,initial_guess(t));
+    f = @(z) z + 2 * log(2 - z) - 2 * log(2) - t_arr(i);
+    z_sol(i) = fsolve(f,initial_guess(t_arr(i)));
 
 end
 
@@ -35,6 +33,7 @@ CSVRootMeanSquaredError(z_sol,N,df,start_time,end_time,innerNs,infos)
 % xi(t) = 1 (Cubic)
 %
 
+end_time = 10
 N = 1000;
 t_arr = linspace(start_time,end_time,N);
 df = 0;
@@ -46,10 +45,8 @@ z_sol = zeros(N,1);
 
 for i = 1:N
 
-    t = t_arr(i);
-    f = @(z) z^2 - 2*log(z) - 1 + 4*t;
-
-    z_sol(i) = fsolve(f,initial_guess(t));
+    f = @(z) z^2 - 2*log(z) - 1 + 4*t_arr(i);
+    z_sol(i) = fsolve(f,initial_guess(t_arr(i)));
 
 end
 

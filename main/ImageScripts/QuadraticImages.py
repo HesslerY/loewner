@@ -2,8 +2,8 @@ import sys
 sys.path.append('../')
 
 import Constants
-from ForwardRun import ForwardRun, SqrtForwardRun, ExactForwardRun
-from InverseRun import InverseRun
+from ForwardLoewner.ForwardRun import ForwardRun, SqrtForwardRun, ExactForwardRun
+from InverseLoewner.InverseRun import InverseRun
 from Plot import Plot, MultiPlot, InversePlot, MiniPlot, InverseMultiPlot
 from numpy import savetxt, column_stack, full_like, linspace
 

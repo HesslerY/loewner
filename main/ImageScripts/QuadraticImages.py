@@ -1,3 +1,6 @@
+import sys
+sys.path.append('../')
+
 from LoewnerRun import LoewnerRun, SqrtLoewnerRun, ExactLoewnerRun
 from InverseRun import InverseRun
 import Constants

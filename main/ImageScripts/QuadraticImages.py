@@ -1,9 +1,10 @@
+import Constants
+
 import sys
 sys.path.append('../')
 
 from LoewnerRun import LoewnerRun, SqrtLoewnerRun, ExactLoewnerRun
 from InverseRun import InverseRun
-import Constants
 from Plot import Plot, MultiPlot, InversePlot, MiniPlot, InverseMultiPlot
 from numpy import savetxt, column_stack, full_like, linspace
 

@@ -1,18 +1,18 @@
 # To-Do
 ## Really Important Things
-- [] Tidy `NumericalLoewner.F90` and refine comments
-- [] Double check the `implicit none`'s 
-- [] Differentiate between cubic and quadratic, forward and inverse, etc 
-- [] Make sure style is consistent across files 
-- [] Organise files into separate folders 
+- [ ] Tidy `NumericalLoewner.F90` and refine comments
+- [ ] Double check the `implicit none`'s 
+- [ ] Differentiate between cubic and quadratic, forward and inverse, etc 
+- [ ] Make sure style is consistent across files 
+- [ ] Organise files into separate folders 
 ## Get Around To It
-- [] Tidy `CubicLoewner.F90` and refine comments
-- [] Enhance Matlab's float output for root-mean-squared files 
+- [ ] Tidy `CubicLoewner.F90` and refine comments
+- [ ] Enhance Matlab's float output for root-mean-squared files 
 ## Maybe 
-- [] Overhaul interface/running script 
-- [] Merge image scripts 
+- [ ] Overhaul interface/running script 
+- [ ] Merge image scripts 
 ## Towards The End
-- [] Replace this file with instructions for use, explanation of overall structure, etc (and describe this in report) 
+- [ ] Replace this file with instructions for use, explanation of overall structure, etc (and describe this in report) 
 # Marking Scheme
 ## 1. Background, Aims and Organisation (25%)
 * Student has understood project aims

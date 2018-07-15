@@ -4,7 +4,7 @@ sys.path.append('../')
 import Constants
 from ForwardLoewner.ForwardRun import ForwardRun, SqrtForwardRun, ExactForwardRun
 from InverseLoewner.InverseRun import InverseRun
-from Plot import Plot, MultiPlot, InversePlot, MiniPlot, InverseMultiPlot
+from LoewnerPlot.LoewnerPlot import Plot, MultiPlot, InversePlot, MiniPlot, InverseMultiPlot
 from numpy import savetxt, column_stack, full_like, linspace
 
 # Output directory for the CSV files

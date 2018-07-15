@@ -10,7 +10,7 @@ from matplotlib import rc
 plt.style.use('seaborn')
 rc('lines', linewidth=1.0)
 
-class Plot:
+class LoewnerPlot:
 
     def __init__(self, driving_function, resolution_parameters, results, plot_dir = None):
 
@@ -77,7 +77,7 @@ class Plot:
     def generate_scatter_plot(self):
         pass
 
-class MiniPlot(Plot):
+class MiniLoewnerPlot(LoewnerPlot):
 
     def __init__(self, driving_function, resolution_parameters, results, plot_dir = None):
 
@@ -121,13 +121,13 @@ class MiniPlot(Plot):
     def generate_scatter_plot(self):
         pass
 
-class MultiPlot(Plot):
+class MultiLoewnerPlot(LoewnerPlot):
 
     def __init__(self, driving_function, resolution_parameters, results_arr, plot_dir = None, labels = None):
 
         self.multi_result = results_arr
 
-        Plot.__init__(self,driving_function,resolution_parameters,[],plot_dir)
+        LoewnerPlot.__init__(self,driving_function,resolution_parameters,[],plot_dir)
 
         if driving_function == 10:
             self.output_plot_title = "$\\xi (t) = 2 \ \sqrt{ \kappa \ (1 - t)}$"
@@ -187,12 +187,12 @@ class MultiPlot(Plot):
             plt.title(self.output_plot_title, fontsize = 19, color = "black", y = 1.02, usetex = True)
             plt.show()
 
-class InverseMultiPlot(Plot):
+class InverseMultiLoewnerPlot(LoewnerPlot):
 
     def __init__(self, driving_function, resolution_parameters, results_arr, plot_dir = None):
 
         self.multi_inverse = results_arr
-        Plot.__init__(self,driving_function,resolution_parameters,[],plot_dir)
+        LoewnerPlot.__init__(self,driving_function,resolution_parameters,[],plot_dir)
 
         if driving_function == 10:
             self.output_plot_title = "$\\xi (t) = 2 \ \sqrt{ \kappa \ (1 - t)}$"
@@ -228,11 +228,11 @@ class InverseMultiPlot(Plot):
             plt.title(self.output_plot_title, fontsize = 19, color = "black", y = 1.02, usetex = True)
             plt.show()
 
-class InversePlot(Plot):
+class InverseLoewnerPlot(LoewnerPlot):
 
     def __init__(self, driving_function, resolution_parameters, time_arr, driving_arr, plot_dir = None):
 
-        Plot.__init__(self,driving_function,resolution_parameters,[],plot_dir)
+        LoewnerPlot.__init__(self,driving_function,resolution_parameters,[],plot_dir)
 
         self.partial_output_filename = self.partial_output_filename + "-inv"
 

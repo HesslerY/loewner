@@ -1,3 +1,5 @@
+# Investigate 
+- [ ] `fsolve` stalling for `GubiecSymczakLoewner.m`
 # To-Do
 ## Really Important Things
 - [ ] Tidy `NumericalLoewner.F90` and refine comments

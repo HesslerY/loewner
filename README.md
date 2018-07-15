@@ -1,25 +1,25 @@
 # Investigate 
-- [ ] `fsolve` stalling for `GubiecSymczakLoewner.m`
+- [ ] `fsolve` stalling for `GubiecSymczakLoewner.m`?
 # To-Do
 ## Really Important Things
 - [x] ~~Change final time for cubic plots again~~  
 - [x] ~~Tidy `NumericalLoewner.F90` and refine comments~~
 - [x] ~~Double check the `implicit none`'s in `NumericalLoewner.F90`~~ 
 - [x] ~~Tidy `InverseLoewner.F90` and refine comments~~
-- [ ] (Attempted) Differentiate between cubic and quadratic, forward and inverse, etc 
-- [ ] Tidy cubic image plot script 
 - [ ] Make sure style is consistent across files 
-- [ ] Organise files into separate folders 
-## Get Around To It
+- [x] Organise files into separate folders 
 - [ ] Enhance Matlab's float output for root-mean-squared files 
-## Maybe 
-- [ ] Setup something for the alternative xi(t) = t exact solution (script, tidying, etc) 
-- [ ] Overhaul interface/running script 
+## Get Around To It
+- [ ] Tidy cubic image plot script 
 - [ ] Examine ApproxLoewner 
-- [ ] Merge image scripts 
+- [ ] Setup something for the alternative xi(t) = t exact solution (script, tidying, etc) 
+## Maybe 
+- [ ] Overhaul interface/running script 
 - [ ] Add detailed input/output explanation to every function 
 ## Towards The End
 - [ ] Replace this file with instructions for use, explanation of overall structure, etc (and describe this in report) 
+## Ongoing 
+- [ ] Differentiate between cubic and quadratic, forward and inverse, etc 
 # Marking Scheme
 ## 1. Background, Aims and Organisation (25%)
 * Student has understood project aims

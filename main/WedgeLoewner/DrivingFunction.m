@@ -31,6 +31,9 @@ function drivingFunction = DrivingFunction(drivingNumber)
         case 10
             drivingFunction.xi = @(t) t * sin(t * pi);
             drivingFunction.name = '\xi(t) = t * sin(t * \pi)';
+        case 11
+            drivingFunction.xi = @(t) sqrt(t + 0.01)
+            drivingFunction.name = '\xi(t) = \surd(t + 0.01)';
         otherwise
             disp('other value')
     end

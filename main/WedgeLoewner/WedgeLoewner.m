@@ -2,52 +2,45 @@
 addpath('../ExactSolutions')
 
 % Discretise time interval
-N = 1000
+outerN = 100
+innerN = 25
 tStart = 0
-tFinal = 25
-tRange = linspace(tStart,tFinal,N+1);
+tFinal = 10
+tRange = linspace(tStart,tFinal,(outerN-1)*innerN);
 deltaT = tFinal/N;
 
 % Set a value for alpha
-alphas = [2 3 4 5];
+alphas = [pi/2];
 
-totalDrivingFunctions = 10;
+totalDrivingFunctions = 6;
 imageCounter = 1;
 
-for i = 1:totalDrivingFunctions
+drivingFunctions = [1,3,7,11];
+
+for i = 1:length(drivingFunctions)
 
     for j = 1:length(alphas)
 
+        piOverAlpha = pi/alphas(j);
         alpha = alphas(j);
 
-        % Configure pi / alpha
-        % piOverAlpha = pi/alpha;
-
-        piOverAlpha = 1;
-
         % Set 'original' Loewner equation
-        origLoewner = @(gt,gdt,drivingFunction) gt * gdt^(piOverAlpha) - gt * drivingFunction^(piOverAlpha) - gdt*gdt^(piOverAlpha) + gdt*drivingFunction^(piOverAlpha) - 2*gdt*deltaT;
-
-        % origLoewner = @(gt,gdt,drivingFunction) gdt * gt^(piOverAlpha) - gdt * drivingFunction^(piOverAlpha) - gt*gt^(piOverAlpha) + gt*drivingFunction^(piOverAlpha) - 2*gt*deltaT;
-
-        % origLoewner = @(gt,gdt,drivingFunction) gdt*gdt^(piOverAlpha) - gdt*drivingFunction^piOverAlpha - gt*gdt^piOverAlpha + gt*drivingFunction^piOverAlpha - 2*deltaT*gdt;
-
-        % origLoewner = @(gt,gdt,drivingFunction) (gdt - gt)*(gt^piOverAlpha - drivingFunction^piOverAlpha) - 2*gt*deltaT;
+        origLoewner = @(gt,gdt,drivingFunction) (gt - gdt)/deltaT - ((2*gdt)/(gdt^piOverAlpha - drivingFunction^piOverAlpha)); 
 
         % Select a driving function
-        df = DrivingFunction(i);
+        df = DrivingFunction(drivingFunctions(i));
 
         % Solve the Wedge Loewner Function
-        gResult = SolveWedgeLoewner(tRange,df,origLoewner);
+        gResult = SolveWedgeLoewner(tRange,innerN,outerN,df,origLoewner);
 
         % Plot result
         figure
         hold on
-        plot(NegativeReal(gResult)+2)
+        plot(gResult)
         AddWedgeAngle(gResult,alpha)
         title(strcat(strcat(df.name,{' / \alpha = '},num2str(alpha))))
         filename = strcat(num2str(imageCounter),'.pdf')
-        % saveas(gcf,filename)
+        saveas(gcf,filename)
         hold off
 
         imageCounter = imageCounter + 1;

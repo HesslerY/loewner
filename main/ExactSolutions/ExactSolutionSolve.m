@@ -7,10 +7,11 @@ start_time = 0;
 end_time = 25;
 t_arr = linspace(start_time,end_time,N);
 df = 1;
-initial_guess = @(t) 2 * 1i * sqrt(t) + (2/3) * t;
 
 num_sol = FileReader(N,df,start_time,end_time,'10')
 z_sol = zeros(N,1);
+
+initial_guess = @(t) 2 * 1i * sqrt(t) + (2/3) * t;
 
 for i = 1:N
 

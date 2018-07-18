@@ -113,7 +113,7 @@ implicit none
 
             h = ComputeH(h,lowerDelta(j),upperDelta(j))
 
-        enddo
+        end do
 
         ! Computer lower and upper delta
         lowerDelta(i) = realpart(h)
@@ -123,7 +123,7 @@ implicit none
         drivingFunctionValues(i) = drivingFunctionValues(i - 1) + lowerDelta(i)
         timeValues(i) = timeValues(i - 1) + upperDelta(i)
 
-    enddo
+    end do
 
 end subroutine InverseLoewner
 

@@ -2,12 +2,12 @@
 addpath('../ExactSolutions')
 
 % Discretise time interval
-outerN = 100
-innerN = 25
+outerN = 200
+innerN = 1
 tStart = 0
-tFinal = 10
+tFinal = 25
 tRange = linspace(tStart,tFinal,(outerN-1)*innerN);
-deltaT = tFinal/N;
+deltaT = tRange(2);
 
 % Set a value for alpha
 alphas = [pi/2];
@@ -30,13 +30,20 @@ for i = 1:length(drivingFunctions)
         % Select a driving function
         df = DrivingFunction(drivingFunctions(i));
 
-        % Solve the Wedge Loewner Function
-        gResult = SolveWedgeLoewner(tRange,innerN,outerN,df,origLoewner);
+        % Solve the Wedge Loewner function for the first trace
+        gResultA = SolveWedgeLoewner(tRange,innerN,outerN,df,origLoewner);
+
+        % Change the sign of the driving function
+        df.xi = @(t) -df.xi(t); 
+
+        % Solve the Wedge Loewner function for the second trace
+        gResultB = SolveWedgeLoewner(tRange,innerN,outerN,df,origLoewner);
 
         % Plot result
         figure
         hold on
-        plot(gResult)
+        plot(gResultA)
+        plot(gResultB)
         AddWedgeAngle(gResult,alpha)
         title(strcat(strcat(df.name,{' / \alpha = '},num2str(alpha))))
         filename = strcat(num2str(imageCounter),'.pdf')

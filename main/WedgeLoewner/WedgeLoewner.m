@@ -12,23 +12,26 @@ deltaT = tRange(2);
 % Set a value for alpha
 alphas = [pi/2];
 
-totalDrivingFunctions = 6;
+totalDrivingFunctions = 11;
 imageCounter = 1;
 
 drivingFunctions = [1,3,7,11];
 
-for i = 1:length(drivingFunctions)
+for i = 1:totalDrivingFunctions
 
     for j = 1:length(alphas)
 
-        piOverAlpha = pi/alphas(j);
+        % Set the value of alpha
         alpha = alphas(j);
+
+        % Set the value for pi/alpha
+        piOverAlpha = pi/alpha;
 
         % Set 'original' Loewner equation
         origLoewner = @(gt,gdt,drivingFunction) (gt - gdt)/deltaT - ((2*gdt)/(gdt^piOverAlpha - drivingFunction^piOverAlpha)); 
 
         % Select a driving function
-        df = DrivingFunction(drivingFunctions(i));
+        df = DrivingFunction(i);
 
         % Solve the Wedge Loewner function for the first trace
         gResultA = SolveWedgeLoewner(tRange,innerN,outerN,df,origLoewner);
@@ -44,10 +47,10 @@ for i = 1:length(drivingFunctions)
         hold on
         plot(gResultA)
         plot(gResultB)
-        AddWedgeAngle(gResult,alpha)
+        % AddWedgeAngle(gResult,alpha)
         title(strcat(strcat(df.name,{' / \alpha = '},num2str(alpha))))
         filename = strcat(num2str(imageCounter),'.pdf')
-        saveas(gcf,filename)
+        % saveas(gcf,filename)
         hold off
 
         imageCounter = imageCounter + 1;

@@ -4,6 +4,7 @@ function drivingFunction = DrivingFunction(drivingNumber)
         case 1
             drivingFunction.xi = @(t) 1;
             drivingFunction.name = '\xi(t) = 1';
+            drivingFunction.cubic_exact = @(N,start_time,end_time) CubicLinearExact(N,start_time,end_time)
         case 2
             drivingFunction.xi = @(t) t;
             drivingFunction.name = '\xi(t) = t';
@@ -34,6 +35,10 @@ function drivingFunction = DrivingFunction(drivingNumber)
         case 11
             drivingFunction.xi = @(t) sqrt(t + 0.01)
             drivingFunction.name = '\xi(t) = \surd(t + 0.01)';
+        case 15
+            drivingFunction.xi = @(t) sqrt(1 + t)
+            drivingFunction.name = '\xi(t) = \surd(1 + t)';
+            drivingFunction.cubic_exact = @(N,start_time,end_time,a0,d0) CubicSqrtOnePlusTExact(N,start_time,end_time,a0,d0);
         otherwise
             disp('other value')
     end

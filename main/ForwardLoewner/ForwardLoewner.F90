@@ -452,7 +452,7 @@ implicit none
 end subroutine QuadraticLoewner
 
 ! Solve Loewner's equation in the cubic case
-subroutine CubicLoewner(outerStartTime, outerFinalTime, outerN, innerN, firstGResult, secndGResult, sqrtDrivingArg,constDrivingArg)
+subroutine CubicLoewner(outerStartTime, outerFinalTime, outerN, innerN, gResultA, gResultB, sqrtDrivingArg, constDrivingArg)
 use Constants
 use CubicSolver
 implicit none
@@ -468,8 +468,8 @@ implicit none
     real(8), optional :: sqrtDrivingArg
     real(8), optional :: constDrivingArg
 
-    complex(8) :: firstGResult(outerN)
-    complex(8) :: secndGResult(outerN)
+    complex(8) :: gResultA(outerN)
+    complex(8) :: gResultB(outerN)
 
     ! Local variable declarations
 
@@ -478,13 +478,13 @@ implicit none
     integer :: j = 0
 
     real(8) :: twoInnerDeltaTime = 0
-    real(8) :: drivingValue = 0
+    real(8) :: drivingValueSquared = 0
 
     real(8), dimension(:), allocatable :: timeRange
 
     complex(8) :: secondCoeff = 0
-    complex(8) :: firstGCurrent = 0
-    complex(8) :: secndGCurrent = 0
+    complex(8) :: gCurrentA = 0
+    complex(8) :: gCurrentB = 0
 
     complex(8), dimension(3) :: firstPolymCoeffs
     complex(8), dimension(3) :: secndPolymCoeffs
@@ -523,44 +523,44 @@ implicit none
     twoInnerDeltaTime = timeRange(2) * 2
 
     ! Set the first elements to be +/-ve value of driving function at t = 0
-    firstGResult(1) = complex(DrivingFunction(timeRange(1)),0)
-    secndGResult(1) = -firstGResult(1)
+    gResultA(1) = complex(DrivingFunction(timeRange(1)),0)
+    gResultB(1) = -gResultA(1)
 
     ! Compute g_0 outerN times
     do i = 1, outerN - 1
 
         ! Find the value of g at t = inner max time
-        firstGCurrent = complex(DrivingFunction(timeRange(i*innerN)),0)
-        secndGCurrent = -firstGCurrent
+        gCurrentA = complex(DrivingFunction(timeRange(i*innerN)),0)
+        gCurrentB = -gCurrentA
 
         ! Iterate backwards from the highest time value to zero
         do j = i*innerN,1,-1
 
             ! Obtain the current driving value
-            drivingValue = DrivingFunction(timeRange(j))
+            drivingValueSquared = RealPower(DrivingFunction(timeRange(j)),2)
 
             ! Obtain the value of the second coefficient
-            secondCoeff = twoInnerDeltaTime - RealPower(drivingValue,2)
+            secondCoeff = twoInnerDeltaTime - drivingValueSquared
 
             ! Define the coefficients of the cubic equation for the first trace
-            firstPolymCoeffs(1) = -firstGCurrent
+            firstPolymCoeffs(1) = -gCurrentA
             firstPolymCoeffs(2) = secondCoeff
-            firstPolymCoeffs(3) = firstGCurrent * RealPower(drivingValue,2)
+            firstPolymCoeffs(3) = gCurrentA * drivingValueSqaured
 
             ! Define the coefficients of the cubic equation for the second trace
-            secndPolymCoeffs(1) = -secndGCurrent
+            secndPolymCoeffs(1) = -gCurrentB
             secndPolymCoeffs(2) = secondCoeff
-            secndPolymCoeffs(3) = secndGCurrent * RealPower(drivingValue,2)
+            secndPolymCoeffs(3) = gCurrentB * drivingValueSquared
 
             ! Use the Cubic Solver to find the cube roots for both traces
-            firstGCurrent = CubicRoot(firstPolymCoeffs)
-            secndGCurrent = CubicRoot(secndPolymCoeffs)
+            gCurrentA = CubicRoot(firstPolymCoeffs)
+            gCurrentB = CubicRoot(secndPolymCoeffs)
 
         end do
 
         ! Place the g_0 values in the arrays
-        firstGResult(i + 1) = firstGCurrent
-        secndGResult(i + 1) = secndGCurrent
+        gResultA(i + 1) = gCurrentA
+        gResultB(i + 1) = gCurrentB
 
     end do
 

@@ -43,7 +43,7 @@ def runCubicLoewner(i):
     if i == 0:
         CubicLoewner.cubicloewner(outerstarttime=start_time, outerfinaltime=final_time, innern=inner_n, firstgresult=first_g_arr, secndgresult=second_g_arr, constdrivingarg=1)
     else:
-        CubicLoewner.cubicloewner(outerstarttime=start_time, outerfinaltime=final_time, innern=inner_n, firstgresult=first_g_arr, secndgresult=second_g_arr)
+        CubicLoewner.cubicloewner(outerstarttime=start_time, outerfinaltime=final_time, innern=inner_n, gresulta=first_g_arr, gresultb=second_g_arr)
 
     createCubicCSV(i,[first_g_arr,second_g_arr])
 
@@ -117,9 +117,9 @@ def RMSCubicLoewner(i,const=None):
     for inner_n in inner_res:
 
         if const is None:
-            CubicLoewner.cubicloewner(outerstarttime=start_time, outerfinaltime=final_time, innern=inner_n, firstgresult=first_g_arr, secndgresult=second_g_arr)
+            CubicLoewner.cubicloewner(outerstarttime=start_time, outerfinaltime=final_time, innern=inner_n, gresulta=first_g_arr, gresultb=second_g_arr)
         else:
-            CubicLoewner.cubicloewner(outerstarttime=start_time, outerfinaltime=final_time, innern=inner_n, firstgresult=first_g_arr, secndgresult=second_g_arr, constdrivingarg=1)
+            CubicLoewner.cubicloewner(outerstarttime=start_time, outerfinaltime=final_time, innern=inner_n, gresulta=first_g_arr, gresultb=second_g_arr, constdrivingarg=1)
 
         createCubicCSV(i,[first_g_arr,second_g_arr],inner_n)
         print("Completed driving function " + str(i) + " with inner resolution of " +str(inner_n))

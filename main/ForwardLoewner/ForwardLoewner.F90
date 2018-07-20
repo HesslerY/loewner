@@ -536,7 +536,7 @@ implicit none
         ! Iterate backwards from the highest time value to zero
         do j = i*innerN,1,-1
 
-            ! Obtain the current driving value
+            ! Obtain the square of the current driving value
             drivingValueSquared = RealPower(DrivingFunction(timeRange(j)),2)
 
             ! Obtain the value of the second coefficient
@@ -545,7 +545,7 @@ implicit none
             ! Define the coefficients of the cubic equation for the first trace
             firstPolymCoeffs(1) = -gCurrentA
             firstPolymCoeffs(2) = secondCoeff
-            firstPolymCoeffs(3) = gCurrentA * drivingValueSqaured
+            firstPolymCoeffs(3) = gCurrentA * drivingValueSquared
 
             ! Define the coefficients of the cubic equation for the second trace
             secndPolymCoeffs(1) = -gCurrentB

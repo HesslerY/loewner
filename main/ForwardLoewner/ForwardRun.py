@@ -1,12 +1,12 @@
 import Constants
 from subprocess import check_output, call
 from subprocess import CalledProcessError
-from numpy import empty, delete, complex128
+from numpy import empty, column_stack, savetxt, complex128
 from importlib import import_module
 
 class ForwardRun:
 
-    def __init__(self, driving_function, filename = "ForwardLoewner"):
+    def __init__(self, driving_function, filename = "ForwardLoewner", constant = 0):
 
         # Assign the driving function index
         self.driving_function = driving_function
@@ -14,33 +14,23 @@ class ForwardRun:
         # Assign the module code
         self.module_code = str(driving_function)
 
+        # Determine the filename of the relevant Fortran file
         self.fortran_filename = "../" + filename + "/" + filename + ".F90"
 
+        # Set a filename for the compiled module
         self.module_name = "modules." + filename + "_"  + self.module_code
 
         # Generate the command for preparing a module with f2py
         self.compile_command = None
 
-        # Obtain the time and resolution parameters
-        self.start_time = None
-        self.final_time = None
-        self.outer_points = None
-        self.inner_points = None
+        # Set a value for the case of xi(t) = constant
+        self.constantParam = constant
 
-        # Create a results attribute
-        self.results = None
-
-        #
-        self.constantParam = 0
-
-    def driving_string(self):
-
-        # Return a string containing the name of the driving function in square
-        # brackets
-        return "[" + Constants.DRIVING_INFO[self.driving_function] + "] "
+        self.output_dir = "../Output/Data/Quadratic/Forward/"
 
     def set_compile_command(self):
 
+        # Create a string that is used to compile for fortran file with f2py
         self.compile_command = Constants.F2PY_FIRST + ["-DCASE=" + self.module_code] \
                + [self.fortran_filename, "-m", \
                   self.module_name]
@@ -52,6 +42,7 @@ class ForwardRun:
             check_output(self.compile_command)
 
         except CalledProcessError:
+            
             print(self.compile_command)
             call(["ls","-l"])
             print("Error: Could not compile module.")
@@ -61,53 +52,6 @@ class ForwardRun:
 
         # Try to import the corresponding module
         return import_module(self.module_name)
-
-    def set_resolution_parameters(self):
-
-        while True:
-
-            # Ask for the run parameters
-            values = input(self.driving_string() + "Please enter the star" \
-                       + "t time, end time, and number of points seperated b" \
-                       + "y a space: ")
-            try:
-
-                # Split the input
-                values = values.split()
-
-                # Ensure that three values were entered
-                if len(values) != 3:
-                    continue
-
-                self.start_time = float(values[0])
-
-                # Check that the start time >= 0
-                if self.start_time < 0:
-                    continue
-
-                self.final_time = float(values[1])
-
-                # Check that final time is greater than the start time
-                if self.final_time <= self.start_time:
-                    continue
-
-                self.outer_points = int(values[2])
-
-                # Check that the number of points is >= 1
-                if self.outer_points < 1:
-                    continue
-
-                self.inner_points = int(values[3])
-
-                # Check that the number of points is >= 1
-                if self.inner_points < 1:
-                    continue
-
-                return
-
-            except ValueError:
-                # Repeat if input had incorrect format
-                continue
 
     def perform_loewner(self):
 
@@ -131,6 +75,28 @@ class ForwardRun:
             ForwardLoewner.quadraticloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresult=self.results, constantdrivingarg=self.constantParam)
         else:
             ForwardLoewner.quadraticloewner(self.start_time, self.final_time, self.inner_points, self.results)
+
+    def generate_properties_string(self):
+
+        # Place the parameters of the run into a list
+        properties = [self.driving_function, self.start_time, self.final_time, self.outer_points, self.inner_points]
+
+        # Convert the parameters to strings
+        desc = [str(attr) for attr in properties]
+
+        # Create a single string to use as a filename
+        return "-".join(desc)
+
+    def save_to_CSV(self):
+
+        # Create a filename for the CSV file
+        filename = self.output_dir + self.generate_properties_string() + ".csv"
+
+        # Create a 2D array from the real and imaginary values of the results
+        combined = column_stack((self.results.real,self.results.imag))
+
+        # Convert the 2D array to a file
+        savetxt(filename, combined, fmt="%.18f")
 
 class SqrtForwardRun(ForwardRun):
 
@@ -161,6 +127,31 @@ class SqrtForwardRun(ForwardRun):
         self.results = empty(self.outer_points, dtype=complex128)
         ForwardLoewner.quadraticloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresult=self.results, sqrtdrivingarg=self.sqrt_param)
 
+    def sqrt_filename_string(self):
+
+        return str(self.sqrt_param)[:3].replace(".","dot")
+
+    def shift(self):
+
+        offset = self.results[0].real
+
+        for i in range(self.outer_points): 
+            self.results[i]  -= offset
+
+    def save_to_CSV(self):
+
+        param = "-" + self.sqrt_filename_string()
+        filename = self.output_dir + self.properties_string() + param + ".csv"
+
+        if self.driving_function == 10:
+            self.shift()
+
+        real_vals = self.results.real
+        imag_vals = self.results.imag
+
+        combined = column_stack((real_vals,imag_vals))
+        savetxt(filename, combined, fmt="%.18f")
+
 class ExactForwardRun(ForwardRun):
 
     def __init__(self, driving_function):
@@ -168,59 +159,11 @@ class ExactForwardRun(ForwardRun):
         ForwardRun.__init__(self, driving_function, "ExactLoewner")
         self.module_name = "modules.ExactLoewner"
 
-    def driving_string(self):
-
-        # Return a string containing the name of the driving function in square
-        # brackets
-        return "[" + Constants.EXACT_INFO[self.driving_function] + "] "
-
     def set_compile_command(self):
 
         self.compile_command = Constants.F2PY_FIRST \
                + [self.fortran_filename, "-m", \
                self.module_name]
-
-    def set_resolution_parameters(self):
-
-        query = ["Please enter the start time and number of intervals seperated by a space: "]
-
-        while True:
-
-            # Ask for the run parameters
-            values = input(self.driving_string() + query[self.driving_function])
-
-            try:
-
-                # Split the input
-                values = values.split()
-
-                if self.driving_function == 0:
-
-                    # Ensure that three values were entered
-                    if len(values) != 2:
-                        continue
-
-                    self.start_time = float(values[0])
-
-                    # Check that the start time >= 0
-                    if self.start_time < 0:
-                        continue
-
-                    self.outer_points = int(values[1])
-
-                    # Check that the number of points is >= 1
-                    if self.outer_points < 1:
-                        continue
-
-                    return
-
-                else:
-                    # Not yet implemented
-                    pass
-
-            except ValueError:
-                    # Repeat if input had incorrect format
-                    continue
 
     def perform_loewner(self):
 
@@ -239,7 +182,6 @@ class ExactForwardRun(ForwardRun):
 
         if self.driving_function == 1:
             ExactLoewner.asymptotic_linear_driving(final_time=self.final_time,outer_n=self.outer_points,g_arr=self.results)
-
         else:
             # Not yet implemented
             pass

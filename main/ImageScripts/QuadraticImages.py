@@ -93,56 +93,6 @@ loewner_runs = create_loewner_runs()
 kappa_runs = create_kappa_runs()
 calpha_runs = create_calpha_runs()
 
-def sqrt_to_string(sqrt):
-
-    return str(sqrt)[:3].replace(".","point")
-
-def generate_properties(loewner):
-
-    return [loewner.driving_function, loewner.start_time, loewner.final_time, loewner.outer_points]
-
-def properties_string(properties):
-
-    desc = [str(attr) for attr in properties]
-    return "-".join(desc)
-
-def create_csv(loewner_run):
-
-    data = loewner_run.results
-
-    if loewner_run.driving_function == 1:
-        filename = output_dir + properties_string(generate_properties(loewner_run)) + "-" + str(loewner_run.inner_points) + filename_end
-    else:
-        filename = output_dir + properties_string(generate_properties(loewner_run)) + filename_end
-
-    real_vals = data.real
-    imag_vals = data.imag
-
-    combined = column_stack((real_vals,imag_vals))
-    savetxt(filename, combined, fmt="%.18f")
-
-def shift(real_vals):
-
-    offset = full_like(real_vals,real_vals[0])
-    return real_vals - offset
-
-def sqrt_create_csv(loewner_run):
-
-    data = loewner_run.results
-    sqrt = loewner_run.sqrt_param
-
-    param = "-" + sqrt_to_string(sqrt)
-    filename = output_dir + properties_string(generate_properties(loewner_run)) + param + filename_end
-
-    real_vals = data.real
-    imag_vals = data.imag
-
-    if loewner_run.driving_function == 10:
-        real_vals = shift(real_vals)
-
-    combined = column_stack((real_vals,imag_vals))
-    savetxt(filename, combined, fmt="%.18f")
-
 def inv_create_csv(time,driving,properties):
 
     filename = output_dir + properties_string(properties) + "-inv" + filename_end
@@ -162,20 +112,22 @@ for run in loewner_runs:
     res = [run.start_time, run.final_time, run.outer_points]
     points = run.results
 
-    create_csv(run)
+    run.save_to_CSV()
 
-    inverse_loewner = InverseRun(df,points,res)
-    inverse_loewner.perform_inverse()
+    # inverse_loewner = InverseRun(df,points,res)
+    # inverse_loewner.perform_inverse()
 
-    time_arr = inverse_loewner.time_arr
-    driving_arr = inverse_loewner.driving_arr
+    # time_arr = inverse_loewner.time_arr
+    # driving_arr = inverse_loewner.driving_arr
 
-    inv_create_csv(time_arr,driving_arr,[df] + res)
+    # inv_create_csv(time_arr,driving_arr,[df] + res)
 
     print("Finished driving function " + str(df))
 
 exact_sol_res = [5,50,100,200,300,400,500]
 run = loewner_runs[1]
+
+exit()
 
 for res in exact_sol_res:
 

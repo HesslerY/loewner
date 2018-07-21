@@ -87,10 +87,10 @@ class ForwardRun:
         # Create a single string to use as a filename
         return "-".join(desc)
 
-    def save_to_CSV(self):
+    def save_to_csv(self):
 
         # Create a filename for the CSV file
-        filename = self.output_dir + self.generate_properties_string() + ".csv"
+        filename = self.output_dir + self.generate_properties_string() + Constants.DATA_EXT
 
         # Create a 2D array from the real and imaginary values of the results
         combined = column_stack((self.results.real,self.results.imag))
@@ -138,10 +138,19 @@ class SqrtForwardRun(ForwardRun):
         for i in range(self.outer_points): 
             self.results[i] -= offset
 
-    def save_to_CSV(self):
+    def generate_properties_string(self):
 
-        param = "-" + self.sqrt_filename_string()
-        filename = self.output_dir + self.properties_string() + param + ".csv"
+        properties = [self.driving_function, self.sqrt_filename_string(), self.start_time, self.final_time, self.outer_points, self.inner_points]
+
+        # Convert the parameters to strings
+        desc = [str(attr) for attr in properties]
+
+        # Create a single string to use as a filename
+        return "-".join(desc)
+
+    def save_to_csv(self):
+
+        filename = self.output_dir + self.generate_properties_string() + Constants.DATA_EXT
 
         if self.driving_function == 10:
             self.shift()

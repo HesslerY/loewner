@@ -55,3 +55,6 @@ F2PY_FIRST = ["f2py", "-c"]
 
 def squareroot_driving(driving_function):
     return driving_function in [KAPPA_IDX, C_ALPHA_IDX]
+
+# Extension for data file output
+DATA_EXT = ".csv"

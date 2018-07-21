@@ -112,7 +112,7 @@ for run in loewner_runs:
     res = [run.start_time, run.final_time, run.outer_points]
     points = run.results
 
-    run.save_to_CSV()
+    run.save_to_csv()
 
     inverse_loewner = InverseRun(df,points,res)
     inverse_loewner.perform_inverse()
@@ -131,36 +131,32 @@ for res in exact_sol_res:
 
     run.inner_points = res
     run.perform_loewner()
-    run.save_to_CSV()
+    run.save_to_csv()
 
 constant_final_times = [1,4,9,16]
 constant_run = loewner_runs[0]
-
-exit()
 
 for final in constant_final_times:
 
     constant_run.final_time = final
     constant_run.perform_loewner()
-    create_csv(constant_run)
+    constant_run.save_to_csv() 
+
 
 for run in kappa_runs:
 
     run.perform_loewner()
-    df = run.driving_function
-    res = [run.start_time, run.final_time, run.outer_points]
-    points = run.results
-    sqrt_param = run.sqrt_param
+    run.save_to_csv()
 
-    sqrt_create_csv(run)
+    # inverse_loewner = InverseRun(df,points,res)
+    # inverse_loewner.perform_inverse()
 
-    inverse_loewner = InverseRun(df,points,res)
-    inverse_loewner.perform_inverse()
+    # time_arr = inverse_loewner.time_arr
+    # driving_arr = inverse_loewner.driving_arr
 
-    time_arr = inverse_loewner.time_arr
-    driving_arr = inverse_loewner.driving_arr
+    # sqrt_inv_create_csv(time_arr,driving_arr,[df] + res,sqrt_param)
 
-    sqrt_inv_create_csv(time_arr,driving_arr,[df] + res,sqrt_param)
+exit()
 
 for run in calpha_runs:
 
@@ -172,11 +168,11 @@ for run in calpha_runs:
 
     sqrt_create_csv(run)
 
-    inverse_loewner = InverseRun(df,points,res)
-    inverse_loewner.perform_inverse()
+    # inverse_loewner = InverseRun(df,points,res)
+    # inverse_loewner.perform_inverse()
 
-    time_arr = inverse_loewner.time_arr
-    driving_arr = inverse_loewner.driving_arr
+    # time_arr = inverse_loewner.time_arr
+    # driving_arr = inverse_loewner.driving_arr
 
-    sqrt_inv_create_csv(time_arr,driving_arr,[df] + res,sqrt_param)
+    # sqrt_inv_create_csv(time_arr,driving_arr,[df] + res,sqrt_param)
 

@@ -114,8 +114,8 @@ for run in loewner_runs:
 
     run.save_to_CSV()
 
-    # inverse_loewner = InverseRun(df,points,res)
-    # inverse_loewner.perform_inverse()
+    inverse_loewner = InverseRun(df,points,res)
+    inverse_loewner.perform_inverse()
 
     # time_arr = inverse_loewner.time_arr
     # driving_arr = inverse_loewner.driving_arr
@@ -127,18 +127,16 @@ for run in loewner_runs:
 exact_sol_res = [5,50,100,200,300,400,500]
 run = loewner_runs[1]
 
-exit()
-
 for res in exact_sol_res:
 
     run.inner_points = res
     run.perform_loewner()
-    res = [run.start_time, run.final_time, run.outer_points]
-    points = run.results
-    create_csv(run)
+    run.save_to_CSV()
 
 constant_final_times = [1,4,9,16]
 constant_run = loewner_runs[0]
+
+exit()
 
 for final in constant_final_times:
 

@@ -136,7 +136,7 @@ class SqrtForwardRun(ForwardRun):
         offset = self.results[0].real
 
         for i in range(self.outer_points): 
-            self.results[i]  -= offset
+            self.results[i] -= offset
 
     def save_to_CSV(self):
 

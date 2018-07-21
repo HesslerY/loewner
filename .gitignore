@@ -23,3 +23,4 @@ compiletest.py
 poly3zerosModule.f90
 *poly3zeros*
 *.pdf
+*.csv

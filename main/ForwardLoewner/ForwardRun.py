@@ -87,7 +87,7 @@ class ForwardRun:
         # Create a single string to use as a filename
         return "-".join(desc)
 
-    def save_to_csv(self):
+    def save_to_dat(self):
 
         # Create a filename for the CSV file
         filename = self.output_dir + self.generate_properties_string() + Constants.DATA_EXT
@@ -148,7 +148,7 @@ class SqrtForwardRun(ForwardRun):
         # Create a single string to use as a filename
         return "-".join(desc)
 
-    def save_to_csv(self):
+    def save_to_dat(self):
 
         filename = self.output_dir + self.generate_properties_string() + Constants.DATA_EXT
 

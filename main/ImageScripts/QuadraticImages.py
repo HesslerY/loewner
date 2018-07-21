@@ -7,12 +7,6 @@ from InverseLoewner.InverseRun import InverseRun
 from LoewnerPlot.LoewnerPlot import LoewnerPlot, MultiLoewnerPlot, InverseLoewnerPlot, MiniLoewnerPlot, InverseMultiLoewnerPlot
 from numpy import savetxt, column_stack, full_like, linspace
 
-# Output directory for the CSV files
-output_dir = "/home/dolica/Documents/writeuploewner/finalreport/data/"
-
-# Declare extension for data filename string
-filename_end = ".csv"
-
 # Declare final time for Loewner runs
 final_time = 25
 
@@ -93,37 +87,16 @@ loewner_runs = create_loewner_runs()
 kappa_runs = create_kappa_runs()
 calpha_runs = create_calpha_runs()
 
-def inv_create_csv(time,driving,properties):
-
-    filename = output_dir + properties_string(properties) + "-inv" + filename_end
-    combined = column_stack((time,driving))
-    savetxt(filename, combined, fmt="%.18f")
-
-def sqrt_inv_create_csv(time,driving,properties,sqrt_param):
-
-    filename = output_dir + properties_string(properties) + "-" + sqrt_to_string(sqrt_param) + "-inv" + filename_end
-    combined = column_stack((time,driving))
-    savetxt(filename, combined, fmt="%.18f")
-
 for run in loewner_runs:
 
     run.perform_loewner()
-    df = run.driving_function
-    res = [run.start_time, run.final_time, run.outer_points]
-    points = run.results
-
-    run.save_to_csv()
+    run.save_to_dat()
 
     inverse_loewner = InverseRun(run)
     inverse_loewner.perform_inverse()
-    inverse_loewner.save_to_csv()
+    inverse_loewner.save_to_dat()
 
-    # time_arr = inverse_loewner.time_arr
-    # driving_arr = inverse_loewner.driving_arr
-
-    # inv_create_csv(time_arr,driving_arr,[df] + res)
-
-    print("Finished driving function " + str(df))
+    print("Finished driving function " + str(run.driving_function))
 
 exact_sol_res = [5,50,100,200,300,400,500]
 run = loewner_runs[1]
@@ -132,7 +105,7 @@ for res in exact_sol_res:
 
     run.inner_points = res
     run.perform_loewner()
-    run.save_to_csv()
+    run.save_to_dat()
 
 constant_final_times = [1,4,9,16]
 constant_run = loewner_runs[0]
@@ -141,31 +114,27 @@ for final in constant_final_times:
 
     constant_run.final_time = final
     constant_run.perform_loewner()
-    constant_run.save_to_csv() 
+    constant_run.save_to_dat() 
 
 for run in kappa_runs:
 
     run.perform_loewner()
-    run.save_to_csv()
+    
+    run.save_to_dat()
 
-    # inverse_loewner = InverseRun(df,points,res)
-    # inverse_loewner.perform_inverse()
+    inverse_loewner = InverseRun(run)
+    inverse_loewner.perform_inverse()
 
-    # time_arr = inverse_loewner.time_arr
-    # driving_arr = inverse_loewner.driving_arr
-
-    # sqrt_inv_create_csv(time_arr,driving_arr,[df] + res,sqrt_param)
+    inverse_loewner.save_to_dat() 
 
 for run in calpha_runs:
 
     run.perform_loewner()
-    run.save_to_csv()
+   
+    run.save_to_dat()
 
-    # inverse_loewner = InverseRun(df,points,res)
-    # inverse_loewner.perform_inverse()
+    inverse_loewner = InverseRun(run)
+    inverse_loewner.perform_inverse()
 
-    # time_arr = inverse_loewner.time_arr
-    # driving_arr = inverse_loewner.driving_arr
-
-    # sqrt_inv_create_csv(time_arr,driving_arr,[df] + res,sqrt_param)
+    inverse_loewner.save_to_dat() 
 

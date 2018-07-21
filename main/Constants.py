@@ -57,4 +57,4 @@ def squareroot_driving(driving_function):
     return driving_function in [KAPPA_IDX, C_ALPHA_IDX]
 
 # Extension for data file output
-DATA_EXT = ".csv"
+DATA_EXT = ".dat"

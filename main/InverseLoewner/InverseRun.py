@@ -62,20 +62,9 @@ class InverseRun:
         self.driving_arr = driving_arr
         self.time_arr = time_arr
 
-    def generate_properties_string(self):
+    def save_to_dat(self):
 
-        # Place the parameters of the run into a list
-        properties = [self.forward_run.driving_function, self.forward_run.start_time, self.forward_run.final_time, self.forward_run.outer_points, self.forward_run.inner_points]
-
-        # Convert the parameters to strings
-        desc = [str(attr) for attr in properties]
-
-        # Create a single string to use as a filename
-        return "-".join(desc)
-
-    def save_to_csv(self):
-
-        filename = self.output_dir + self.generate_properties_string() + Constants.DATA_EXT
+        filename = self.output_dir + self.forward_run.generate_properties_string() + Constants.DATA_EXT
         combined = column_stack((self.time_arr,self.driving_arr))
         savetxt(filename, combined, fmt="%.18f")
 

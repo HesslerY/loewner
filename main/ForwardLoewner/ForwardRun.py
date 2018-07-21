@@ -129,7 +129,7 @@ class SqrtForwardRun(ForwardRun):
 
     def sqrt_filename_string(self):
 
-        return str(self.sqrt_param)[:3].replace(".","dot")
+        return str(self.sqrt_param)[:3].replace(".","point")
 
     def shift(self):
 

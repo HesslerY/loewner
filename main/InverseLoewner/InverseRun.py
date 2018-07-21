@@ -1,15 +1,12 @@
 import Constants
 from subprocess import check_output, call
 from subprocess import CalledProcessError
-from numpy import empty, copy
+from numpy import empty, copy, column_stack, savetxt
 from importlib import import_module
 
 class InverseRun:
 
-    def __init__(self, driving_function, results, res_params):
-
-        # Assign the driving function index
-        self.driving_function = driving_function
+    def __init__(self, forward_run):
 
         filename = "InverseLoewner"
 
@@ -20,19 +17,9 @@ class InverseRun:
         # Generate the command for preparing a module with f2py
         self.compile_command = None
 
-        # Obtain the time and resolution parameters
-        self.start_time = res_params[0]
-        self.final_time = res_params[1]
-        self.numpoints = res_params[2]
+        self.output_dir = "../Output/Data/Quadratic/Inverse/"
 
-        # Create a results attribute
-        self.results = results
-
-    def driving_string(self):
-
-        # Return a string containing the name of the driving function in square
-        # brackets
-        return "[" + Constants.DRIVING_INFO[self.driving_function] + "] "
+        self.forward_run = forward_run
 
     def set_compile_command(self):
 
@@ -68,9 +55,27 @@ class InverseRun:
             self.compile_inverse()
             InverseLoewner = self.import_inverse()
 
-        driving_arr = empty(self.numpoints, dtype=float)
-        time_arr = empty(self.numpoints, dtype=float)
-        InverseLoewner.inverseloewner(self.results, driving_arr, time_arr, self.numpoints)
+        driving_arr = empty(self.forward_run.outer_points, dtype=float)
+        time_arr = empty(self.forward_run.outer_points, dtype=float)
+        InverseLoewner.inverseloewner(self.forward_run.results, driving_arr, time_arr, self.forward_run.outer_points)
 
         self.driving_arr = driving_arr
         self.time_arr = time_arr
+
+    def generate_properties_string(self):
+
+        # Place the parameters of the run into a list
+        properties = [self.forward_run.driving_function, self.forward_run.start_time, self.forward_run.final_time, self.forward_run.outer_points, self.forward_run.inner_points]
+
+        # Convert the parameters to strings
+        desc = [str(attr) for attr in properties]
+
+        # Create a single string to use as a filename
+        return "-".join(desc)
+
+    def save_to_csv(self):
+
+        filename = self.output_dir + self.generate_properties_string() + Constants.DATA_EXT
+        combined = column_stack((self.time_arr,self.driving_arr))
+        savetxt(filename, combined, fmt="%.18f")
+

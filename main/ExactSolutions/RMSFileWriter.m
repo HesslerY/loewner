@@ -1,12 +1,12 @@
 function RMSFileWriter(df,rms,innerNs)
 
-    extension='.csv'
+    extension='.dat'
     runs = length(innerNs)
 
     if df == 1
-        outputdir='/home/dolica/Documents/writeuploewner/finalreport/data/RMS/Quadratic/';
+        outputdir='../Output/Data/Quadratic/RootMeanSquared/';
     else
-        outputdir='/home/dolica/Documents/writeuploewner/finalreport/data/RMS/Cubic/';
+        outputdir='../Output/Data/Cubic/RootMeanSquared/';
     end
 
     fileinfo=[string(df) 'RMS'];

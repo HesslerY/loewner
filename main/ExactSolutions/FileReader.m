@@ -1,16 +1,12 @@
-function z = FileReader(N,df,start_time,end_time,info)
+function z = FileReader(outerN,innerN,df,start_time,end_time,inputdirB)
 
-    inputdir='/home/dolica/Documents/writeuploewner/finalreport/data/';
-    extension='.csv';
+    inputdirA='../Output/Data';
+    extension='.dat';
 
-    if exist('info','var')
-        fileinfo=[df start_time end_time N string(info)];
-    else
-        fileinfo=[df start_time end_time N];
-    end
+    fileinfo=[df start_time end_time outerN innerN];
 
     fileinfo = string(fileinfo);
-    fullfilename=strcat(inputdir,join(fileinfo,'-'),extension);
+    fullfilename=strcat(inputdirA,inputdirB,join(fileinfo,'-'),extension);
 
     M = dlmread(fullfilename);
     z = complex(M(:,1), M(:,2));

@@ -1,5 +1,5 @@
 import sys
-sys.path.append('../')
+sys.path.append('../LoewnerRun')
 
 from importlib import import_module
 from numpy import savetxt, column_stack, full_like, linspace, empty, absolute, complex128, copy
@@ -12,135 +12,61 @@ final_time = 10
 outer_n = 1000
 inner_n = 10
 
-first_g_arr = empty(outer_n, dtype=complex128)
-second_g_arr = empty(outer_n,  dtype=complex128)
-
 kappas = [i + 0.5 for i in range(10)]
 alphas = [i * 0.1 for i in range(1,10)]
 nonSquareRootDriving = [i for i in range(1,10)] + [i for i in range(12,13)]
 
-output_dir = "/home/dolica/Documents/writeuploewner/finalreport/data/"
+# Create a list of CubicRun objects for the different driving functions
+def create_cubic_runs():
 
-def plot_me(data):
-    plt.plot(data.real, data.imag)
+    # Create an empty list for ForwardRun objects
+    loewner_runs = []
 
-def sqrtToString(sqrt):
+    # Iterate through the driving functions
+    for driving_function in range(Constants.TOTAL_DRIVING_FUNCTIONS):
 
-    sqrt = str(sqrt)
-    first = sqrt[0]
-    last = sqrt[2]
+        # Check that the driving function is not kappa or c_alpha
+        if not Constants.squareroot_driving(driving_function):
 
-    return first + "dot" + last
+            # Add a ForwardRun object to the list that corresponds with the current driving function
+            loewner_runs.append(CubicRun(driving_function))
 
-def runCubicLoewner(i):
+            # Set the properties of the ForwardRun
+            loewner_runs[-1].final_time = final_time
+            loewner_runs[-1].start_time = start_time
+            loewner_runs[-1].outer_points = outer_n
+            loewner_runs[-1].inner_points = inner_n
 
-    module_test = ["f2py", "-c", "-DCASE="+str(i), "../ForwardLoewner/ForwardLoewner.F90", "-m", "modules.ForwardLoewner_"+str(i)]
+    # Return list
+    return loewner_runs
 
-    subprocess.check_output(module_test)
-    module_name = "modules.ForwardLoewner_" + str(i)
-    CubicLoewner = import_module(module_name)
+# Create a list of SqrtForwardRun objects for kappa-driving
+def create_kappa_runs():
 
-    if i == 0:
-        CubicLoewner.cubicloewner(outerstarttime=start_time, outerfinaltime=final_time, innern=inner_n, firstgresult=first_g_arr, secndgresult=second_g_arr, constdrivingarg=1)
-    else:
-        CubicLoewner.cubicloewner(outerstarttime=start_time, outerfinaltime=final_time, innern=inner_n, gresulta=first_g_arr, gresultb=second_g_arr)
+    # Define the kappa driving index
+    kappa_driving = 10
 
-    createCubicCSV(i,[first_g_arr,second_g_arr])
+    # Create an empty list for ForwardRun objects
+    loewner_runs = []
 
-def createCSVFilename(df,root):
+    # Create a list of different kappa values
+    kappas = [i + 0.5 for i in range(1,10)]
 
-    properties = [str(df), str(start_time), str(final_time), str(outer_n), str(root), "Cubic"]
-    return "-".join(properties) + ".csv"
+    # Ireate through the possible kappa values
+    for kappa in kappas:
 
-def createSquareRootCSVFilename(df,root,sqrt):
+        # Add a new ForwardRun object to the list
+        loewner_runs.append(SqrtCubicRun(kappa_driving))
 
-    properties = [str(df), str(start_time), str(final_time), str(outer_n), sqrtToString(sqrt), str(root), "Cubic"]
-    return "-".join(properties) + ".csv"
+        # Set the ForwardRun properties
+        loewner_runs[-1].final_time = 1
+        loewner_runs[-1].start_time = 0
+        loewner_runs[-1].outer_points = 1000
+        loewner_runs[-1].inner_points = 10
 
-def createCubicCSV(df, results, innerRes=False):
+        # Set the kappa value for the ForwardRun
+        loewner_runs[-1].sqrt_param = kappa
 
-    filenames = [createCSVFilename(df,i) for i in range(1,3)]
+    # Return the list
+    return loewner_runs
 
-    if innerRes:
-        filenames[0] = filenames[0][:-4] + "-" + str(innerRes) + ".csv"
-        filenames[1] = filenames[1][:-4] + "-" + str(innerRes) + ".csv"
-
-    for i in range(2):
-
-        data = results[i]
-        filename = filenames[i]
-
-        real_vals = data.real
-        imag_vals = data.imag
-
-        combined = column_stack((real_vals,imag_vals))
-        savetxt(output_dir + filename, combined, fmt="%.18f")
-
-def createSquareRootCubicCSV(df, sqrt, results):
-
-    filenames = [createSquareRootCSVFilename(df,i,sqrt) for i in range(1,3)]
-
-    for i in range(2):
-
-        data = results[i]
-        filename = filenames[i]
-
-        real_vals = data.real
-        imag_vals = data.imag
-
-        combined = column_stack((real_vals,imag_vals))
-        savetxt(output_dir + filename, combined, fmt="%.18f")
-
-def runSquareRootCubicLoewner(i,sqrtparam):
-
-    module_test = ["f2py", "-c", "-DCASE="+str(i), "../ForwardLoewner/ForwardLoewner.F90", "-m", "modules.ForwardLoewner_"+str(i)]
-    subprocess.check_output(module_test)
-    module_name = "modules.ForwardLoewner_" + str(i)
-    CubicLoewner = import_module(module_name)
-    CubicLoewner.cubicloewner(outerstarttime=start_time, outerfinaltime=final_time, innern=inner_n, firstgresult=first_g_arr, secndgresult=second_g_arr,sqrtdrivingarg=sqrtparam)
-
-    createSquareRootCubicCSV(i,sqrtparam,[first_g_arr,second_g_arr])
-
-def RMSCubicLoewner(i,const=None):
-
-    inner_res = [5, 10, 50, 100, 200, 300, 400, 500]
-    module_test = ["f2py", "-c", "-DCASE="+str(i), "../ForwardLoewner/ForwardLoewner.F90", "-m", "modules.ForwardLoewner_"+str(i)]
-    subprocess.check_output(module_test)
-    module_name = "modules.ForwardLoewner_" + str(i)
-    CubicLoewner = import_module(module_name)
-
-    first_g_arr = empty(outer_n, dtype=complex128)
-    second_g_arr = empty(outer_n,  dtype=complex128)
-
-    approx_sol_pairs = []
-
-    for inner_n in inner_res:
-
-        if const is None:
-            CubicLoewner.cubicloewner(outerstarttime=start_time, outerfinaltime=final_time, innern=inner_n, gresulta=first_g_arr, gresultb=second_g_arr)
-        else:
-            CubicLoewner.cubicloewner(outerstarttime=start_time, outerfinaltime=final_time, innern=inner_n, gresulta=first_g_arr, gresultb=second_g_arr, constdrivingarg=1)
-
-        createCubicCSV(i,[first_g_arr,second_g_arr],inner_n)
-        print("Completed driving function " + str(i) + " with inner resolution of " +str(inner_n))
-
-for drivingFunction in nonSquareRootDriving:
-    runCubicLoewner(drivingFunction)
-    print("Completed driving function " + str(drivingFunction))
-
-RMSCubicLoewner(0,1)
-RMSCubicLoewner(14)
-
-inner_n = 10
-
-final_time = 1
-
-for kappa in kappas:
-    runSquareRootCubicLoewner(10,kappa)
-    print("Compled kappa " + str(kappa))
-
-final_time = 25
-
-for alpha in alphas:
-    runSquareRootCubicLoewner(11,alpha)
-    print("Compled calpha " + str(alpha))

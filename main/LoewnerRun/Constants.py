@@ -58,3 +58,9 @@ def squareroot_driving(driving_function):
 
 # Extension for data file output
 DATA_EXT = ".dat"
+
+# Extension for data fortran files
+FORTRAN_EXT = ".F90"
+
+# Extension for data fortran files
+DAT_PREC = "%.18f"

@@ -1,11 +1,11 @@
-function CSVRootMeanSquaredError(exactSol,N,df,start_time,end_time,innerNs,infos)
+function CSVRootMeanSquaredError(exactSol,outerN,df,start_time,end_time,innerNs,inputdirB)
 
-    nSols = length(infos);
+    nSols = length(innerNs);
     rms = zeros(1,nSols);
 
     for i = 1:nSols
 
-        numericalSol = FileReader(N,df,start_time,end_time,infos(i));
+        numericalSol = FileReader(outerN,innerNs(i),df,start_time,end_time,inputdirB);
         rms(i) = RootMeanSquaredError(exactSol,numericalSol);
 
     end

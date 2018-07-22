@@ -1,7 +1,7 @@
-function FileWriter(N,z_sol,df,start_time,end_time,info)
+function FileWriter(N,z_sol,df,start_time,end_time,info,outputdirB)
 
-    outputdir='/home/dolica/Documents/writeuploewner/finalreport/data/'
-    extension='.csv'
+    outputdirA='../Output/Data'
+    extension='.dat'
 
     if exist('info','var')
         fileinfo=[df start_time end_time N string(info)];
@@ -10,7 +10,7 @@ function FileWriter(N,z_sol,df,start_time,end_time,info)
     end
 
     fileinfo = string(fileinfo);
-    fullfilename=strcat(outputdir,join(fileinfo,'-'),extension);
+    fullfilename=strcat(outputdirA,outputdirB,join(fileinfo,'-'),extension);
 
     fileID = fopen(fullfilename,'w');
 

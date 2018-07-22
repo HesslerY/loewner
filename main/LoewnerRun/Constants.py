@@ -64,3 +64,15 @@ FORTRAN_EXT = ".F90"
 
 # Extension for data fortran files
 DAT_PREC = "%.18f"
+
+FOR_LOEWNER = "ForwardLoewner"
+INV_LOEWNER = "InverseLoewner"
+
+# Directories for the data files
+FORWARD_DATA_OUTPUT = "../Output/Data/Quadratic/Forward/"
+INVERSE_DATA_OUTPUT = "../Output/Data/Quadratic/Inverse/"
+CUBIC_DATA_OUTPUT = "../Output/Data/Cubic/Forward/"
+
+FOR_RUN_STR = "Forward"
+INV_RUN_STR = "Inverse"
+CBC_RUN_STR = "Cubic"

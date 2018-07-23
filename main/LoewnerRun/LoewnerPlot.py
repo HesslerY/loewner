@@ -241,6 +241,7 @@ class InverseLoewnerPlot(LoewnerPlot):
 
     def generate_plot(self):
 
+        plt.figure() 
         plt.plot(self.time_arr, self.driving_arr)
 
         if bool(self.plot_dir):
@@ -256,10 +257,9 @@ class InverseLoewnerPlot(LoewnerPlot):
             plt.yticks([])
 
             plt.savefig(self.plot_dir + self.partial_output_filename + ".pdf", bbox_inches='tight')
-            plt.cla()
 
         else:
 
             # Set the plot title
             plt.title(self.output_plot_title, fontsize = 19, color = "black", y = 1.02, usetex = True)
-            plt.show()
+            plt.draw()

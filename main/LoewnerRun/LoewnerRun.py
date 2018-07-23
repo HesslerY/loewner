@@ -1,4 +1,5 @@
 import Constants
+import matplotlib.pyplot as plt
 from subprocess import check_output, call, CalledProcessError
 from numpy import empty, column_stack, savetxt, complex128
 from importlib import import_module
@@ -22,7 +23,8 @@ class LoewnerRun:
         self.inverse_module_name = "modules." + Constants.INV_LOEWNER + "_"  + self.module_code
 
         self.save_data = save_data
-        self.plot_data = False
+        self.display_plot = True
+        self.save_plot = True
 
         self.compile_forward = None
         self.compile_inverse = None
@@ -102,7 +104,7 @@ class LoewnerRun:
         if self.driving_function == 0:
             ForwardLoewner.quadraticloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresult=self.forward_results, constantdrivingarg=self.constant_param)
 
-        elif not Constants.squareroot_driving(self.driving_function):
+        elif not Constants.SQUAREROOT_DRIVING(self.driving_function):
             ForwardLoewner.quadraticloewner(self.start_time, self.final_time, self.inner_points, self.forward_results)
         
         else: 
@@ -164,7 +166,7 @@ class LoewnerRun:
         filename = Constants.FORWARD_DATA_OUTPUT + self.generate_properties_string() + Constants.DATA_EXT
 
         # Shift the real values for the case of kappa-driving
-        if self.driving_function == 10:
+        if self.driving_function == Constants.KAPPA_IDX:
             self.shift()
 
         # Create a 2D array from the real and imaginary values of the results
@@ -189,8 +191,8 @@ class LoewnerRun:
         combinedB = column_stack((self.cubic_results_B.real,self.cubic_results_B.imag))
 
         # Convert the 2D arrays to files
-        savetxt(filenameA, combinedA, fmt="%.18f")
-        savetxt(filenameB, combinedB, fmt="%.18f")
+        savetxt(filenameA, combinedA, fmt=Constants.DATA_PREC)
+        savetxt(filenameB, combinedB, fmt=Constants.DATA_PREC)
 
     def save_to_dat(self, algorithm):
 
@@ -214,8 +216,8 @@ class LoewnerRun:
         if self.save_data:
             self.save_to_dat(algorithm)
 
-        if self.plot_data:
-            pass
+        if self.save_plot or self.display_plot:
+            self.plot_results(algorithm)
 
     def forward_run(self):
         self.algorithm_run(Constants.FOR_RUN_STR)
@@ -225,4 +227,78 @@ class LoewnerRun:
 
     def cubic_run(self):
         self.algorithm_run(Constants.CBC_RUN_STR)
+
+    def forward_plot(self):
+
+        # Plot the values
+        plt.plot(self.forward_results.real, self.forward_results.imag, color='crimson')
+        
+        plt.title(Constants.PLOT_TITLE[self.driving_function], fontsize = 19, color = "black", y = 1.02, usetex = True)
+
+        plt.xlabel(Constants.FOR_PLOT_XL)
+        plt.ylabel(Constants.FOR_PLOT_YL)
+
+        plt.ylim(bottom=0)
+
+        if self.save_plot:
+            plt.savefig(Constants.FORWARD_PLOT_OUTPUT + self.generate_properties_string() + Constants.PLOT_EXT, bbox_inches='tight')
+
+        if self.display_plot:
+            plt.draw()
+                
+    def inverse_plot(self):
+
+        # Plot the values
+        plt.plot(self.time_arr, self.driving_arr, color='crimson')
+        
+        plt.title(Constants.PLOT_TITLE[self.driving_function], fontsize = 19, color = "black", y = 1.02, usetex = True)
+
+        plt.xlabel(Constants.INV_PLOT_XL)
+        plt.ylabel(Constants.INV_PLOT_YL)
+
+        plt.xlim(left=self.start_time)
+
+        if self.save_plot:
+            plt.savefig(Constants.INVERSE_PLOT_OUTPUT + self.generate_properties_string() + Constants.PLOT_EXT, bbox_inches='tight')
+
+        if self.display_plot:
+            plt.show()
+                
+    def cubic_plot(self):
+
+        # Plot the values
+        plt.plot(self.cubic_results_A.real, self.cubic_results_A.imag, color='crimson')
+        plt.plot(self.cubic_results_B.real, self.cubic_results_B.imag, color='crimson')
+        
+        plt.title(Constants.PLOT_TITLE[self.driving_function], fontsize = 19, color = "black", y = 1.02, usetex = True)
+
+        plt.xlabel(Constants.FOR_PLOT_XL)
+        plt.ylabel(Constants.FOR_PLOT_YL)
+
+        plt.ylim(bottom=0)
+
+        if self.save_plot:
+            plt.savefig(Constants.CUBIC_PLOT_OUTPUT + self.generate_properties_string() + Constants.PLOT_EXT, bbox_inches='tight')
+
+        if self.display_plot:
+            plt.show()
+                
+    def plot_results(self, algorithm):
+      
+        plt.cla()
+
+        if self.driving_function == Constants.KAPPA_IDX:
+            Constants.PLOT_TITLE[self.driving_function] = "$\\xi (t) = 2 \ \sqrt{"+str(self.sqrt_param)[:3]+"\ (1 - t)}$"
+
+        if self.driving_function == Constants.C_ALPHA_IDX:
+            Constants.PLOT_TITLE[self.driving_function] = "$\\xi (t) = c_{"+str(self.sqrt_param)[:3]+"} \sqrt{t}$"
+
+        if algorithm == Constants.FOR_RUN_STR:
+            return self.forward_plot() 
+
+        if algorithm == Constants.INV_RUN_STR:
+            return self.inverse_plot() 
+
+        if algorithm == Constants.CBC_RUN_STR:
+            return self.cubic_plot() 
 

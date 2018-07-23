@@ -1,7 +1,4 @@
-# Declare a list of mode options
-RUN_OPTIONS = ["Standard Mode","Resolution Mode","Exact Solutions"]
-
-# Declare a list of driving function options
+# Strings for the names of the different driving functions 
 DRIVING_INFO = ["0.0",
                 "t",
                 "cos(t)",
@@ -32,14 +29,8 @@ PLOT_TITLE = ["$\\xi (t) = 0$",
               "$\\xi (t) = \lfloor t \\rfloor $",
               "$\\xi (t) = \lfloor t \\rfloor \ \\mathrm{mod} \ 2$"]
 
+# Inicides of the driving functions
 DRIVING_INDICES = {pair[1] : pair[0] for pair in enumerate(DRIVING_INFO)}
-
-# Declare a list of "exact" solution options
-EXACT_INFO = ["t"]
-
-EXACT_TITLE = ["$\\xi (t) = t$"]
-
-TOTAL_EXACT_DRIVING = len(EXACT_INFO)
 
 # Obtain the total number of driving functions
 TOTAL_DRIVING_FUNCTIONS = len(DRIVING_INFO)
@@ -47,17 +38,19 @@ TOTAL_DRIVING_FUNCTIONS = len(DRIVING_INFO)
 # Indices for "special" driving functions
 KAPPA_IDX = 10
 C_ALPHA_IDX = 11
+PERIODIC_DRIVING = [i for i in range(2,10)]
 MULTIPLE_IDX = TOTAL_DRIVING_FUNCTIONS
 ALL_IDX = TOTAL_DRIVING_FUNCTIONS + 1
 
-# Compilation-related lists
+# Compilation related lists
 F2PY_FIRST = ["f2py", "-c"]
 
-def squareroot_driving(driving_function):
+def SQUAREROOT_DRIVING(driving_function):
     return driving_function in [KAPPA_IDX, C_ALPHA_IDX]
 
 # Extension for data file output
 DATA_EXT = ".dat"
+PLOT_EXT = ".pdf"
 
 # Extension for data fortran files
 FORTRAN_EXT = ".F90"
@@ -65,6 +58,7 @@ FORTRAN_EXT = ".F90"
 # Extension for data fortran files
 DAT_PREC = "%.18f"
 
+# Names of the Forward files that are used to solve Loewner's equation
 FOR_LOEWNER = "ForwardLoewner"
 INV_LOEWNER = "InverseLoewner"
 
@@ -73,6 +67,20 @@ FORWARD_DATA_OUTPUT = "../Output/Data/Quadratic/Forward/"
 INVERSE_DATA_OUTPUT = "../Output/Data/Quadratic/Inverse/"
 CUBIC_DATA_OUTPUT = "../Output/Data/Cubic/Forward/"
 
+# Directories for the plot files
+FORWARD_PLOT_OUTPUT = "../Output/Plots/Quadratic/Forward/"
+INVERSE_PLOT_OUTPUT = "../Output/Plots/Quadratic/Inverse/"
+CUBIC_PLOT_OUTPUT =  "../Output/Plots/Cubic/Forward/"
+
+# Names for the different algorithms used
 FOR_RUN_STR = "Forward"
 INV_RUN_STR = "Inverse"
 CBC_RUN_STR = "Cubic"
+
+# Plot axis labels for forward/cubic runs
+FOR_PLOT_XL = 'Re($g$)'
+FOR_PLOT_YL = 'Im($g$)'
+
+# Plot axis labels for inverse runs
+INV_PLOT_XL = '$t$'
+INV_PLOT_YL = r'$\xi(t)$'

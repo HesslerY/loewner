@@ -19,7 +19,7 @@ def create_loewner_runs():
     for driving_function in range(Constants.TOTAL_DRIVING_FUNCTIONS):
 
         # Check that the driving function is not kappa or c_alpha
-        if not Constants.squareroot_driving(driving_function):
+        if not Constants.SQUAREROOT_DRIVING(driving_function):
 
             # Add a LoewnerRun object to the list that corresponds with the current driving function
             loewner_runs.append(LoewnerRun(driving_function))
@@ -93,6 +93,10 @@ for run in loewner_runs:
     run.forward_run()
     run.inverse_run()
     run.final_time = 10
+
+    if run.driving_function == 0:
+        run.constant_param = 1
+
     run.cubic_run()
 
     print("Finished driving function " + str(run.driving_function))

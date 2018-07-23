@@ -14,7 +14,7 @@ DRIVING_INFO = ["0.0",
                 "floor(t)",
                 "floot(t) % 2"]
 
-PLOT_TITLE = ["$\\xi (t) = 0$",
+PLOT_TITLE = ["$\\xi (t) = ",
               "$\\xi (t) = t$",
               "$\\xi (t) = \cos(t)$",
               "$\\xi (t) = t \ \cos(t)$",
@@ -24,8 +24,8 @@ PLOT_TITLE = ["$\\xi (t) = 0$",
               "$\\xi (t) = t \ \sin(t)$",
               "$\\xi (t) = \sin(\pi t)$",
               "$\\xi (t) = t \ \sin(\pi t)$",
-              "$\\xi (t) = 2 \ \sqrt{ SQRT_PARAM \ (1 - t)}$",
-              "$\\xi (t) = c_{SQRT_PARAM} \sqrt{t}$",
+              "",
+              "",
               "$\\xi (t) = \lfloor t \\rfloor $",
               "$\\xi (t) = \lfloor t \\rfloor \ \\mathrm{mod} \ 2$"]
 
@@ -38,6 +38,7 @@ TOTAL_DRIVING_FUNCTIONS = len(DRIVING_INFO)
 # Indices for "special" driving functions
 KAPPA_IDX = 10
 C_ALPHA_IDX = 11
+CONST_IDX = 0
 PERIODIC_DRIVING = [i for i in range(2,10)]
 MULTIPLE_IDX = TOTAL_DRIVING_FUNCTIONS
 ALL_IDX = TOTAL_DRIVING_FUNCTIONS + 1

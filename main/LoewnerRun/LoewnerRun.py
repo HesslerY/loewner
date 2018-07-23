@@ -6,7 +6,7 @@ from importlib import import_module
 
 class LoewnerRun:
 
-    def __init__(self, driving_function, save_data = True):
+    def __init__(self, driving_function, save_data = True, save_plot = True):
 
         # Assign the driving function index
         self.driving_function = driving_function
@@ -23,8 +23,7 @@ class LoewnerRun:
         self.inverse_module_name = "modules." + Constants.INV_LOEWNER + "_"  + self.module_code
 
         self.save_data = save_data
-        self.display_plot = True
-        self.save_plot = True
+        self.save_plot = save_plot
 
         self.compile_forward = None
         self.compile_inverse = None
@@ -101,7 +100,7 @@ class LoewnerRun:
         self.forward_results = empty(self.outer_points, dtype=complex128)
 
         # Solve Loewner's equation with the given parameters
-        if self.driving_function == 0:
+        if self.driving_function == Constants.CONST_IDX:
             ForwardLoewner.quadraticloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresult=self.forward_results, constantdrivingarg=self.constant_param)
 
         elif not Constants.SQUAREROOT_DRIVING(self.driving_function):
@@ -132,7 +131,7 @@ class LoewnerRun:
         self.cubic_results_B = empty(self.outer_points, dtype=complex128)
 
         # Solve Loewner's equation with the given parameters
-        if self.driving_function == 0:
+        if self.driving_function == Constants.CONST_IDX:
             ForwardLoewner.cubicloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresulta=self.cubic_results_A, gresultb=self.cubic_results_B, constdrivingarg=self.constant_param)
         else:
             ForwardLoewner.cubicloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresulta=self.cubic_results_A, gresultb=self.cubic_results_B)
@@ -280,12 +279,12 @@ class LoewnerRun:
         if self.save_plot:
             plt.savefig(Constants.CUBIC_PLOT_OUTPUT + self.generate_properties_string() + Constants.PLOT_EXT, bbox_inches='tight')
 
-        if self.display_plot:
-            plt.show()
-                
     def plot_results(self, algorithm):
       
         plt.cla()
+        
+        if self.driving_function == Constants.CONST_IDX:
+            Constants.PLOT_TITLE[self.driving_function] += str(self.constant_param) + "$"
 
         if self.driving_function == Constants.KAPPA_IDX:
             Constants.PLOT_TITLE[self.driving_function] = "$\\xi (t) = 2 \ \sqrt{"+str(self.sqrt_param)[:3]+"\ (1 - t)}$"

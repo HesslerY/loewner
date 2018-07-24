@@ -1,4 +1,4 @@
-# Strings for the names of the different driving functions 
+# Strings for the names of the different driving functions
 DRIVING_INFO = ["0.0",
                 "t",
                 "cos(t)",
@@ -12,7 +12,8 @@ DRIVING_INFO = ["0.0",
                 "2 * dsqrt(kappa * (1 - t))",
                 "dsqrt(t) * c_alpha",
                 "floor(t)",
-                "floot(t) % 2"]
+                "floot(t) % 2",
+                "sqrt(1 + t)"]
 
 PLOT_TITLE = [["$\\xi (t) = ","$"],
               "$\\xi (t) = t$",
@@ -27,7 +28,8 @@ PLOT_TITLE = [["$\\xi (t) = ","$"],
               ["$\\xi (t) = 2 \ \sqrt{","\ (1 - t)}$"],
               ["$\\xi (t) = c_{","} \sqrt{t}$"],
               "$\\xi (t) = \lfloor t \\rfloor $",
-              "$\\xi (t) = \lfloor t \\rfloor \ \\mathrm{mod} \ 2$"]
+              "$\\xi (t) = \lfloor t \\rfloor \ \\mathrm{mod} \ 2$",
+              "$\\xi (t) = \sqrt{1 + t}$"]
 
 # Obtain the total number of driving functions
 TOTAL_DRIVING_FUNCTIONS = len(DRIVING_INFO)
@@ -42,7 +44,7 @@ MULTIPLE_IDX = TOTAL_DRIVING_FUNCTIONS
 ALL_IDX = TOTAL_DRIVING_FUNCTIONS + 1
 
 def MAKE_CONSTANT_TITLE(constant):
-    return PLOT_TITLE[CONST_IDX][0] + str(constant) + PLOT_TITLE[CONST_IDX][1] 
+    return PLOT_TITLE[CONST_IDX][0] + str(constant) + PLOT_TITLE[CONST_IDX][1]
 
 def MAKE_KAPPA_TITLE(kappa):
     return PLOT_TITLE[KAPPA_IDX][0] + str(kappa)[:3] + PLOT_TITLE[KAPPA_IDX][1]
@@ -74,15 +76,15 @@ FOR_LOEWNER = "ForwardLoewner"
 INV_LOEWNER = "InverseLoewner"
 
 # Directories for the data files
-EXACT_FORWARD_DATA_OUTPUT = "../Output/Data/Quadratic/ExactSolutions/" 
-EXACT_CUBIC_DATA_OUTPUT = "../Output/Data/Cubic/ExactSolutions/" 
+EXACT_FORWARD_DATA_OUTPUT = "../Output/Data/Quadratic/ExactSolutions/"
+EXACT_CUBIC_DATA_OUTPUT = "../Output/Data/Cubic/ExactSolutions/"
 FORWARD_DATA_OUTPUT = "../Output/Data/Quadratic/Forward/"
 INVERSE_DATA_OUTPUT = "../Output/Data/Quadratic/Inverse/"
 CUBIC_DATA_OUTPUT = "../Output/Data/Cubic/Forward/"
 
 # Directories for the plot files
-EXACT_FORWARD_PLOT_OUTPUT = "../Output/Plots/Quadratic/ExactSolutions/" 
-EXACT_CUBIC_PLOT_OUTPUT = "../Output/Plots/Cubic/ExactSolutions/" 
+EXACT_FORWARD_PLOT_OUTPUT = "../Output/Plots/Quadratic/ExactSolutions/"
+EXACT_CUBIC_PLOT_OUTPUT = "../Output/Plots/Cubic/ExactSolutions/"
 FORWARD_PLOT_OUTPUT = "../Output/Plots/Quadratic/Forward/"
 INVERSE_PLOT_OUTPUT = "../Output/Plots/Quadratic/Inverse/"
 CUBIC_PLOT_OUTPUT =  "../Output/Plots/Cubic/Forward/"

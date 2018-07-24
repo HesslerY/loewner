@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from subprocess import check_output, call, CalledProcessError
 from mpmath import findroot
 from cmath import log, sqrt
-from numpy import empty, column_stack, savetxt, complex128, zeros, linspace, copy
+from numpy import empty, column_stack, savetxt, complex128, zeros, linspace, copy, roots
 from importlib import import_module
 plt.style.use('ggplot')
 
@@ -328,6 +328,7 @@ class LoewnerRun:
         self.cubic_exact_sol_A = zeros(self.outer_points,dtype = complex128)
         self.cubic_exact_sol_B = zeros(self.outer_points,dtype = complex128)
         self.exact_time_sol = linspace(self.start_time, self.final_time, self.outer_points)
+        constant = 1
 
         def initial_guess(t):
             return 1 + 1j * sqrt(2*t) - (1./3) * t
@@ -351,12 +352,53 @@ class LoewnerRun:
         if save_plot:
 
             plt.cla()
-            plt.ylim(bottom=0)
-            plt.title(Constants.MAKE_CONSTANT_TITLE(1), fontsize = 19, color = "black", y = 1.02, usetex = True)
+            plt.title(Constants.MAKE_CONSTANT_TITLE(constant), fontsize = 19, color = "black", y = 1.02, usetex = True)
             plt.plot(self.cubic_exact_sol_A.real, self.cubic_exact_sol_A.imag, color='crimson')
             plt.plot(self.cubic_exact_sol_B.real, self.cubic_exact_sol_B.imag, color='crimson')
+            plt.ylim(bottom=0)
             plt.savefig(Constants.EXACT_CUBIC_PLOT_OUTPUT + properties_string + Constants.PLOT_EXT, bbox_inches='tight')
 
-    def sqrtplusone_cubic_exact(self):
-        pass
+    def sqrtplusone_cubic_exact(self, save_plot, save_data):
 
+        self.cubic_exact_sol_A = zeros(self.outer_points,dtype = complex128)
+        self.cubic_exact_sol_B = zeros(self.outer_points,dtype = complex128)
+        self.exact_time_sol = linspace(self.start_time, self.final_time, self.outer_points)
+
+        driving_function = 14
+
+        a0 = 1
+        d0 = 1
+
+        # def f(z,t):
+            # return (-1)*z**5 + (10*a0**2)*z**3 - (25*a0**4)*z + 16*(a0**2 + d0 * t)**(5./2)
+
+        def get_coeffs(t):
+            return [-1, 0, 10*a0**2, 0, -25*a0**4, 16*(a0**2 + d0 * t)**(5./2)]
+
+
+        for i in range(self.outer_points):
+            exact_roots = roots(get_coeffs(self.exact_time_sol[i]))
+            self.cubic_exact_sol_A[i] = exact_roots[3]
+            self.cubic_exact_sol_B[i] = -self.cubic_exact_sol_A[i].real + self.cubic_exact_sol_A[i].imag * 1j
+
+        properties_string = "-".join([str(prop) for prop in [driving_function, self.start_time, self.final_time, self.outer_points]])
+
+        if save_data:
+
+            filename = Constants.EXACT_CUBIC_DATA_OUTPUT + properties_string
+
+            array_A = column_stack((self.cubic_exact_sol_A.real, self.cubic_exact_sol_A.imag))
+            array_B = column_stack((self.cubic_exact_sol_B.real, self.cubic_exact_sol_B.imag))
+
+            savetxt(filename + "-A" + Constants.DATA_EXT, array_A, fmt=Constants.DATA_PREC)
+            savetxt(filename + "-B" + Constants.DATA_EXT, array_B, fmt=Constants.DATA_PREC)
+
+        if save_plot:
+
+            plt.cla()
+
+            plt.title(Constants.PLOT_TITLE[driving_function], fontsize = 19, color = "black", y = 1.02, usetex = True)
+            plt.plot(self.cubic_exact_sol_A.real, self.cubic_exact_sol_A.imag, color='crimson')
+            plt.plot(self.cubic_exact_sol_B.real, self.cubic_exact_sol_B.imag, color='crimson')
+            plt.ylim(bottom=0)
+            plt.savefig(Constants.EXACT_CUBIC_PLOT_OUTPUT + properties_string + Constants.PLOT_EXT, bbox_inches='tight')

@@ -1,8 +1,11 @@
 import Constants
 import matplotlib.pyplot as plt
 from subprocess import check_output, call, CalledProcessError
-from numpy import empty, column_stack, savetxt, complex128
+from mpmath import findroot
+from cmath import log, sqrt
+from numpy import empty, column_stack, savetxt, complex128, zeros, linspace, copy
 from importlib import import_module
+plt.style.use('ggplot')
 
 class LoewnerRun:
 
@@ -33,14 +36,14 @@ class LoewnerRun:
 
         offset = self.forward_results[0].real
 
-        for i in range(self.outer_points): 
+        for i in range(self.outer_points):
             self.forward_results[i] -= offset
 
     def generate_properties_string(self):
 
         # Place the parameters of the run into a list
 
-        if self.driving_function not in [Constants.KAPPA_IDX, Constants.C_ALPHA_IDX]:
+        if self.driving_function not in [Constants.KAPPA_IDX, Constants.CALPHA_IDX]:
             properties = [self.driving_function, self.start_time, self.final_time, self.outer_points, self.inner_points]
 
         else:
@@ -78,7 +81,7 @@ class LoewnerRun:
             check_output(command)
 
         except CalledProcessError:
-            
+
             print(command)
             call(["ls","-l"])
             print("Error: Could not compile module.")
@@ -88,7 +91,7 @@ class LoewnerRun:
 
         if algorithm in [Constants.FOR_RUN_STR, Constants.CBC_RUN_STR]:
             return import_module(self.forward_module_name)
-        
+
         if algorithm == Constants.INV_RUN_STR:
             return import_module(self.inverse_module_name)
 
@@ -105,8 +108,8 @@ class LoewnerRun:
 
         elif not Constants.SQUAREROOT_DRIVING(self.driving_function):
             ForwardLoewner.quadraticloewner(self.start_time, self.final_time, self.inner_points, self.forward_results)
-        
-        else: 
+
+        else:
             ForwardLoewner.quadraticloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresult=self.forward_results, sqrtdrivingarg=self.sqrt_param)
 
     def perform_inverse_loewner(self):
@@ -157,7 +160,7 @@ class LoewnerRun:
 
     def array_to_file(self, array, filename):
 
-        savetxt(filename, array, fmt=Constants.DAT_PREC)
+        savetxt(filename, array, fmt=Constants.DATA_PREC)
 
     def forward_save_to_dat(self):
 
@@ -196,43 +199,18 @@ class LoewnerRun:
     def save_to_dat(self, algorithm):
 
         if algorithm == Constants.FOR_RUN_STR:
-            return self.forward_save_to_dat() 
+            return self.forward_save_to_dat()
 
         if algorithm == Constants.INV_RUN_STR:
-            return self.inverse_save_to_dat() 
+            return self.inverse_save_to_dat()
 
         if algorithm == Constants.CBC_RUN_STR:
-            return self.cubic_save_to_dat() 
+            return self.cubic_save_to_dat()
 
-    def algorithm_run(self, algorithm):
-
-        self.set_compile_commands()
-        
-        self.compile_module(algorithm)
-        self.import_loewner(algorithm)
-        self.perform_loewner(algorithm)
-
-        if self.save_data:
-            self.save_to_dat(algorithm)
-
-        if self.save_plot or self.display_plot:
-            self.plot_results(algorithm)
-
-    def forward_run(self):
-        self.algorithm_run(Constants.FOR_RUN_STR)
-
-    def inverse_run(self):
-        self.algorithm_run(Constants.INV_RUN_STR)
-
-    def cubic_run(self):
-        self.algorithm_run(Constants.CBC_RUN_STR)
-
-    def forward_plot(self):
+    def quadratic_forward_plot(self):
 
         # Plot the values
         plt.plot(self.forward_results.real, self.forward_results.imag, color='crimson')
-        
-        plt.title(Constants.PLOT_TITLE[self.driving_function], fontsize = 19, color = "black", y = 1.02, usetex = True)
 
         plt.xlabel(Constants.FOR_PLOT_XL)
         plt.ylabel(Constants.FOR_PLOT_YL)
@@ -242,15 +220,10 @@ class LoewnerRun:
         if self.save_plot:
             plt.savefig(Constants.FORWARD_PLOT_OUTPUT + self.generate_properties_string() + Constants.PLOT_EXT, bbox_inches='tight')
 
-        if self.display_plot:
-            plt.draw()
-                
-    def inverse_plot(self):
+    def quadratic_inverse_plot(self):
 
         # Plot the values
         plt.plot(self.time_arr, self.driving_arr, color='crimson')
-        
-        plt.title(Constants.PLOT_TITLE[self.driving_function], fontsize = 19, color = "black", y = 1.02, usetex = True)
 
         plt.xlabel(Constants.INV_PLOT_XL)
         plt.ylabel(Constants.INV_PLOT_YL)
@@ -260,16 +233,11 @@ class LoewnerRun:
         if self.save_plot:
             plt.savefig(Constants.INVERSE_PLOT_OUTPUT + self.generate_properties_string() + Constants.PLOT_EXT, bbox_inches='tight')
 
-        if self.display_plot:
-            plt.show()
-                
     def cubic_plot(self):
 
         # Plot the values
         plt.plot(self.cubic_results_A.real, self.cubic_results_A.imag, color='crimson')
         plt.plot(self.cubic_results_B.real, self.cubic_results_B.imag, color='crimson')
-        
-        plt.title(Constants.PLOT_TITLE[self.driving_function], fontsize = 19, color = "black", y = 1.02, usetex = True)
 
         plt.xlabel(Constants.FOR_PLOT_XL)
         plt.ylabel(Constants.FOR_PLOT_YL)
@@ -279,25 +247,116 @@ class LoewnerRun:
         if self.save_plot:
             plt.savefig(Constants.CUBIC_PLOT_OUTPUT + self.generate_properties_string() + Constants.PLOT_EXT, bbox_inches='tight')
 
-    def plot_results(self, algorithm):
-      
-        plt.cla()
-        
+    def set_plot_title(self):
+
         if self.driving_function == Constants.CONST_IDX:
-            Constants.PLOT_TITLE[self.driving_function] += str(self.constant_param) + "$"
+            self.plot_title = Constants.MAKE_CONSTANT_TITLE(self.constant_param)
 
-        if self.driving_function == Constants.KAPPA_IDX:
-            Constants.PLOT_TITLE[self.driving_function] = "$\\xi (t) = 2 \ \sqrt{"+str(self.sqrt_param)[:3]+"\ (1 - t)}$"
+        elif self.driving_function == Constants.CALPHA_IDX:
+            self.plot_title = Constants.MAKE_CALPHA_TITLE(self.sqrt_param)
 
-        if self.driving_function == Constants.C_ALPHA_IDX:
-            Constants.PLOT_TITLE[self.driving_function] = "$\\xi (t) = c_{"+str(self.sqrt_param)[:3]+"} \sqrt{t}$"
+        elif self.driving_function == Constants.KAPPA_IDX:
+            self.plot_title = Constants.MAKE_KAPPA_TITLE(self.sqrt_param)
+
+        else:
+            self.plot_title = Constants.PLOT_TITLE[self.driving_function]
+
+        plt.title(self.plot_title, fontsize = 19, color = "black", y = 1.02, usetex = True)
+
+    def plot_results(self, algorithm):
+
+        plt.cla()
+        self.set_plot_title()
 
         if algorithm == Constants.FOR_RUN_STR:
-            return self.forward_plot() 
+            return self.quadratic_forward_plot()
 
         if algorithm == Constants.INV_RUN_STR:
-            return self.inverse_plot() 
+            return self.quadratic_inverse_plot()
 
         if algorithm == Constants.CBC_RUN_STR:
-            return self.cubic_plot() 
+            return self.cubic_plot()
+
+    def run(self, algorithm):
+
+        self.set_compile_commands()
+        self.compile_module(algorithm)
+        self.import_loewner(algorithm)
+        self.perform_loewner(algorithm)
+
+        if self.save_data:
+            self.save_to_dat(algorithm)
+
+        if self.save_plot:
+            self.plot_results(algorithm)
+
+    def negative_real(self, complex_arr):
+
+        for i in range(len(complex_arr)):
+            complex_arr[i] = -complex_arr[i].real + complex_arr[i].imag
+
+    def perform_linear_quad_exact(self,save_plot,save_data):
+
+        exact_linear = zeros(self.outer_points,dtype = complex128)
+        self.exact_time_sol = linspace(self.start_time, self.final_time, self.outer_points)
+
+        def initial_guess(t):
+            return 2 * 1j * sqrt(t) + (2./3) * t
+
+        for i in range(self.outer_points):
+            exact_linear[i] = findroot(lambda z: z + 2 * log(2 - z) - 2 * log(2) - self.exact_time_sol[i], initial_guess(self.exact_time_sol[i]),solver='muller')
+
+        properties_string = "-".join([str(prop) for prop in [Constants.LINR_IDX, self.start_time, self.final_time, self.outer_points]])
+
+        if save_data:
+
+            filename = Constants.EXACT_FORWARD_DATA_OUTPUT + properties_string + Constants.DATA_EXT
+            array = column_stack((exact_linear.real, exact_linear.imag))
+            savetxt(filename, array, fmt=Constants.DATA_PREC)
+
+        if save_plot:
+
+            plt.cla()
+            plt.ylim(bottom=0)
+
+            plt.title(Constants.PLOT_TITLE[Constants.LINR_IDX], fontsize = 19, color = "black", y = 1.02, usetex = True)
+            plt.plot(exact_linear.real, exact_linear.imag, color='crimson')
+            plt.savefig(Constants.EXACT_FORWARD_PLOT_OUTPUT + properties_string + Constants.PLOT_EXT, bbox_inches='tight')
+
+    def perform_constant_cubic_exact(self,save_plot,save_data):
+
+        self.cubic_exact_sol_A = zeros(self.outer_points,dtype = complex128)
+        self.cubic_exact_sol_B = zeros(self.outer_points,dtype = complex128)
+        self.exact_time_sol = linspace(self.start_time, self.final_time, self.outer_points)
+
+        def initial_guess(t):
+            return 1 + 1j * sqrt(2*t) - (1./3) * t
+
+        for i in range(self.outer_points):
+            self.cubic_exact_sol_A[i] = findroot(lambda z: z**2 - 2*log(z) - 1 + 4*self.exact_time_sol[i], initial_guess(self.exact_time_sol[i]),solver='muller')
+            self.cubic_exact_sol_B[i] = -self.cubic_exact_sol_A[i].real + self.cubic_exact_sol_A[i].imag * 1j
+
+        properties_string = "-".join([str(prop) for prop in [Constants.CONST_IDX, self.start_time, self.final_time, self.outer_points]])
+
+        if save_data:
+
+            filename = Constants.EXACT_CUBIC_DATA_OUTPUT + properties_string
+
+            array_A = column_stack((self.cubic_exact_sol_A.real, self.cubic_exact_sol_A.imag))
+            array_B = column_stack((self.cubic_exact_sol_B.real, self.cubic_exact_sol_B.imag))
+
+            savetxt(filename + "-A" + Constants.DATA_EXT, array_A, fmt=Constants.DATA_PREC)
+            savetxt(filename + "-B" + Constants.DATA_EXT, array_B, fmt=Constants.DATA_PREC)
+
+        if save_plot:
+
+            plt.cla()
+            plt.ylim(bottom=0)
+            plt.title(Constants.MAKE_CONSTANT_TITLE(1), fontsize = 19, color = "black", y = 1.02, usetex = True)
+            plt.plot(self.cubic_exact_sol_A.real, self.cubic_exact_sol_A.imag, color='crimson')
+            plt.plot(self.cubic_exact_sol_B.real, self.cubic_exact_sol_B.imag, color='crimson')
+            plt.savefig(Constants.EXACT_CUBIC_PLOT_OUTPUT + properties_string + Constants.PLOT_EXT, bbox_inches='tight')
+
+    def sqrtplusone_cubic_exact(self):
+        pass
 

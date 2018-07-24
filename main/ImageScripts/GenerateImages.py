@@ -1,9 +1,8 @@
 import sys
-sys.path.append('../LoewnerRun')
+sys.path.append('../PythonTools')
 
 import Constants
 from LoewnerRun import LoewnerRun
-from LoewnerPlot import LoewnerPlot, MultiLoewnerPlot, InverseLoewnerPlot, MiniLoewnerPlot, InverseMultiLoewnerPlot
 from numpy import savetxt, column_stack, full_like, linspace
 
 # Declare final time for Loewner runs
@@ -88,16 +87,22 @@ loewner_runs = create_loewner_runs()
 kappa_runs = create_kappa_runs()
 calpha_runs = create_calpha_runs()
 
+loewner_runs[1].perform_linear_quad_exact(True,True)
+loewner_runs[0].final_time = 10
+loewner_runs[0].perform_constant_cubic_exact(True,True)
+loewner_runs[0].final_time = 25
+
 for run in loewner_runs:
 
-    run.forward_run()
-    run.inverse_run()
+    run.run("Forward")
+    run.run("Inverse")
+
     run.final_time = 10
 
     if run.driving_function == 0:
         run.constant_param = 1
 
-    run.cubic_run()
+    run.run("Cubic")
 
     print("Finished driving function " + str(run.driving_function))
 
@@ -107,7 +112,7 @@ run = loewner_runs[1]
 for res in exact_sol_res:
 
     run.inner_points = res
-    run.forward_run()
+    run.run("Forward")
 
 constant_final_times = [1,4,9,16]
 constant_run = loewner_runs[0]
@@ -115,15 +120,15 @@ constant_run = loewner_runs[0]
 for final in constant_final_times:
 
     constant_run.final_time = final
-    constant_run.forward_run()
+    run.run("Forward")
 
 for run in kappa_runs:
 
-    run.forward_run()
-    run.inverse_run()
-    
+    run.run("Forward")
+    run.run("Inverse")
+
 for run in calpha_runs:
 
-    run.forward_run()
-    run.inverse_run()
-   
+    run.run("Forward")
+    run.run("Inverse")
+

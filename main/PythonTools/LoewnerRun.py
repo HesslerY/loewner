@@ -34,10 +34,10 @@ class LoewnerRun:
 
     def shift(self):
 
-        offset = self.forward_results[0].real
+        offset = self.copy_answer[0].real
 
         for i in range(self.outer_points):
-            self.forward_results[i] -= offset
+            self.copy_answer[i] -= offset
 
     def generate_properties_string(self):
 
@@ -117,9 +117,6 @@ class LoewnerRun:
         # Check if the module can be imported successfully
         InverseLoewner = self.import_loewner(Constants.INV_RUN_STR)
 
-        # Declare an empty complex array for the results
-        self.inverse_results = empty(self.outer_points, dtype=complex128)
-
         self.driving_arr = empty(self.outer_points, dtype=float)
         self.time_arr = empty(self.outer_points, dtype=float)
 
@@ -164,12 +161,16 @@ class LoewnerRun:
 
     def forward_save_to_dat(self):
 
-        # Create a filename for the dat file
-        filename = Constants.FORWARD_DATA_OUTPUT + self.generate_properties_string() + Constants.DATA_EXT
-
         # Shift the real values for the case of kappa-driving
         if self.driving_function == Constants.KAPPA_IDX:
+            self.copy_answer = copy(self.forward_results)
             self.shift()
+            shifted_array = column_stack((self.copy_answer.real, self.copy_answer.imag))
+            filename = Constants.FORSHIFT_DATA_OUTPUT + self.generate_properties_string() + Constants.DATA_EXT
+            self.array_to_file(shifted_array, filename)
+
+        # Create a filename for the dat file
+        filename = Constants.FORWARD_DATA_OUTPUT + self.generate_properties_string() + Constants.DATA_EXT
 
         # Create a 2D array from the real and imaginary values of the results
         self.array_to_file(self.prepare_file(Constants.FOR_RUN_STR), filename)

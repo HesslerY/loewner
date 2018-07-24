@@ -79,6 +79,7 @@ INV_LOEWNER = "InverseLoewner"
 EXACT_FORWARD_DATA_OUTPUT = "../Output/Data/Quadratic/ExactSolutions/"
 EXACT_CUBIC_DATA_OUTPUT = "../Output/Data/Cubic/ExactSolutions/"
 FORWARD_DATA_OUTPUT = "../Output/Data/Quadratic/Forward/"
+FORSHIFT_DATA_OUTPUT = "../Output/Data/Quadratic/TranslatedForward/"
 INVERSE_DATA_OUTPUT = "../Output/Data/Quadratic/Inverse/"
 CUBIC_DATA_OUTPUT = "../Output/Data/Cubic/Forward/"
 

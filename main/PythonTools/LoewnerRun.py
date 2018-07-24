@@ -1,6 +1,7 @@
 import Constants
 import matplotlib.pyplot as plt
 from subprocess import check_output, call, CalledProcessError
+from DrivingFunction import DrivingFunction
 from mpmath import findroot
 from cmath import log, sqrt
 from numpy import empty, column_stack, savetxt, complex128, zeros, linspace, copy, roots
@@ -9,10 +10,10 @@ plt.style.use('ggplot')
 
 class LoewnerRun:
 
-    def __init__(self, driving_function, save_data = True, save_plot = True):
+    def __init__(self, driving_function, constant = None, kappa = None, alpha = None, save_data = True, save_plot = True):
 
         # Assign the driving function index
-        self.driving_function = driving_function
+        self.driving_function = DrivingFunction(index=driving_function, constant=constant, kappa=kappa, alpha=alpha)
 
         # Assign the module code
         self.module_code = str(driving_function)
@@ -43,13 +44,18 @@ class LoewnerRun:
 
         # Place the parameters of the run into a list
 
-        if self.driving_function not in [Constants.KAPPA_IDX, Constants.CALPHA_IDX]:
-            properties = [self.driving_function, self.start_time, self.final_time, self.outer_points, self.inner_points]
+        if self.driving_function.index not in [Constants.KAPPA_IDX, Constants.CALPHA_IDX]:
+            properties = [self.driving_function.index, self.start_time, self.final_time, self.outer_points, self.inner_points]
+
+        elif self.driving_function.index == Constants.KAPPA_IDX:
+
+            sqrt_string = str(self.driving_function.kappa)[:3].replace(".","point")
+            properties = [self.driving_function.index, sqrt_string, self.start_time, self.final_time, self.outer_points, self.inner_points]
 
         else:
 
-            sqrt_string = str(self.sqrt_param)[:3].replace(".","point")
-            properties = [self.driving_function, sqrt_string, self.start_time, self.final_time, self.outer_points, self.inner_points]
+            sqrt_string = str(self.driving_function.alpha)[:3].replace(".","point")
+            properties = [self.driving_function.index, sqrt_string, self.start_time, self.final_time, self.outer_points, self.inner_points]
 
         # Convert the parameters to strings
         desc = [str(attr) for attr in properties]
@@ -103,14 +109,16 @@ class LoewnerRun:
         self.forward_results = empty(self.outer_points, dtype=complex128)
 
         # Solve Loewner's equation with the given parameters
-        if self.driving_function == Constants.CONST_IDX:
-            ForwardLoewner.quadraticloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresult=self.forward_results, constantdrivingarg=self.constant_param)
+        if self.driving_function.index == Constants.CONST_IDX:
+            ForwardLoewner.quadraticloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresult=self.forward_results, constantdrivingarg=self.driving_function.constant)
 
-        elif not Constants.SQUAREROOT_DRIVING(self.driving_function):
+        elif not Constants.SQUAREROOT_DRIVING(self.driving_function.index):
             ForwardLoewner.quadraticloewner(self.start_time, self.final_time, self.inner_points, self.forward_results)
 
+        elif self.driving_function.index == Constants.KAPPA_IDX:
+            ForwardLoewner.quadraticloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresult=self.forward_results, sqrtdrivingarg=self.driving_function.kappa)
         else:
-            ForwardLoewner.quadraticloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresult=self.forward_results, sqrtdrivingarg=self.sqrt_param)
+            ForwardLoewner.quadraticloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresult=self.forward_results, sqrtdrivingarg=self.driving_function.alpha)
 
     def perform_inverse_loewner(self):
 
@@ -131,7 +139,7 @@ class LoewnerRun:
         self.cubic_results_B = empty(self.outer_points, dtype=complex128)
 
         # Solve Loewner's equation with the given parameters
-        if self.driving_function == Constants.CONST_IDX:
+        if self.driving_function.index == Constants.CONST_IDX:
             ForwardLoewner.cubicloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresulta=self.cubic_results_A, gresultb=self.cubic_results_B, constdrivingarg=self.constant_param)
         else:
             ForwardLoewner.cubicloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresulta=self.cubic_results_A, gresultb=self.cubic_results_B)
@@ -162,7 +170,7 @@ class LoewnerRun:
     def forward_save_to_dat(self):
 
         # Shift the real values for the case of kappa-driving
-        if self.driving_function == Constants.KAPPA_IDX:
+        if self.driving_function.index == Constants.KAPPA_IDX:
             self.copy_answer = copy(self.forward_results)
             self.shift()
             shifted_array = column_stack((self.copy_answer.real, self.copy_answer.imag))
@@ -250,19 +258,7 @@ class LoewnerRun:
 
     def set_plot_title(self):
 
-        if self.driving_function == Constants.CONST_IDX:
-            self.plot_title = Constants.MAKE_CONSTANT_TITLE(self.constant_param)
-
-        elif self.driving_function == Constants.CALPHA_IDX:
-            self.plot_title = Constants.MAKE_CALPHA_TITLE(self.sqrt_param)
-
-        elif self.driving_function == Constants.KAPPA_IDX:
-            self.plot_title = Constants.MAKE_KAPPA_TITLE(self.sqrt_param)
-
-        else:
-            self.plot_title = Constants.PLOT_TITLE[self.driving_function]
-
-        plt.title(self.plot_title, fontsize = 19, color = "black", y = 1.02, usetex = True)
+        plt.title(self.driving_function.plot_title, fontsize = 19, color = "black", y = 1.02, usetex = True)
 
     def plot_results(self, algorithm):
 
@@ -370,14 +366,12 @@ class LoewnerRun:
         a0 = 1
         d0 = 1
 
-        # def f(z,t):
-            # return (-1)*z**5 + (10*a0**2)*z**3 - (25*a0**4)*z + 16*(a0**2 + d0 * t)**(5./2)
-
         def get_coeffs(t):
             return [-1, 0, 10*a0**2, 0, -25*a0**4, 16*(a0**2 + d0 * t)**(5./2)]
 
 
         for i in range(self.outer_points):
+
             exact_roots = roots(get_coeffs(self.exact_time_sol[i]))
             self.cubic_exact_sol_A[i] = exact_roots[3]
             self.cubic_exact_sol_B[i] = -self.cubic_exact_sol_A[i].real + self.cubic_exact_sol_A[i].imag * 1j
@@ -398,7 +392,7 @@ class LoewnerRun:
 
             plt.cla()
 
-            plt.title(Constants.PLOT_TITLE[driving_function], fontsize = 19, color = "black", y = 1.02, usetex = True)
+            plt.title(DrivingFunction(driving_function).plot_title, fontsize = 19, color = "black", y = 1.02, usetex = True)
             plt.plot(self.cubic_exact_sol_A.real, self.cubic_exact_sol_A.imag, color='crimson')
             plt.plot(self.cubic_exact_sol_B.real, self.cubic_exact_sol_B.imag, color='crimson')
             plt.ylim(bottom=0)

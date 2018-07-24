@@ -4,6 +4,8 @@ class DrivingFunction:
 
     def __init__(self, index, constant = None, kappa = None, alpha = None):
 
+        self.index = index
+
         if index == 0:
 
             self.name = "Constant"
@@ -69,7 +71,7 @@ class DrivingFunction:
 
             self.name = "2 * dsqrt(kappa * (1 - t))"
             self.kappa = kappa
-            self.plot_title = "xi (t) = 2 \ \sqrt{" + str(self.kappa)[:3] + "\ (1 - t)}$"
+            self.plot_title = "$\\xi (t) = 2 \ \sqrt{" + str(self.kappa)[:3] + "\ (1 - t)}$"
             self.xi = lambda t: sqrt(self.kappa * (1 - t))
 
         if index == 11:

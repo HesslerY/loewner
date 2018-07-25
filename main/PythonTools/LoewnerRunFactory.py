@@ -15,6 +15,7 @@ class LoewnerRunFactory():
         self.save_data = save_data
 
         self.standard_idxs = [i for i in range (1,10)] + [i for i in range(12,15)]
+        self.exact_cubic_idx = [0,14]
 
     def select_single_run(self,index,start_time=None,final_time=None,outer_points=None,inner_points=None,constant=None,kappa=None,alpha=None):
 
@@ -65,3 +66,7 @@ class LoewnerRunFactory():
 
     def vary_final_time(self, index, times, constant=None, kappa=None, alpha=None):
         return [self.select_single_run(index=index, final_time=t, constant=constant, kappa=kappa, alpha=alpha) for t in times]
+
+    def create_exact_cubic(self):
+        constant = 1
+        return [self.select_single_run(index=i, constant=constant) for i in self.exact_cubic_idx]

@@ -79,6 +79,7 @@ CUBIC_DATA_OUTPUT = "../Output/Data/Cubic/Forward/"
 EXACT_FORWARD_PLOT_OUTPUT = "../Output/Plots/Quadratic/ExactSolutions/"
 EXACT_CUBIC_PLOT_OUTPUT = "../Output/Plots/Cubic/ExactSolutions/"
 FORWARD_PLOT_OUTPUT = "../Output/Plots/Quadratic/Forward/"
+FORSHIFT_PLOT_OUTPUT = "../Output/Plots/Quadratic/TranslatedForward/"
 INVERSE_PLOT_OUTPUT = "../Output/Plots/Quadratic/Inverse/"
 CUBIC_PLOT_OUTPUT =  "../Output/Plots/Cubic/Forward/"
 

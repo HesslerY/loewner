@@ -405,8 +405,8 @@ class ConstantLoewnerRun(LoewnerRun):
     def exact_cubic_forward_loewner(self):
 
         # Declare empty complex arrays for the exact results
-        self.exact_cubic_sol_a = zeros(self.outer_points,dtype = complex128)
-        self.exact_cubic_sol_b = zeros(self.outer_points,dtype = complex128)
+        self.exact_cubic_sol_a = zeros(self.outer_points, dtype = complex128)
+        self.exact_cubic_sol_b = zeros(self.outer_points, dtype = complex128)
 
         # Define a function for generating an initial guess to be used by the non-linear solver
         def initial_guess(t):
@@ -422,7 +422,7 @@ class ConstantLoewnerRun(LoewnerRun):
             # Use Muller's method for finding the exact solution
             self.exact_cubic_sol_a[i] = findroot(lambda g: exact_solution(g, self.exact_time_sol[i]), initial_guess(self.exact_time_sol[i]), solver='muller')
 
-            # Obatain the solution to the second trace by changing the sign of the real component
+            # Obtain the solution to the second trace by changing the sign of the real component
             self.exact_cubic_sol_b[i] = -self.exact_cubic_sol_a[i].real + self.exact_cubic_sol_a[i].imag * 1j
 
         if self.save_data:
@@ -575,7 +575,7 @@ class KappaLoewnerRun(LoewnerRun):
 
         if self.save_data:
 
-            # Obtain the partial filenames for both the raw and translated results
+            # Obtain the filenames for both the raw and translated results
             filename = FORWARD_DATA_OUTPUT + self.properties_string + DATA_EXT
             translated_filename = FORSHIFT_DATA_OUTPUT + self.properties_string + DATA_EXT
 
@@ -593,7 +593,7 @@ class KappaLoewnerRun(LoewnerRun):
 
         if self.save_plot:
 
-            # Obtain the partial filenames for both the raw and translated results
+            # Obtain the filenames for both the raw and translated results
             filename = FORWARD_PLOT_OUTPUT + self.properties_string + PLOT_EXT
             translated_filename = FORSHIFT_PLOT_OUTPUT + self.properties_string + PLOT_EXT
 
@@ -635,17 +635,20 @@ class CAlphaLoewnerRun(LoewnerRun):
         # Obtain the value for calpha
         self.calpha = (2 - 4 * alpha) / sqrt(alpha - alpha**2)
 
+        # Create a properties string for the calpha case (Used for creating filenames)
+        self.set_properties_string()
+
+        # Create the names and lambda function for the given driving function
         self.name = "dsqrt(t) * c_alpha"
-        self.alpha = alpha
-        self.calpha = (2 - 4 * alpha) / sqrt(alpha - alpha**2)
         self.latex_name = "$\\xi (t) = c_{" + str(self.alpha)[:3] + "} \sqrt{t}$"
         self.xi = lambda t: self.calpha * sqrt(t)
 
-        self.set_properties_string()
-
     def set_properties_string(self):
 
+        # Convert the kappa parameter to a string
         sqrt_string = str(self.alpha)[:3].replace(".","point")
+
+        # Create a list from the run parameters
         properties = [self.index, sqrt_string, self.start_time, self.final_time, self.outer_points, self.inner_points]
 
         # Convert the parameters to strings
@@ -672,48 +675,66 @@ class SqrtTPlusOneLoewnerRun(LoewnerRun):
         # Invoke the superclass initialiser
         LoewnerRun.__init__(self, SQRTPLUS_IDX, start_time, final_time, outer_points, inner_points, compile_modules, save_data, save_plot)
 
+        # Create the names and lambda function for the given driving function
         self.name = "sqrt(1 + t)"
         self.latex_name = "$\\xi (t) = \sqrt{1 + t}$"
         self.xi = lambda t: sqrt(1 + t)
 
-    def sqrtplusone_cubic_exact(self, save_plot, save_data):
+    def exact_cubic_forward_loewner(self, save_plot, save_data):
 
-        self.cubic_exact_sol_a = zeros(self.outer_points,dtype = complex128)
-        self.cubic_exact_sol_b = zeros(self.outer_points,dtype = complex128)
+        # Declare empty complex arrays for the exact results
+        self.exact_cubic_sol_a = zeros(self.outer_points, dtype = complex128)
+        self.exact_cubic_sol_b = zeros(self.outer_points, dtype = complex128)
 
-        driving_function = 14
-
+        # Set the 'weights' of the exact solution
         a0 = 1
         d0 = 1
 
+        # Define a function for generating the coefficients of the polynomial to be solved
         def get_coeffs(t):
             return [-1, 0, 10*a0**2, 0, -25*a0**4, 16*(a0**2 + d0 * t)**(5./2)]
 
+        # Iterate through the exact time values
         for i in range(self.outer_points):
 
+            # Find the roots of the polynomial at the given time value
             exact_roots = roots(get_coeffs(self.exact_time_sol[i]))
-            self.cubic_exact_sol_a[i] = exact_roots[3]
-            self.cubic_exact_sol_b[i] = -self.cubic_exact_sol_a[i].real + self.cubic_exact_sol_a[i].imag * 1j
 
-        properties_string = "-".join([str(prop) for prop in [driving_function, self.start_time, self.final_time, self.outer_points]])
+            # Select the third root (this one has the positive imaginary component)
+            self.exact_cubic_sol_a[i] = exact_roots[3]
+
+            # Obtain the solution to the second trace by changing the sign of the real component
+            self.exact_cubic_sol_b[i] = -self.exact_cubic_sol_a[i].real + self.exact_cubic_sol_a[i].imag * 1j
 
         if save_data:
 
-            filename = EXACT_CUBIC_DATA_OUTPUT + properties_string
+            # Create filenames for the dat file
+            filename_a = EXACT_CUBIC_DATA_OUTPUT + self.properties_string + "-A" + DATA_EXT
+            filename_b = EXACT_CUBIC_DATA_OUTPUT + self.properties_string + "-B" + DATA_EXT
 
-            array_a = column_stack((self.cubic_exact_sol_a.real, self.cubic_exact_sol_a.imag))
-            array_b = column_stack((self.cubic_exact_sol_b.real, self.cubic_exact_sol_b.imag))
+            # Create 2D arrays from the real and imaginary values of the results
+            array_a = column_stack((self.exact_cubic_sol_a.real, self.exact_cubic_sol_a.imag))
+            array_b = column_stack((self.exact_cubic_sol_b.real, self.exact_cubic_sol_b.imag))
 
-            savetxt(filename + "-A" + DATA_EXT, array_a, fmt=DATA_PREC)
-            savetxt(filename + "-B" + DATA_EXT, array_b, fmt=DATA_PREC)
+            # Save the arrays to the filesystem
+            self.save_to_dat(filename_a, array_a)
+            self.save_to_dat(filename_b, array_b)
 
         if save_plot:
 
+            # Clear any preexisting plots to be safe
             plt.cla()
 
-            plt.title(self.latex_name, fontsize = 19, color = "black", y = 1.02, usetex = True)
-            plt.plot(self.cubic_exact_sol_a.real, self.cubic_exact_sol_a.imag, color='crimson')
-            plt.plot(self.cubic_exact_sol_b.real, self.cubic_exact_sol_b.imag, color='crimson')
+            # Set the plot title
+            self.set_plot_title()
+
+            # Plot the results
+            plt.plot(self.exact_cubic_sol_a.real, self.exact_cubic_sol_a.imag, color='crimson')
+            plt.plot(self.exact_cubic_sol_b.real, self.exact_cubic_sol_b.imag, color='crimson')
+
+            # Set the lower limit of the y-axis
             plt.ylim(bottom=0)
-            plt.savefig(EXACT_CUBIC_PLOT_OUTPUT + properties_string + PLOT_EXT, bbox_inches='tight')
+
+            # Save the plot to the filesystem
+            plt.savefig(EXACT_CUBIC_PLOT_OUTPUT + self.properties_string + PLOT_EXT, bbox_inches='tight')
 

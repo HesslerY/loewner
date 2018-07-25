@@ -47,61 +47,61 @@ class LoewnerRun:
         if index == 2:
 
             self.name = "cos(t)"
-            self.plot_title = "$\\xi (t) = \cos(t)$"
+            self.latex_name = "$\\xi (t) = \cos(t)$"
             self.xi = lambda t: cos(t)
 
         if index == 3:
 
             self.name = "t * cos(t)"
-            self.plot_title = "$\\xi (t) = t \ \cos(t)$"
+            self.latex_name = "$\\xi (t) = t \ \cos(t)$"
             self.xi = lambda t: t * cos(t)
 
         if index == 4:
 
             self.name = "cos(t * pi)"
-            self.plot_title = "$\\xi (t) = \cos(\pi t)$"
+            self.latex_name = "$\\xi (t) = \cos(\pi t)$"
             self.xi = lambda t: cos(pi * t)
 
         if index == 5:
 
             self.name = "t * cos(t * pi)"
-            self.plot_title = "$\\xi (t) = t \ \cos(\pi t)$"
+            self.latex_name = "$\\xi (t) = t \ \cos(\pi t)$"
             self.xi = lambda t: t * cos(pi * t)
 
         if index == 6:
 
             self.name = "sin(t)"
-            self.plot_title = "$\\xi (t) = \sin(t)$"
+            self.latex_name = "$\\xi (t) = \sin(t)$"
             self.xi = lambda t: sin(t)
 
         if index == 7:
 
             self.name = "t * sin(t)"
-            self.plot_title = "$\\xi (t) = t \ \sin(t)$"
+            self.latex_name = "$\\xi (t) = t \ \sin(t)$"
             self.xi = lambda t: t * sin(t)
 
         if index == 8:
 
             self.name = "sin(t * pi)"
-            self.plot_title = "$\\xi (t) = \sin(\pi t)$"
+            self.latex_name = "$\\xi (t) = \sin(\pi t)$"
             self.xi = lambda t: sin(pi * t)
 
         if index == 9:
 
             self.name = "t * sin(t * pi)"
-            self.plot_title = "$\\xi (t) = t \ \sin(\pi t)$"
+            self.latex_name = "$\\xi (t) = t \ \sin(\pi t)$"
             self.xi = lambda t: t * sin(pi * t)
 
         if index == 12:
 
             self.name = "floor(t)"
-            self.plot_title = "$\\xi (t) = \lfloor t \\rfloor $"
+            self.latex_name = "$\\xi (t) = \lfloor t \\rfloor $"
             self.xi = lambda t: floor(t)
 
         if index == 13:
 
             self.name = "floot(t) % 2"
-            self.plot_title = "$\\xi (t) = \lfloor t \\rfloor \ \\mathrm{mod} \ 2$"
+            self.latex_name = "$\\xi (t) = \lfloor t \\rfloor \ \\mathrm{mod} \ 2$"
             self.xi = lambda t: floor(t) % 2
 
         # Create the properties string (Used for creating filenames)
@@ -118,7 +118,7 @@ class LoewnerRun:
         # Convert the parameters to strings
         desc = [str(attr) for attr in properties]
 
-        # Create a single string to use as a filename
+        # Create a single string to use as a filename template
         self.properties_string = "-".join(desc)
 
     def compile_modules(self):
@@ -153,7 +153,7 @@ class LoewnerRun:
     def set_plot_title(self):
 
         # Prepare the plot title
-        plt.title(self.plot_title, fontsize = 19, color = "black", y = 1.02, usetex = True)
+        plt.title(self.latex_name, fontsize = 19, color = "black", y = 1.02, usetex = True)
 
     def quadratic_forward_plot(self):
 
@@ -185,7 +185,7 @@ class LoewnerRun:
         # Save the plot to the filesystem
         plt.savefig(INVERSE_PLOT_OUTPUT + self.properties_string + PLOT_EXT, bbox_inches='tight')
 
-    def cubic_plot(self):
+    def cubic_forward_plot(self):
 
         # Plot the values
         plt.plot(self.cubic_results_A.real, self.cubic_results_A.imag, color='crimson')
@@ -239,7 +239,7 @@ class LoewnerRun:
         # Check if the quadratic forward function has been executed
         if self.forward_resuls is None:
 
-            print("Error: No quadratic forward results to use for inverse algorithm")
+            print("Error: No quadratic forward results to use for inverse algorithm.")
             exit()
 
         # Import the compiled Inverse Loewner module
@@ -313,13 +313,17 @@ class LoewnerRun:
 
 def ConstantLoewnerRun(LoewnerRun):
 
-    def __init__(self, constant):
+    def __init__(self, constant, start_time, final_time, outer_points, inner_points, compile_modules = True, save_data = True, save_plot = True):
 
-        LoewnerRun.__init__(CONST_IDX)
+        # Invoke the superclass initialiser
+        LoewnerRun.__init__(CONST_IDX, start_time, final_time, outer_points, inner_points, compile_modules, save_data, save_plot)
 
-        self.name = "Constant"
+        # Set the constant value
         self.constant = constant
-        self.plot_title = "$\\xi (t) = " + str(self.constant) + "$"
+
+        # Set the name, plot title, and function for the given driving function
+        self.name = "Constant"
+        self.latex_name = "$\\xi (t) = " + str(self.constant) + "$"
         self.xi = lambda t: self.constant
 
     def quadratic_forward_loewner(self):
@@ -333,6 +337,28 @@ def ConstantLoewnerRun(LoewnerRun):
         # Solve Loewner's equation with the given parameters
         ForwardLoewner.quadraticloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresult=self.forward_results, constantdrivingarg=self.constant)
 
+        if self.save_data:
+
+            # Create a filenames for the dat files
+            filename = FORWARD_DATA_OUTPUT + self.properties_string + DATA_EXT
+
+            # Create a 2D array from the real and imaginary values of the raw results and translated results
+            results_array = self.column_stack((self.forward_results.real, self.forward_results.imag))
+
+            # Save the arrays to the filesystem
+            self.save_to_dat(filename, results_array)
+
+        if self.save_plot:
+
+            # Clear any preexisting plots to be safe
+            plt.cla()
+
+            # Set the plot title
+            self.set_plot_title()
+
+            # Plot the data and save it to the filesystem
+            self.quadratic_forward_plot()
+
     def cubic_forward_loewner(self):
 
         # Improt the module
@@ -344,6 +370,31 @@ def ConstantLoewnerRun(LoewnerRun):
 
         # Solve Loewner's equation with the given parameters
         ForwardLoewner.cubicloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresulta=self.cubic_results_A, gresultb=self.cubic_results_B, constdrivingarg=self.constant_param)
+
+        if self.save_data:
+
+            # Create filenames for the data files
+            filenameA = CUBIC_DATA_OUTPUT + self.properties_string + "-A" + DATA_EXT
+            filenameB = CUBIC_DATA_OUTPUT + self.properties_string + "-B" + DATA_EXT
+
+            # Create 2D arrays from the real and imaginary values of the results
+            combinedA = column_stack((self.cubic_results_A.real,self.cubic_results_A.imag))
+            combinedB = column_stack((self.cubic_results_B.real,self.cubic_results_B.imag))
+
+            # Save the arrays to the filesystem
+            self.save_to_dat(filenameA, combinedA)
+            self.save_to_dat(filenameB, combinedB)
+
+        if self.save_plot:
+
+            # Clear any preexisting plots to be safe
+            plt.cla()
+
+            # Set the plot title
+            self.set_plot_title()
+
+            # Plot the data and save it to the filesystem
+            self.cubic_forward_plot()
 
     def exact_cubic_forward_loewner(self):
 
@@ -396,7 +447,7 @@ def LinearLoewnerRun(LoewnerRun):
         LoewnerRun.__init__(LINR_IDX)
 
         self.name = "t"
-        self.plot_title = "$\\xi (t) = t$"
+        self.latex_name = "$\\xi (t) = t$"
         self.xi = lambda t: t
 
     def exact_quadratic_forward(self):
@@ -440,7 +491,7 @@ def KappaLoewnerRun(LoewnerRun):
         self.set_properties_string()
 
         self.name = "2 * dsqrt(kappa * (1 - t))"
-        self.plot_title = "$\\xi (t) = 2 \ \sqrt{" + str(self.kappa)[:3] + "\ (1 - t)}$"
+        self.latex_name = "$\\xi (t) = 2 \ \sqrt{" + str(self.kappa)[:3] + "\ (1 - t)}$"
         self.xi = lambda t: sqrt(self.kappa * (1 - t))
 
     def set_properties_string(self):
@@ -509,7 +560,7 @@ def CAlphaLoewnerRun(LoewnerRun):
         self.name = "dsqrt(t) * c_alpha"
         self.alpha = alpha
         self.calpha = (2 - 4 * alpha) / sqrt(alpha - alpha**2)
-        self.plot_title = "$\\xi (t) = c_{" + str(self.alpha)[:3] + "} \sqrt{t}$"
+        self.latex_name = "$\\xi (t) = c_{" + str(self.alpha)[:3] + "} \sqrt{t}$"
         self.xi = lambda t: self.calpha * sqrt(t)
 
         self.set_properties_string()
@@ -542,7 +593,7 @@ def SqrtTPlusOneLoewnerRun(LoewnerRun):
         LoewnerRun.__init__(SQRTPLUS_IDX)
 
         self.name = "sqrt(1 + t)"
-        self.plot_title = "$\\xi (t) = \sqrt{1 + t}$"
+        self.latex_name = "$\\xi (t) = \sqrt{1 + t}$"
         self.xi = lambda t: sqrt(1 + t)
 
     def sqrtplusone_cubic_exact(self, save_plot, save_data):
@@ -580,7 +631,7 @@ def SqrtTPlusOneLoewnerRun(LoewnerRun):
 
             plt.cla()
 
-            plt.title(DrivingFunction(driving_function).plot_title, fontsize = 19, color = "black", y = 1.02, usetex = True)
+            plt.title(self.latex_name, fontsize = 19, color = "black", y = 1.02, usetex = True)
             plt.plot(self.cubic_exact_sol_A.real, self.cubic_exact_sol_A.imag, color='crimson')
             plt.plot(self.cubic_exact_sol_B.real, self.cubic_exact_sol_B.imag, color='crimson')
             plt.ylim(bottom=0)

@@ -427,7 +427,7 @@ def ConstantLoewnerRun(LoewnerRun):
 
         if self.save_data:
 
-            # Create a filename for the dat file
+            # Create filenames for the dat file
             filename_A = EXACT_CUBIC_DATA_OUTPUT + properties_string + "-A" + DATA_EXT
             filename_B = EXACT_CUBIC_DATA_OUTPUT + properties_string + "-B" + DATA_EXT
 
@@ -489,25 +489,36 @@ def LinearLoewnerRun(LoewnerRun):
         # Iterate through the exact time values
         for i in range(self.outer_points):
 
-            self.exact_quadratic_forward[i] = findroot(lambda g: exact_solution(g, self.exact_time_sol[i]), initial_guess(self.exact_time_sol[i]),solver='muller')
+            # Use Muller's method for finding the exact solution
+            self.exact_quadratic_forward[i] = findroot(lambda g: exact_solution(g, self.exact_time_sol[i]), initial_guess(self.exact_time_sol[i]), solver='muller')
 
         if save_data:
 
+            # Create a filename for the dat file
             filename = EXACT_FORWARD_DATA_OUTPUT + properties_string + DATA_EXT
+
+            # Create a 2D array from the real and imaginary values of the results
             array = column_stack((exact_linear.real, exact_linear.imag))
-            savetxt(filename, array, fmt=DATA_PREC)
+
+            # Save the array to the filesystem
+            self.save_to_dat(filename, array)
 
         if save_plot:
 
+            # Clear any preexisting plots to be safe
             plt.cla()
+
+            # Set the plot title
+            self.set_plot_title()
+
+            # Plo the values
+            plt.plot(exact_quadratic_forward.real, exact_quadratic_forward.imag, color='crimson')
 
             # Set the lower limit of the y-axis
             plt.ylim(bottom=0)
 
-            plt.title(PLOT_TITLE[LINR_IDX], fontsize = 19, color = "black", y = 1.02, usetex = True)
-            plt.plot(exact_linear.real, exact_linear.imag, color='crimson')
+            # Save the plot to the filesystem
             plt.savefig(EXACT_FORWARD_PLOT_OUTPUT + properties_string + PLOT_EXT, bbox_inches='tight')
-
 
 def KappaLoewnerRun(LoewnerRun):
 

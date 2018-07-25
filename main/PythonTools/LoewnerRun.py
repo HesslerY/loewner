@@ -104,12 +104,6 @@ class LoewnerRun:
             self.plot_title = "$\\xi (t) = \lfloor t \\rfloor \ \\mathrm{mod} \ 2$"
             self.xi = lambda t: floor(t) % 2
 
-        if index == 14:
-
-            self.name = "sqrt(1 + t)"
-            self.plot_title = "$\\xi (t) = \sqrt{1 + t}$"
-            self.xi = lambda t: sqrt(1 + t)
-
         # Create the properties string (Used for creating filenames)
         self.set_properties_string()
 
@@ -289,6 +283,7 @@ class LoewnerRun:
         self.cubic_results_A = empty(self.outer_points, dtype=complex128)
         self.cubic_results_B = empty(self.outer_points, dtype=complex128)
 
+        # Carry out the Cubic algorithm
         ForwardLoewner.cubicloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresulta=self.cubic_results_A, gresultb=self.cubic_results_B)
 
         if self.save_data:
@@ -301,7 +296,7 @@ class LoewnerRun:
             combinedA = column_stack((self.cubic_results_A.real,self.cubic_results_A.imag))
             combinedB = column_stack((self.cubic_results_B.real,self.cubic_results_B.imag))
 
-            # Save the arrays to files
+            # Save the arrays to the filesystem
             self.save_to_dat(filenameA, combinedA)
             self.save_to_dat(filenameB, combinedB)
 
@@ -315,47 +310,6 @@ class LoewnerRun:
 
             # Plot the data and save it to the filesystem
             self.cubic_forward_plot()
-
-    def sqrtplusone_cubic_exact(self, save_plot, save_data):
-
-        self.cubic_exact_sol_A = zeros(self.outer_points,dtype = complex128)
-        self.cubic_exact_sol_B = zeros(self.outer_points,dtype = complex128)
-
-        driving_function = 14
-
-        a0 = 1
-        d0 = 1
-
-        def get_coeffs(t):
-            return [-1, 0, 10*a0**2, 0, -25*a0**4, 16*(a0**2 + d0 * t)**(5./2)]
-
-        for i in range(self.outer_points):
-
-            exact_roots = roots(get_coeffs(self.exact_time_sol[i]))
-            self.cubic_exact_sol_A[i] = exact_roots[3]
-            self.cubic_exact_sol_B[i] = -self.cubic_exact_sol_A[i].real + self.cubic_exact_sol_A[i].imag * 1j
-
-        properties_string = "-".join([str(prop) for prop in [driving_function, self.start_time, self.final_time, self.outer_points]])
-
-        if save_data:
-
-            filename = EXACT_CUBIC_DATA_OUTPUT + properties_string
-
-            array_A = column_stack((self.cubic_exact_sol_A.real, self.cubic_exact_sol_A.imag))
-            array_B = column_stack((self.cubic_exact_sol_B.real, self.cubic_exact_sol_B.imag))
-
-            savetxt(filename + "-A" + DATA_EXT, array_A, fmt=DATA_PREC)
-            savetxt(filename + "-B" + DATA_EXT, array_B, fmt=DATA_PREC)
-
-        if save_plot:
-
-            plt.cla()
-
-            plt.title(DrivingFunction(driving_function).plot_title, fontsize = 19, color = "black", y = 1.02, usetex = True)
-            plt.plot(self.cubic_exact_sol_A.real, self.cubic_exact_sol_A.imag, color='crimson')
-            plt.plot(self.cubic_exact_sol_B.real, self.cubic_exact_sol_B.imag, color='crimson')
-            plt.ylim(bottom=0)
-            plt.savefig(EXACT_CUBIC_PLOT_OUTPUT + properties_string + PLOT_EXT, bbox_inches='tight')
 
 def ConstantLoewnerRun(LoewnerRun):
 
@@ -580,4 +534,55 @@ def CAlphaLoewnerRun(LoewnerRun):
 
         # Solve Loewner's equation with the given parameters
         ForwardLoewner.quadraticloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresult=self.forward_results, sqrtdrivingarg=self.alpha)
+
+def SqrtTPlusOneLoewnerRun(LoewnerRun):
+
+    def __init__(self):
+
+        LoewnerRun.__init__(SQRTPLUS_IDX)
+
+        self.name = "sqrt(1 + t)"
+        self.plot_title = "$\\xi (t) = \sqrt{1 + t}$"
+        self.xi = lambda t: sqrt(1 + t)
+
+    def sqrtplusone_cubic_exact(self, save_plot, save_data):
+
+        self.cubic_exact_sol_A = zeros(self.outer_points,dtype = complex128)
+        self.cubic_exact_sol_B = zeros(self.outer_points,dtype = complex128)
+
+        driving_function = 14
+
+        a0 = 1
+        d0 = 1
+
+        def get_coeffs(t):
+            return [-1, 0, 10*a0**2, 0, -25*a0**4, 16*(a0**2 + d0 * t)**(5./2)]
+
+        for i in range(self.outer_points):
+
+            exact_roots = roots(get_coeffs(self.exact_time_sol[i]))
+            self.cubic_exact_sol_A[i] = exact_roots[3]
+            self.cubic_exact_sol_B[i] = -self.cubic_exact_sol_A[i].real + self.cubic_exact_sol_A[i].imag * 1j
+
+        properties_string = "-".join([str(prop) for prop in [driving_function, self.start_time, self.final_time, self.outer_points]])
+
+        if save_data:
+
+            filename = EXACT_CUBIC_DATA_OUTPUT + properties_string
+
+            array_A = column_stack((self.cubic_exact_sol_A.real, self.cubic_exact_sol_A.imag))
+            array_B = column_stack((self.cubic_exact_sol_B.real, self.cubic_exact_sol_B.imag))
+
+            savetxt(filename + "-A" + DATA_EXT, array_A, fmt=DATA_PREC)
+            savetxt(filename + "-B" + DATA_EXT, array_B, fmt=DATA_PREC)
+
+        if save_plot:
+
+            plt.cla()
+
+            plt.title(DrivingFunction(driving_function).plot_title, fontsize = 19, color = "black", y = 1.02, usetex = True)
+            plt.plot(self.cubic_exact_sol_A.real, self.cubic_exact_sol_A.imag, color='crimson')
+            plt.plot(self.cubic_exact_sol_B.real, self.cubic_exact_sol_B.imag, color='crimson')
+            plt.ylim(bottom=0)
+            plt.savefig(EXACT_CUBIC_PLOT_OUTPUT + properties_string + PLOT_EXT, bbox_inches='tight')
 

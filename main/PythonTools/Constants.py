@@ -39,18 +39,10 @@ KAPPA_IDX = 10
 CALPHA_IDX = 11
 CONST_IDX = 0
 LINR_IDX = 1
+SQRTPLUS_IDX = 14
 PERIODIC_DRIVING = [i for i in range(2,10)]
 MULTIPLE_IDX = TOTAL_DRIVING_FUNCTIONS
 ALL_IDX = TOTAL_DRIVING_FUNCTIONS + 1
-
-def MAKE_CONSTANT_TITLE(constant):
-    return PLOT_TITLE[CONST_IDX][0] + str(constant) + PLOT_TITLE[CONST_IDX][1]
-
-def MAKE_KAPPA_TITLE(kappa):
-    return PLOT_TITLE[KAPPA_IDX][0] + str(kappa)[:3] + PLOT_TITLE[KAPPA_IDX][1]
-
-def MAKE_CALPHA_TITLE(calpha):
-    return PLOT_TITLE[CALPHA_IDX][0] + str(calpha)[:3] + PLOT_TITLE[CALPHA_IDX][1]
 
 # Inicides of the driving functions
 DRIVING_INDICES = {pair[1] : pair[0] for pair in enumerate(DRIVING_INFO)}

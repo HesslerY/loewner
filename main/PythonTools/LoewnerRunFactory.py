@@ -1,6 +1,6 @@
 from LoewnerRun import LoewnerRun
 
-def LoewnerRunFactory(index, start_time, final_time, outer_res, inner_res, save_plot = True, save_data = True, kappa = None, alpha = None, constant = None)
+def LoewnerRunFactory(index, start_time, final_time, outer_res, inner_res, save_plot = True, save_data = True, kappa = None, alpha = None, constant = None):
 
     if index == CONST_IDX:
         return ConstantLoewnerRun(constant)

@@ -1,9 +1,9 @@
 from Constants import *
 import matplotlib.pyplot as plt
-from subprocess import check_output, call, CalledProcessError
-from DrivingFunction import DrivingFunction
+from subprocess import check_output, CalledProcessError
 from mpmath import findroot
 from cmath import log, sqrt
+from math import pi, sin, floor, cos
 from numpy import empty, column_stack, savetxt, complex128, zeros, linspace, copy, roots
 from importlib import import_module
 plt.style.use('ggplot')
@@ -16,7 +16,7 @@ class LoewnerRun:
         self.index = index
 
         # Assign the module code
-        self.module_code = str(driving_function)
+        self.module_code = str(index)
 
         # Determine the filename of the relevant Fortran file
         self.forward_filename = "../" + FOR_LOEWNER + "/" + FOR_LOEWNER + FORTRAN_EXT
@@ -43,7 +43,7 @@ class LoewnerRun:
         if compile_modules:
             self.compile_modules()
 
-        # Obtain the names and function for the given driving function
+        # Obtain the names and lambda function for the given driving function
         if index == 2:
 
             self.name = "cos(t)"
@@ -276,7 +276,7 @@ class LoewnerRun:
 
     def cubic_forward_loewner(self):
 
-        # Import the module
+        # Import the compiled Forward Loewner module
         ForwardLoewner = import_module(self.forward_module_name)
 
         # Declare empty complex arrays for the results
@@ -311,12 +311,12 @@ class LoewnerRun:
             # Plot the data and save it to the filesystem
             self.cubic_forward_plot()
 
-def ConstantLoewnerRun(LoewnerRun):
+class ConstantLoewnerRun(LoewnerRun):
 
     def __init__(self, constant, start_time, final_time, outer_points, inner_points, compile_modules = True, save_data = True, save_plot = True):
 
         # Invoke the superclass initialiser
-        LoewnerRun.__init__(CONST_IDX, start_time, final_time, outer_points, inner_points, compile_modules, save_data, save_plot)
+        LoewnerRun.__init__(self, CONST_IDX, start_time, final_time, outer_points, inner_points, compile_modules, save_data, save_plot)
 
         # Set the constant value
         self.constant = constant
@@ -324,7 +324,7 @@ def ConstantLoewnerRun(LoewnerRun):
         # Set the constant value for the known exact solution (Foward Cubic case)
         self.exact_cubic_constant = 1
 
-        # Set the names and function for the given driving function
+        # Set the names and lambda function for the given driving function
         self.name = "Constant"
         self.latex_name = "$\\xi (t) = " + str(self.constant) + "$"
         self.xi = lambda t: self.constant
@@ -334,8 +334,8 @@ def ConstantLoewnerRun(LoewnerRun):
 
     def quadratic_forward_loewner(self):
 
-        # Import the module
-        ForwardLoewner = self.import_loewner(FOR_RUN_STR)
+        # Import the compiled Forward Loewner module
+        ForwardLoewner = import_module(self.forward_module_name)
 
         # Declare an empty complex array for the results
         self.forward_results = empty(self.outer_points, dtype=complex128)
@@ -349,7 +349,7 @@ def ConstantLoewnerRun(LoewnerRun):
             filename = FORWARD_DATA_OUTPUT + self.properties_string + DATA_EXT
 
             # Create a 2D array from the real and imaginary values of the raw results and translated results
-            results_array = self.column_stack((self.forward_results.real, self.forward_results.imag))
+            results_array = column_stack((self.forward_results.real, self.forward_results.imag))
 
             # Save the arrays to the filesystem
             self.save_to_dat(filename, results_array)
@@ -367,15 +367,15 @@ def ConstantLoewnerRun(LoewnerRun):
 
     def cubic_forward_loewner(self):
 
-        # Improt the module
-        ForwardLoewner = self.import_loewner(FOR_RUN_STR)
+        # Import the compiled Forward Loewner module
+        ForwardLoewner = import_module(self.forward_module_name)
 
         # Declare empty complex arrays for the results
         self.cubic_results_A = empty(self.outer_points, dtype=complex128)
         self.cubic_results_B = empty(self.outer_points, dtype=complex128)
 
         # Solve Loewner's equation with the given parameters
-        ForwardLoewner.cubicloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresulta=self.cubic_results_A, gresultb=self.cubic_results_B, constdrivingarg=self.constant_param)
+        ForwardLoewner.cubicloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresulta=self.cubic_results_A, gresultb=self.cubic_results_B, constdrivingarg=self.constant)
 
         if self.save_data:
 
@@ -428,12 +428,12 @@ def ConstantLoewnerRun(LoewnerRun):
         if self.save_data:
 
             # Create filenames for the dat file
-            filename_A = EXACT_CUBIC_DATA_OUTPUT + properties_string + "-A" + DATA_EXT
-            filename_B = EXACT_CUBIC_DATA_OUTPUT + properties_string + "-B" + DATA_EXT
+            filename_A = EXACT_CUBIC_DATA_OUTPUT + self.properties_string + "-A" + DATA_EXT
+            filename_B = EXACT_CUBIC_DATA_OUTPUT + self.properties_string + "-B" + DATA_EXT
 
             # Create 2D arrays from the real and imaginary values of the results
-            array_A = column_stack((self.cubic_exact_sol_A.real, self.cubic_exact_sol_A.imag))
-            array_B = column_stack((self.cubic_exact_sol_B.real, self.cubic_exact_sol_B.imag))
+            array_A = column_stack((self.exact_cubic_sol_A.real, self.exact_cubic_sol_A.imag))
+            array_B = column_stack((self.exact_cubic_sol_B.real, self.exact_cubic_sol_B.imag))
 
             # Save the arrays to the filesystem
             self.save_to_dat(filename_A, array_A)
@@ -448,8 +448,8 @@ def ConstantLoewnerRun(LoewnerRun):
             plt.title(self.exact_cubic_latex_name, fontsize = 19, color = "black", y = 1.02, usetex = True)
 
             # Plot the values
-            plt.plot(self.cubic_exact_sol_A.real, self.cubic_exact_sol_A.imag, color='crimson')
-            plt.plot(self.cubic_exact_sol_B.real, self.cubic_exact_sol_B.imag, color='crimson')
+            plt.plot(self.exact_cubic_sol_A.real, self.exact_cubic_sol_A.imag, color='crimson')
+            plt.plot(self.exact_cubic_sol_B.real, self.exact_cubic_sol_B.imag, color='crimson')
 
             # Set the axes labels
             plt.xlabel(FOR_PLOT_XL)
@@ -459,16 +459,16 @@ def ConstantLoewnerRun(LoewnerRun):
             plt.ylim(bottom=0)
 
             # Save the plot to the filesystem
-            plt.savefig(EXACT_CUBIC_PLOT_OUTPUT + properties_string + PLOT_EXT, bbox_inches='tight')
+            plt.savefig(EXACT_CUBIC_PLOT_OUTPUT + self.properties_string + PLOT_EXT, bbox_inches='tight')
 
-def LinearLoewnerRun(LoewnerRun):
+class LinearLoewnerRun(LoewnerRun):
 
     def __init__(self, start_time, final_time, outer_points, inner_points, compile_modules = True, save_data = True, save_plot = True):
 
         # Invoke the superclass initialiser
-        LoewnerRun.__init__(LINR_IDX, start_time, final_time, outer_points, inner_points, compile_modules, save_data, save_plot)
+        LoewnerRun.__init__(self, LINR_IDX, start_time, final_time, outer_points, inner_points, compile_modules, save_data, save_plot)
 
-        # Set the names and function for the given driving function
+        # Set the names and lambda function for the given driving function
         self.name = "t"
         self.latex_name = "$\\xi (t) = t$"
         self.xi = lambda t: t
@@ -492,18 +492,18 @@ def LinearLoewnerRun(LoewnerRun):
             # Use Muller's method for finding the exact solution
             self.exact_quadratic_forward[i] = findroot(lambda g: exact_solution(g, self.exact_time_sol[i]), initial_guess(self.exact_time_sol[i]), solver='muller')
 
-        if save_data:
+        if self.save_data:
 
             # Create a filename for the dat file
-            filename = EXACT_FORWARD_DATA_OUTPUT + properties_string + DATA_EXT
+            filename = EXACT_FORWARD_DATA_OUTPUT + self.properties_string + DATA_EXT
 
             # Create a 2D array from the real and imaginary values of the results
-            array = column_stack((exact_linear.real, exact_linear.imag))
+            array = column_stack((self.exact_quadratic_forward.real, self.exact_quadratic_forward.imag))
 
             # Save the array to the filesystem
             self.save_to_dat(filename, array)
 
-        if save_plot:
+        if self.save_plot:
 
             # Clear any preexisting plots to be safe
             plt.cla()
@@ -512,26 +512,28 @@ def LinearLoewnerRun(LoewnerRun):
             self.set_plot_title()
 
             # Plo the values
-            plt.plot(exact_quadratic_forward.real, exact_quadratic_forward.imag, color='crimson')
+            plt.plot(self.exact_quadratic_forward.real, self.exact_quadratic_forward.imag, color='crimson')
 
             # Set the lower limit of the y-axis
             plt.ylim(bottom=0)
 
             # Save the plot to the filesystem
-            plt.savefig(EXACT_FORWARD_PLOT_OUTPUT + properties_string + PLOT_EXT, bbox_inches='tight')
+            plt.savefig(EXACT_FORWARD_PLOT_OUTPUT + self.properties_string + PLOT_EXT, bbox_inches='tight')
 
-def KappaLoewnerRun(LoewnerRun):
+class KappaLoewnerRun(LoewnerRun):
 
-    def __init__(self, kappa):
+    def __init__(self, kappa, start_time, final_time, outer_points, inner_points, compile_modules = True, save_data = True, save_plot = True):
 
-        LoewnerRun.__init__(KAPPA_IDX)
+        # Invoke the superclass initialiser
+        LoewnerRun.__init__(self, KAPPA_IDX, start_time, final_time, outer_points, inner_points, compile_modules, save_data, save_plot)
 
         # Set the kappa value
         self.kappa = kappa
 
-        # Generate a properties string
+        # Generate a properties string for the kappa case (Used for creating filenames)
         self.set_properties_string()
 
+        # Create the names and lambda function for the given driving function
         self.name = "2 * dsqrt(kappa * (1 - t))"
         self.latex_name = "$\\xi (t) = 2 \ \sqrt{" + str(self.kappa)[:3] + "\ (1 - t)}$"
         self.xi = lambda t: sqrt(self.kappa * (1 - t))
@@ -550,22 +552,10 @@ def KappaLoewnerRun(LoewnerRun):
         # Create a single string to use as a filename template
         self.properties_string = "-".join(desc)
 
-    def shift(self):
-
-        self.copy_answer = copy(self.forward_results)
-        offset = self.copy_answer[0].real
-
-        for i in range(self.outer_points):
-            self.copy_answer[i] -= offset
-
-        shifted_array = column_stack((self.copy_answer.real, self.copy_answer.imag))
-        filename = FORSHIFT_DATA_OUTPUT + self.properties_string + DATA_EXT
-        self.array_to_file(shifted_array, filename)
-
     def quadratic_forward_loewner(self):
 
-        # Import the module
-        ForwardLoewner = self.import_loewner(FOR_RUN_STR)
+        # Import the compiled forward Loewner module
+        ForwardLoewner = import_module(self.forward_module_name)
 
         # Declare an empty complex array for the results
         self.forward_results = empty(self.outer_points, dtype=complex128)
@@ -573,25 +563,39 @@ def KappaLoewnerRun(LoewnerRun):
         # Solve Loewner's equation with the given parameters
         ForwardLoewner.quadraticloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresult=self.forward_results, sqrtdrivingarg=self.kappa)
 
+        # Create a copy of the results
+        self.translated_results = copy(self.forward_results)
+
+        # Determine the distance from the first point to the origin
+        offset = self.translated_results[0].real
+
+        # Shift the copy so that the trace begins at the origin
+        for i in range(self.outer_points):
+            self.translated_results[i] -= offset
+
         if self.save_data:
 
-            # Create a filename for the dat file
+            # Create a filename for the dat files
             filename = FORWARD_DATA_OUTPUT + self.properties_string + DATA_EXT
+            translated_filename = FORSHIFT_DATA_OUTPUT + self.properties_string + DATA_EXT
 
-            # Create a 2D array from the real and imaginary values of the results
-            self.array_to_file(self.prepare_file(FOR_RUN_STR), filename)
+            # Convert the results to 2D arrays
+            results_array = column_stack((self.forward_results.real, self.forward_results.imag))
+            translated_array = column_stack((self.translated_results.real, self.translated_results.imag))
 
-            # Translate the real values so the plot starts at the origin
-            self.shift()
+            # Save the arrays to the filesystem
+            self.save_to_dat(filename, results_array)
+            self.save_to_dat(translated_filename, translated_array)
 
         if self.save_plot:
             pass
 
-def CAlphaLoewnerRun(LoewnerRun):
+class CAlphaLoewnerRun(LoewnerRun):
 
-    def __init__(self, alpha):
+    def __init__(self, alpha, start_time, final_time, outer_points, inner_points, compile_modules = True, save_data = True, save_plot = True):
 
-        LoewnerRun.__init__(CALPHA_IDX)
+        # Invoke the superclass initialiser
+        LoewnerRun.__init__(self, CALPHA_IDX, start_time, final_time, outer_points, inner_points, compile_modules, save_data, save_plot)
 
         # Set the value for alpha
         self.alpha = alpha
@@ -620,7 +624,8 @@ def CAlphaLoewnerRun(LoewnerRun):
 
     def quadratic_forward_loewner(self):
 
-        ForwardLoewner = self.import_loewner(FOR_RUN_STR)
+        # Import the compiiled Forward Loewner module
+        ForwardLoewner = import_module(self.forward_module_name)
 
         # Declare an empty complex array for the results
         self.forward_results = empty(self.outer_points, dtype=complex128)
@@ -628,11 +633,12 @@ def CAlphaLoewnerRun(LoewnerRun):
         # Solve Loewner's equation with the given parameters
         ForwardLoewner.quadraticloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresult=self.forward_results, sqrtdrivingarg=self.alpha)
 
-def SqrtTPlusOneLoewnerRun(LoewnerRun):
+class SqrtTPlusOneLoewnerRun(LoewnerRun):
 
-    def __init__(self):
+    def __init__(self, start_time, final_time, outer_points, inner_points, compile_modules = True, save_data = True, save_plot = True):
 
-        LoewnerRun.__init__(SQRTPLUS_IDX)
+        # Invoke the superclass initialiser
+        LoewnerRun.__init__(self, SQRTPLUS_IDX, start_time, final_time, outer_points, inner_points, compile_modules, save_data, save_plot)
 
         self.name = "sqrt(1 + t)"
         self.latex_name = "$\\xi (t) = \sqrt{1 + t}$"

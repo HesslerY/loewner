@@ -681,7 +681,7 @@ class SqrtTPlusOneLoewnerRun(LoewnerRun):
         self.latex_name = "$\\xi (t) = \sqrt{1 + t}$"
         self.xi = lambda t: sqrt(1 + t)
 
-    def exact_cubic_forward_loewner(self, save_plot, save_data):
+    def exact_cubic_forward_loewner(self):
 
         # Declare empty complex arrays for the exact results
         self.exact_cubic_sol_a = zeros(self.outer_points, dtype = complex128)
@@ -707,7 +707,7 @@ class SqrtTPlusOneLoewnerRun(LoewnerRun):
             # Obtain the solution to the second trace by changing the sign of the real component
             self.exact_cubic_sol_b[i] = -self.exact_cubic_sol_a[i].real + self.exact_cubic_sol_a[i].imag * 1j
 
-        if save_data:
+        if self.save_data:
 
             # Create filenames for the dat file
             filename_a = EXACT_CUBIC_DATA_OUTPUT + self.properties_string + "-A" + DATA_EXT
@@ -721,7 +721,7 @@ class SqrtTPlusOneLoewnerRun(LoewnerRun):
             self.save_to_dat(filename_a, array_a)
             self.save_to_dat(filename_b, array_b)
 
-        if save_plot:
+        if self.save_plot:
 
             # Clear any preexisting plots to be safe
             plt.cla()

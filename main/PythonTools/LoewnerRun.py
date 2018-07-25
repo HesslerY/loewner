@@ -105,7 +105,8 @@ class LoewnerRun:
             self.xi = lambda t: floor(t) % 2
 
         # Create the properties string (Used for creating filenames)
-        self.set_properties_string()
+        if not SQUAREROOT_DRIVING(index):
+            self.set_properties_string()
 
         # Construct the exact solution for time
         self.exact_time_sol = linspace(self.start_time, self.final_time, self.outer_points)
@@ -134,7 +135,7 @@ class LoewnerRun:
                   self.inverse_module_name]
 
         # Iterate through the modules
-        for command in [FOR_RUN_STR, CBC_RUN_STR]:
+        for command in [self.compile_forward, self.compile_inverse]:
 
             # Attempt to compile the module
             try:
@@ -237,7 +238,7 @@ class LoewnerRun:
     def quadratic_inverse_loewner(self):
 
         # Check if the quadratic forward function has been executed
-        if self.forward_resuls is None:
+        if self.forward_results is None:
 
             print("Error: No quadratic forward results to use for inverse algorithm.")
             exit()

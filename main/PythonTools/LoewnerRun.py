@@ -50,55 +50,55 @@ class LoewnerRun:
             self.latex_name = "$\\xi (t) = \cos(t)$"
             self.xi = lambda t: cos(t)
 
-        if index == 3:
+        elif index == 3:
 
             self.name = "t * cos(t)"
             self.latex_name = "$\\xi (t) = t \ \cos(t)$"
             self.xi = lambda t: t * cos(t)
 
-        if index == 4:
+        elif index == 4:
 
             self.name = "cos(t * pi)"
             self.latex_name = "$\\xi (t) = \cos(\pi t)$"
             self.xi = lambda t: cos(pi * t)
 
-        if index == 5:
+        elif index == 5:
 
             self.name = "t * cos(t * pi)"
             self.latex_name = "$\\xi (t) = t \ \cos(\pi t)$"
             self.xi = lambda t: t * cos(pi * t)
 
-        if index == 6:
+        elif index == 6:
 
             self.name = "sin(t)"
             self.latex_name = "$\\xi (t) = \sin(t)$"
             self.xi = lambda t: sin(t)
 
-        if index == 7:
+        elif index == 7:
 
             self.name = "t * sin(t)"
             self.latex_name = "$\\xi (t) = t \ \sin(t)$"
             self.xi = lambda t: t * sin(t)
 
-        if index == 8:
+        elif index == 8:
 
             self.name = "sin(t * pi)"
             self.latex_name = "$\\xi (t) = \sin(\pi t)$"
             self.xi = lambda t: sin(pi * t)
 
-        if index == 9:
+        elif index == 9:
 
             self.name = "t * sin(t * pi)"
             self.latex_name = "$\\xi (t) = t \ \sin(\pi t)$"
             self.xi = lambda t: t * sin(pi * t)
 
-        if index == 12:
+        elif index == 12:
 
             self.name = "floor(t)"
             self.latex_name = "$\\xi (t) = \lfloor t \\rfloor $"
             self.xi = lambda t: floor(t)
 
-        if index == 13:
+        elif index == 13:
 
             self.name = "floot(t) % 2"
             self.latex_name = "$\\xi (t) = \lfloor t \\rfloor \ \\mathrm{mod} \ 2$"
@@ -188,8 +188,8 @@ class LoewnerRun:
     def cubic_forward_plot(self):
 
         # Plot the values
-        plt.plot(self.cubic_results_A.real, self.cubic_results_A.imag, color='crimson')
-        plt.plot(self.cubic_results_B.real, self.cubic_results_B.imag, color='crimson')
+        plt.plot(self.cubic_results_a.real, self.cubic_results_a.imag, color='crimson')
+        plt.plot(self.cubic_results_b.real, self.cubic_results_b.imag, color='crimson')
 
         # Set the axes labels
         plt.xlabel(FOR_PLOT_XL)
@@ -280,25 +280,25 @@ class LoewnerRun:
         ForwardLoewner = import_module(self.forward_module_name)
 
         # Declare empty complex arrays for the results
-        self.cubic_results_A = empty(self.outer_points, dtype=complex128)
-        self.cubic_results_B = empty(self.outer_points, dtype=complex128)
+        self.cubic_results_a = empty(self.outer_points, dtype=complex128)
+        self.cubic_results_b = empty(self.outer_points, dtype=complex128)
 
         # Carry out the Cubic algorithm
-        ForwardLoewner.cubicloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresulta=self.cubic_results_A, gresultb=self.cubic_results_B)
+        ForwardLoewner.cubicloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresulta=self.cubic_results_a, gresultb=self.cubic_results_b)
 
         if self.save_data:
 
             # Create filenames for the data files
-            filename_A = CUBIC_DATA_OUTPUT + self.properties_string + "-A" + DATA_EXT
-            filename_B = CUBIC_DATA_OUTPUT + self.properties_string + "-B" + DATA_EXT
+            filename_a = CUBIC_DATA_OUTPUT + self.properties_string + "-A" + DATA_EXT
+            filename_b = CUBIC_DATA_OUTPUT + self.properties_string + "-B" + DATA_EXT
 
             # Create 2D arrays from the real and imaginary values of the results
-            array_A = column_stack((self.cubic_results_A.real,self.cubic_results_A.imag))
-            array_B = column_stack((self.cubic_results_B.real,self.cubic_results_B.imag))
+            array_a = column_stack((self.cubic_results_a.real,self.cubic_results_a.imag))
+            array_b = column_stack((self.cubic_results_b.real,self.cubic_results_b.imag))
 
             # Save the arrays to the filesystem
-            self.save_to_dat(filename_A, array_A)
-            self.save_to_dat(filename_B, array_B)
+            self.save_to_dat(filename_a, array_a)
+            self.save_to_dat(filename_b, array_b)
 
         if self.save_plot:
 
@@ -371,25 +371,25 @@ class ConstantLoewnerRun(LoewnerRun):
         ForwardLoewner = import_module(self.forward_module_name)
 
         # Declare empty complex arrays for the results
-        self.cubic_results_A = empty(self.outer_points, dtype=complex128)
-        self.cubic_results_B = empty(self.outer_points, dtype=complex128)
+        self.cubic_results_a = empty(self.outer_points, dtype=complex128)
+        self.cubic_results_b = empty(self.outer_points, dtype=complex128)
 
         # Solve Loewner's equation with the given parameters
-        ForwardLoewner.cubicloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresulta=self.cubic_results_A, gresultb=self.cubic_results_B, constdrivingarg=self.constant)
+        ForwardLoewner.cubicloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresulta=self.cubic_results_a, gresultb=self.cubic_results_b, constdrivingarg=self.constant)
 
         if self.save_data:
 
             # Create filenames for the data files
-            filenameA = CUBIC_DATA_OUTPUT + self.properties_string + "-A" + DATA_EXT
-            filenameB = CUBIC_DATA_OUTPUT + self.properties_string + "-B" + DATA_EXT
+            filename_a = CUBIC_DATA_OUTPUT + self.properties_string + "-A" + DATA_EXT
+            filename_b = CUBIC_DATA_OUTPUT + self.properties_string + "-B" + DATA_EXT
 
             # Create 2D arrays from the real and imaginary values of the results
-            combinedA = column_stack((self.cubic_results_A.real,self.cubic_results_A.imag))
-            combinedB = column_stack((self.cubic_results_B.real,self.cubic_results_B.imag))
+            array_a = column_stack((self.cubic_results_a.real,self.cubic_results_a.imag))
+            array_b = column_stack((self.cubic_results_b.real,self.cubic_results_b.imag))
 
             # Save the arrays to the filesystem
-            self.save_to_dat(filenameA, combinedA)
-            self.save_to_dat(filenameB, combinedB)
+            self.save_to_dat(filename_a, array_a)
+            self.save_to_dat(filename_b, array_b)
 
         if self.save_plot:
 
@@ -405,8 +405,8 @@ class ConstantLoewnerRun(LoewnerRun):
     def exact_cubic_forward_loewner(self):
 
         # Declare empty complex arrays for the exact results
-        self.exact_cubic_sol_A = zeros(self.outer_points,dtype = complex128)
-        self.exact_cubic_sol_B = zeros(self.outer_points,dtype = complex128)
+        self.exact_cubic_sol_a = zeros(self.outer_points,dtype = complex128)
+        self.exact_cubic_sol_b = zeros(self.outer_points,dtype = complex128)
 
         # Define a function for generating an initial guess to be used by the non-linear solver
         def initial_guess(t):
@@ -420,24 +420,24 @@ class ConstantLoewnerRun(LoewnerRun):
         for i in range(self.outer_points):
 
             # Use Muller's method for finding the exact solution
-            self.exact_cubic_sol_A[i] = findroot(lambda g: exact_solution(g, self.exact_time_sol[i]), initial_guess(self.exact_time_sol[i]), solver='muller')
+            self.exact_cubic_sol_a[i] = findroot(lambda g: exact_solution(g, self.exact_time_sol[i]), initial_guess(self.exact_time_sol[i]), solver='muller')
 
             # Obatain the solution to the second trace by changing the sign of the real component
-            self.exact_cubic_sol_B[i] = -self.exact_cubic_sol_A[i].real + self.exact_cubic_sol_A[i].imag * 1j
+            self.exact_cubic_sol_b[i] = -self.exact_cubic_sol_a[i].real + self.exact_cubic_sol_a[i].imag * 1j
 
         if self.save_data:
 
             # Create filenames for the dat file
-            filename_A = EXACT_CUBIC_DATA_OUTPUT + self.properties_string + "-A" + DATA_EXT
-            filename_B = EXACT_CUBIC_DATA_OUTPUT + self.properties_string + "-B" + DATA_EXT
+            filename_a = EXACT_CUBIC_DATA_OUTPUT + self.properties_string + "-A" + DATA_EXT
+            filename_b = EXACT_CUBIC_DATA_OUTPUT + self.properties_string + "-B" + DATA_EXT
 
             # Create 2D arrays from the real and imaginary values of the results
-            array_A = column_stack((self.exact_cubic_sol_A.real, self.exact_cubic_sol_A.imag))
-            array_B = column_stack((self.exact_cubic_sol_B.real, self.exact_cubic_sol_B.imag))
+            array_a = column_stack((self.exact_cubic_sol_a.real, self.exact_cubic_sol_a.imag))
+            array_b = column_stack((self.exact_cubic_sol_b.real, self.exact_cubic_sol_b.imag))
 
             # Save the arrays to the filesystem
-            self.save_to_dat(filename_A, array_A)
-            self.save_to_dat(filename_B, array_B)
+            self.save_to_dat(filename_a, array_a)
+            self.save_to_dat(filename_b, array_b)
 
         if self.save_plot:
 
@@ -448,8 +448,8 @@ class ConstantLoewnerRun(LoewnerRun):
             plt.title(self.exact_cubic_latex_name, fontsize = 19, color = "black", y = 1.02, usetex = True)
 
             # Plot the values
-            plt.plot(self.exact_cubic_sol_A.real, self.exact_cubic_sol_A.imag, color='crimson')
-            plt.plot(self.exact_cubic_sol_B.real, self.exact_cubic_sol_B.imag, color='crimson')
+            plt.plot(self.exact_cubic_sol_a.real, self.exact_cubic_sol_a.imag, color='crimson')
+            plt.plot(self.exact_cubic_sol_b.real, self.exact_cubic_sol_b.imag, color='crimson')
 
             # Set the axes labels
             plt.xlabel(FOR_PLOT_XL)
@@ -575,20 +575,52 @@ class KappaLoewnerRun(LoewnerRun):
 
         if self.save_data:
 
-            # Create a filename for the dat files
+            # Obtain the partial filenames for both the raw and translated results
             filename = FORWARD_DATA_OUTPUT + self.properties_string + DATA_EXT
             translated_filename = FORSHIFT_DATA_OUTPUT + self.properties_string + DATA_EXT
 
-            # Convert the results to 2D arrays
-            results_array = column_stack((self.forward_results.real, self.forward_results.imag))
-            translated_array = column_stack((self.translated_results.real, self.translated_results.imag))
+            # Create an array for the combined filenames and combined results
+            combined_filenames = [filename, translated_filename]
+            combined_results = [self.forward_results, self.translated_results]
 
-            # Save the arrays to the filesystem
-            self.save_to_dat(filename, results_array)
-            self.save_to_dat(translated_filename, translated_array)
+            for result, filename in zip(combined_results, combined_filenames):
+
+                # Convert the result to a 2D array
+                results_array = column_stack((result.real, result.imag))
+
+                # Save the array to the filesystem
+                self.save_to_dat(filename, results_array)
 
         if self.save_plot:
-            pass
+
+            # Obtain the partial filenames for both the raw and translated results
+            filename = FORWARD_PLOT_OUTPUT + self.properties_string + PLOT_EXT
+            translated_filename = FORSHIFT_PLOT_OUTPUT + self.properties_string + PLOT_EXT
+
+            # Create an array for the combined filenames and combined results
+            combined_filenames = [filename, translated_filename]
+            combined_results = [self.forward_results, self.translated_results]
+
+            for result, filename in zip(combined_results, combined_filenames):
+
+                # Clear any preexisting plots to be safe
+                plt.cla()
+
+                # Set the plot title
+                self.set_plot_title()
+
+                # Plot the values
+                plt.plot(result.real, result.imag, color='crimson')
+
+                # Set the axes labels
+                plt.xlabel(FOR_PLOT_XL)
+                plt.ylabel(FOR_PLOT_YL)
+
+                # Set the lower limit of the y-axis
+                plt.ylim(bottom=0)
+
+                # Save the plot to the filesystem
+                plt.savefig(filename, bbox_inches='tight')
 
 class CAlphaLoewnerRun(LoewnerRun):
 
@@ -646,8 +678,8 @@ class SqrtTPlusOneLoewnerRun(LoewnerRun):
 
     def sqrtplusone_cubic_exact(self, save_plot, save_data):
 
-        self.cubic_exact_sol_A = zeros(self.outer_points,dtype = complex128)
-        self.cubic_exact_sol_B = zeros(self.outer_points,dtype = complex128)
+        self.cubic_exact_sol_a = zeros(self.outer_points,dtype = complex128)
+        self.cubic_exact_sol_b = zeros(self.outer_points,dtype = complex128)
 
         driving_function = 14
 
@@ -660,8 +692,8 @@ class SqrtTPlusOneLoewnerRun(LoewnerRun):
         for i in range(self.outer_points):
 
             exact_roots = roots(get_coeffs(self.exact_time_sol[i]))
-            self.cubic_exact_sol_A[i] = exact_roots[3]
-            self.cubic_exact_sol_B[i] = -self.cubic_exact_sol_A[i].real + self.cubic_exact_sol_A[i].imag * 1j
+            self.cubic_exact_sol_a[i] = exact_roots[3]
+            self.cubic_exact_sol_b[i] = -self.cubic_exact_sol_a[i].real + self.cubic_exact_sol_a[i].imag * 1j
 
         properties_string = "-".join([str(prop) for prop in [driving_function, self.start_time, self.final_time, self.outer_points]])
 
@@ -669,19 +701,19 @@ class SqrtTPlusOneLoewnerRun(LoewnerRun):
 
             filename = EXACT_CUBIC_DATA_OUTPUT + properties_string
 
-            array_A = column_stack((self.cubic_exact_sol_A.real, self.cubic_exact_sol_A.imag))
-            array_B = column_stack((self.cubic_exact_sol_B.real, self.cubic_exact_sol_B.imag))
+            array_a = column_stack((self.cubic_exact_sol_a.real, self.cubic_exact_sol_a.imag))
+            array_b = column_stack((self.cubic_exact_sol_b.real, self.cubic_exact_sol_b.imag))
 
-            savetxt(filename + "-A" + DATA_EXT, array_A, fmt=DATA_PREC)
-            savetxt(filename + "-B" + DATA_EXT, array_B, fmt=DATA_PREC)
+            savetxt(filename + "-A" + DATA_EXT, array_a, fmt=DATA_PREC)
+            savetxt(filename + "-B" + DATA_EXT, array_b, fmt=DATA_PREC)
 
         if save_plot:
 
             plt.cla()
 
             plt.title(self.latex_name, fontsize = 19, color = "black", y = 1.02, usetex = True)
-            plt.plot(self.cubic_exact_sol_A.real, self.cubic_exact_sol_A.imag, color='crimson')
-            plt.plot(self.cubic_exact_sol_B.real, self.cubic_exact_sol_B.imag, color='crimson')
+            plt.plot(self.cubic_exact_sol_a.real, self.cubic_exact_sol_a.imag, color='crimson')
+            plt.plot(self.cubic_exact_sol_b.real, self.cubic_exact_sol_b.imag, color='crimson')
             plt.ylim(bottom=0)
             plt.savefig(EXACT_CUBIC_PLOT_OUTPUT + properties_string + PLOT_EXT, bbox_inches='tight')
 

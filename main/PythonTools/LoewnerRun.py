@@ -43,7 +43,7 @@ class LoewnerRun:
         if compile_modules:
             self.compile_modules()
 
-        # Obtain the name, plot title, and function for the given driving function
+        # Obtain the names and function for the given driving function
         if index == 2:
 
             self.name = "cos(t)"
@@ -164,7 +164,7 @@ class LoewnerRun:
         plt.xlabel(FOR_PLOT_XL)
         plt.ylabel(FOR_PLOT_YL)
 
-        # Set the lower limit for the y-axis
+        # Set the lower limit of the y-axis
         plt.ylim(bottom=0)
 
         # Save the plot to the filesystem
@@ -179,7 +179,7 @@ class LoewnerRun:
         plt.xlabel(INV_PLOT_XL)
         plt.ylabel(INV_PLOT_YL)
 
-        # Set the lower limit for the x-axis
+        # Set the lower limit of the x-axis
         plt.xlim(left=self.start_time)
 
         # Save the plot to the filesystem
@@ -195,7 +195,7 @@ class LoewnerRun:
         plt.xlabel(FOR_PLOT_XL)
         plt.ylabel(FOR_PLOT_YL)
 
-        # Set the lower limit for the y-axis
+        # Set the lower limit of the y-axis
         plt.ylim(bottom=0)
 
         # Save the plot to the filesystem
@@ -289,16 +289,16 @@ class LoewnerRun:
         if self.save_data:
 
             # Create filenames for the data files
-            filenameA = CUBIC_DATA_OUTPUT + self.properties_string + "-A" + DATA_EXT
-            filenameB = CUBIC_DATA_OUTPUT + self.properties_string + "-B" + DATA_EXT
+            filename_A = CUBIC_DATA_OUTPUT + self.properties_string + "-A" + DATA_EXT
+            filename_B = CUBIC_DATA_OUTPUT + self.properties_string + "-B" + DATA_EXT
 
             # Create 2D arrays from the real and imaginary values of the results
-            combinedA = column_stack((self.cubic_results_A.real,self.cubic_results_A.imag))
-            combinedB = column_stack((self.cubic_results_B.real,self.cubic_results_B.imag))
+            array_A = column_stack((self.cubic_results_A.real,self.cubic_results_A.imag))
+            array_B = column_stack((self.cubic_results_B.real,self.cubic_results_B.imag))
 
             # Save the arrays to the filesystem
-            self.save_to_dat(filenameA, combinedA)
-            self.save_to_dat(filenameB, combinedB)
+            self.save_to_dat(filename_A, array_A)
+            self.save_to_dat(filename_B, array_B)
 
         if self.save_plot:
 
@@ -321,10 +321,16 @@ def ConstantLoewnerRun(LoewnerRun):
         # Set the constant value
         self.constant = constant
 
-        # Set the name, plot title, and function for the given driving function
+        # Set the constant value for the known exact solution (Foward Cubic case)
+        self.exact_cubic_constant = 1
+
+        # Set the names and function for the given driving function
         self.name = "Constant"
         self.latex_name = "$\\xi (t) = " + str(self.constant) + "$"
         self.xi = lambda t: self.constant
+
+        # Set the latex name for the exact cubic case
+        self.exact_cubic_latex_name = "$\\xi (t) = " + str(self.exact_cubic_constant) + "$"
 
     def quadratic_forward_loewner(self):
 
@@ -402,9 +408,6 @@ def ConstantLoewnerRun(LoewnerRun):
         self.exact_cubic_sol_A = zeros(self.outer_points,dtype = complex128)
         self.exact_cubic_sol_B = zeros(self.outer_points,dtype = complex128)
 
-        # Define the constant term for the exact solution
-        exact_constant = 1
-
         # Define a function for generating an initial guess to be used by the non-linear solver
         def initial_guess(t):
             return 1 + 1j * sqrt(2*t) - (1./3) * t
@@ -417,49 +420,76 @@ def ConstantLoewnerRun(LoewnerRun):
         for i in range(self.outer_points):
 
             # Use Muller's method for finding the exact solution
-            self.exact_cubic_sol_A[i] = findroot(lambda g: f(g,self.exact_time_sol[i], initial_guess(self.exact_time_sol[i]),solver='muller')
+            self.exact_cubic_sol_A[i] = findroot(lambda g: exact_solution(g, self.exact_time_sol[i]), initial_guess(self.exact_time_sol[i]), solver='muller')
 
             # Obatain the solution to the second trace by changing the sign of the real component
             self.exact_cubic_sol_B[i] = -self.exact_cubic_sol_A[i].real + self.exact_cubic_sol_A[i].imag * 1j
 
-        if save_data:
+        if self.save_data:
 
             # Create a filename for the dat file
-            filename = EXACT_CUBIC_DATA_OUTPUT + properties_string
+            filename_A = EXACT_CUBIC_DATA_OUTPUT + properties_string + "-A" + DATA_EXT
+            filename_B = EXACT_CUBIC_DATA_OUTPUT + properties_string + "-B" + DATA_EXT
 
             # Create 2D arrays from the real and imaginary values of the results
             array_A = column_stack((self.cubic_exact_sol_A.real, self.cubic_exact_sol_A.imag))
             array_B = column_stack((self.cubic_exact_sol_B.real, self.cubic_exact_sol_B.imag))
 
-        if save_plot:
+            # Save the arrays to the filesystem
+            self.save_to_dat(filename_A, array_A)
+            self.save_to_dat(filename_B, array_B)
 
+        if self.save_plot:
+
+            # Clear any preexisting plots to be safe
             plt.cla()
-            plt.title(MAKE_CONSTANT_TITLE(constant), fontsize = 19, color = "black", y = 1.02, usetex = True)
+
+            # Set a new plot title for the exact solution case (Uses a particular constant)
+            plt.title(self.exact_cubic_latex_name, fontsize = 19, color = "black", y = 1.02, usetex = True)
+
+            # Plot the values
             plt.plot(self.cubic_exact_sol_A.real, self.cubic_exact_sol_A.imag, color='crimson')
             plt.plot(self.cubic_exact_sol_B.real, self.cubic_exact_sol_B.imag, color='crimson')
+
+            # Set the axes labels
+            plt.xlabel(FOR_PLOT_XL)
+            plt.ylabel(FOR_PLOT_YL)
+
+            # Set the lower limit of the y-axis
             plt.ylim(bottom=0)
+
+            # Save the plot to the filesystem
             plt.savefig(EXACT_CUBIC_PLOT_OUTPUT + properties_string + PLOT_EXT, bbox_inches='tight')
 
 def LinearLoewnerRun(LoewnerRun):
 
-    def __init__(self):
+    def __init__(self, start_time, final_time, outer_points, inner_points, compile_modules = True, save_data = True, save_plot = True):
 
-        LoewnerRun.__init__(LINR_IDX)
+        # Invoke the superclass initialiser
+        LoewnerRun.__init__(LINR_IDX, start_time, final_time, outer_points, inner_points, compile_modules, save_data, save_plot)
 
+        # Set the names and function for the given driving function
         self.name = "t"
         self.latex_name = "$\\xi (t) = t$"
         self.xi = lambda t: t
 
-    def exact_quadratic_forward(self):
+    def exact_quadratic_forward_loewner(self):
 
-        self.exact_quad_for = zeros(self.outer_points,dtype = complex128)
+        # Declare an empty complex array for the exact results
+        self.exact_quadratic_forward = zeros(self.outer_points,dtype = complex128)
 
+        # Define a function for generating an initial guess to be used by the non-linear solver
         def initial_guess(t):
             return 2 * 1j * sqrt(t) + (2./3) * t
 
+        # Define the non-linear function for obtaining the exact solution
+        def exact_solution(g,t):
+            return g + 2 * log(2 - g) - 2 * log(2) - t
+
+        # Iterate through the exact time values
         for i in range(self.outer_points):
 
-            self.exact_quadfor[i] = findroot(lambda z: z + 2 * log(2 - z) - 2 * log(2) - self.exact_time_sol[i], initial_guess(self.exact_time_sol[i]),solver='muller')
+            self.exact_quadratic_forward[i] = findroot(lambda g: exact_solution(g, self.exact_time_sol[i]), initial_guess(self.exact_time_sol[i]),solver='muller')
 
         if save_data:
 
@@ -471,6 +501,7 @@ def LinearLoewnerRun(LoewnerRun):
 
             plt.cla()
 
+            # Set the lower limit of the y-axis
             plt.ylim(bottom=0)
 
             plt.title(PLOT_TITLE[LINR_IDX], fontsize = 19, color = "black", y = 1.02, usetex = True)

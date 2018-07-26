@@ -86,6 +86,11 @@ FORSHIFT_PLOT_OUTPUT = "../Output/Plots/Quadratic/TranslatedForward/"
 INVERSE_PLOT_OUTPUT = "../Output/Plots/Quadratic/Inverse/"
 CUBIC_PLOT_OUTPUT =  "../Output/Plots/Cubic/Forward/"
 
+# Directories for root mean squared error data
+QUADRATIC_FORWARD_RMS =  "../Output/Data/Quadratic/RootMeanSquared/Forward/"
+QUADRATIC_INVERSE_RMS =  "../Output/Data/Quadratic/RootMeanSquared/Forward/"
+CUBIC_FORWARD_RMS =  "../Output/Data/Cubic/RootMeanSquared/Forward/"
+
 # Names for the different algorithms used
 FOR_RUN_STR = "Forward"
 INV_RUN_STR = "Inverse"

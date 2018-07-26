@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 from subprocess import check_output, CalledProcessError
 from mpmath import findroot
 from cmath import log, sqrt
+from cmath import cos as ccos
+from cmath import sin as csin
 from math import pi, sin, floor, cos
 from numpy import empty, column_stack, savetxt, complex128, zeros, linspace, copy, roots
 from importlib import import_module
@@ -311,6 +313,23 @@ class LoewnerRun:
 
             # Plot the data and save it to the filesystem
             self.cubic_forward_plot()
+
+    def fingered_growth(self):
+
+        # Declare empty complex arrays for the results
+        self.fing_results_a = empty(self.outer_points, dtype=complex128)
+        self.fing_results_b = empty(self.outer_points, dtype=complex128)
+
+        # Define a 'weight' for the equation
+        d = 1
+
+        # Obtain the value of delta t
+        delta_t = self.exact_time_sol[1]
+
+        def f(g_current, g_previous, xi_t):
+            return delta_t * d * HALF_PI * ccos(HALF_PI * g_current) + (g_current - g_previous)*(csin(HALF_PI * g_current) - csin(HALF_PI * xi_t))
+
+
 
 class ConstantLoewnerRun(LoewnerRun):
 

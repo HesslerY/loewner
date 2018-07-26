@@ -1,3 +1,5 @@
+from math import pi
+
 # Strings for the names of the different driving functions
 DRIVING_INFO = ["0.0",
                 "t",
@@ -109,3 +111,6 @@ INV_PLOT_YL = r'$\xi(t)$'
 
 # Define the constant that is used for the exact solutions in the case of xi(t) = Constant
 EXACT_CUBIC_CONSTANT = 1
+
+# Define pi/2 constant for solving Gubiec + Szymczak equation
+HALF_PI = pi / 2

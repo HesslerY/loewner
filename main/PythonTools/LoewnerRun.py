@@ -232,6 +232,22 @@ class LoewnerRun:
         # Save the plot to the filesystem
         plt.savefig(FINGER_PLOT_OUTPUT + self.short_properties_string + PLOT_EXT, bbox_inches='tight')
 
+    def wedge_growth_plot(self):
+
+        # Plot the values
+        plt.plot(self.wedge_results_a.real, self.wedge_results_a.imag, color='crimson')
+        plt.plot(self.wedge_results_b.real, self.wedge_results_b.imag, color='crimson')
+
+        # Set the axes labels
+        plt.xlabel(FOR_PLOT_XL)
+        plt.ylabel(FOR_PLOT_YL)
+
+        # Set the lower limit of the y-axis
+        plt.ylim(bottom=0)
+
+        # Save the plot to the filesystem
+        plt.savefig(WEDGE_PLOT_OUTPUT + self.properties_string + PLOT_EXT, bbox_inches='tight')
+
     def quadratic_forward_loewner(self):
 
         # Import the compiled Forward Loewner module
@@ -351,7 +367,7 @@ class LoewnerRun:
         # Find all the values of the driving function
         xi_sol = [self.xi(t) for t in self.exact_time_sol]
 
-        # Set the first value of the solution
+        # Set the first values of the solution
         self.finger_results_a[0] = xi_sol[0]
         self.finger_results_b[0] = -xi_sol[0]
 
@@ -361,6 +377,7 @@ class LoewnerRun:
         # Obtain the value of delta t
         delta_t = self.exact_time_sol[1]
 
+        # Set an increment for obtaining an initial guess for the nonlinear solver
         increment = delta_t * 1j
 
         # Define a non-linear function for obtaining the fingered growth solution
@@ -370,7 +387,7 @@ class LoewnerRun:
         # Iterate through the exact time values
         for i in range(1,self.outer_points):
 
-            # Use Muller's method for finding the finger solution
+            # Use the Secant method for finding the finger solution
             self.finger_results_a[i] = findroot(lambda g: f(g, self.finger_results_a[i - 1],  xi_sol[i]), self.finger_results_a[i - 1] + increment, solver='secant', tol=TOL)
             self.finger_results_b[i] = findroot(lambda g: f(g, self.finger_results_b[i - 1], -xi_sol[i]), self.finger_results_b[i - 1] + increment, solver='secant', tol=TOL)
 
@@ -398,6 +415,89 @@ class LoewnerRun:
 
             # Plot the data and save it to the filesystem
             self.finger_growth_plot()
+
+    def wedge_growth(self, wedge_alpha):
+
+        # Declare empty complex arrays for the results
+        self.wedge_results_a = empty(self.outer_points, dtype=complex128)
+        self.wedge_results_b = empty(self.outer_points, dtype=complex128)
+
+        # Obtain a high res solution for the change in time
+        high_resolution_time = linspace(self.start_time, self.final_time, (self.outer_points - 1)*self.inner_points)
+
+        # Find all the values of the driving function
+        xi_sol = [self.xi(t) for t in high_resolution_time]
+
+        # Set the first values of the solution
+        self.wedge_results_a[0] = xi_sol[0]
+        self.wedge_results_b[0] = -xi_sol[0]
+
+        # Obtain the value of delta t
+        delta_t = self.exact_time_sol[1]
+
+        # Compute pi/alpha
+        pi_over_alpha = pi / wedge_alpha
+
+        # Set an increment for obtaining an initial guess for the nonlinear solver
+        increment = delta_t * 1j
+
+        # Define a non-linear function for obtaining the fingered growth solution
+        def f(g_previous, g_current, xi_t):
+            return (g_current - g_previous) / delta_t - ((2 * g_previous) / (g_previous**pi_over_alpha - xi_t**pi_over_alpha))
+
+        def progress(number):
+            if number < 10:
+                return "000" + str(number)
+            if number < 100:
+                return "00" + str(number)
+            if number < 1000:
+                return "0" + str(number)
+
+        print("Progress:", end="\n")
+
+        # Iterate through the 'outer' exact time values
+        for i in range(1,self.outer_points):
+
+            temp_sol_a = self.xi(high_resolution_time[(i*self.inner_points)-1])
+            temp_sol_b = -temp_sol_a
+
+            # Iterate backwards in time
+            for j in range((i*self.inner_points)-1,-1,-1):
+
+                # Use Muller's method for finding the Wedge solution
+                temp_sol_a = findroot(lambda g: f(g, temp_sol_a,  xi_sol[j]), temp_sol_a + increment, solver='secant', tol=TOL)
+                temp_sol_b = findroot(lambda g: f(g, temp_sol_b, -xi_sol[j]), temp_sol_b + increment, solver='secant', tol=TOL)
+
+            # Place the final values in the arrays
+            self.wedge_results_a[i] = temp_sol_a
+            self.wedge_results_b[i] = temp_sol_b
+
+            print("Found point " + progress(i) + "/" + str(self.outer_points), end="\r")
+
+        if self.save_data:
+
+            # Create filenames for the dat files
+            filename_a = WEDGE_DATA_OUTPUT + self.properties_string + "-A" + DATA_EXT
+            filename_b = WEDGE_DATA_OUTPUT + self.properties_string + "-B" + DATA_EXT
+
+            # Create 2D arrays from the real and imaginary values of the results
+            array_a = column_stack((self.wedge_results_a.real, self.wedge_results_a.imag))
+            array_b = column_stack((self.wedge_results_b.real, self.wedge_results_b.imag))
+
+            # Save the arrays to the filesystem
+            self.save_to_dat(filename_a, array_a)
+            self.save_to_dat(filename_b, array_b)
+
+        if self.save_plot:
+
+            # Clear any preexisting plots to be safe
+            plt.cla()
+
+            # Set the plot title
+            self.set_plot_title()
+
+            # Plot the data and save it to the filesystem
+            self.wedge_growth_plot()
 
 class ConstantLoewnerRun(LoewnerRun):
 

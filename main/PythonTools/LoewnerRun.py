@@ -109,6 +109,7 @@ class LoewnerRun:
         # Create the properties string (Used for creating filenames)
         if not SQUAREROOT_DRIVING(index):
             self.set_properties_string()
+            self.set_short_properties_string()
 
         # Construct the exact solution for time
         self.exact_time_sol = linspace(self.start_time, self.final_time, self.outer_points)
@@ -123,6 +124,17 @@ class LoewnerRun:
 
         # Create a single string to use as a filename template
         self.properties_string = "-".join(desc)
+
+    def set_short_properties_string(self):
+
+        # Place the parameters of the run into a list
+        properties = [self.index, self.start_time, self.final_time, self.outer_points]
+
+        # Convert the parameters to strings
+        desc = [str(attr) for attr in properties]
+
+        # Create a single string to use as a filename template
+        self.short_properties_string = "-".join(desc)
 
     def compile_modules(self):
 
@@ -203,6 +215,22 @@ class LoewnerRun:
 
         # Save the plot to the filesystem
         plt.savefig(CUBIC_PLOT_OUTPUT + self.properties_string + PLOT_EXT, bbox_inches='tight')
+
+    def finger_growth_plot(self):
+
+        # Plot the values
+        plt.plot(self.finger_results_a.real, self.finger_results_a.imag, color='crimson')
+        plt.plot(self.finger_results_b.real, self.finger_results_b.imag, color='crimson')
+
+        # Set the axes labels
+        plt.xlabel(FOR_PLOT_XL)
+        plt.ylabel(FOR_PLOT_YL)
+
+        # Set the lower limit of the y-axis
+        plt.ylim(bottom=0)
+
+        # Save the plot to the filesystem
+        plt.savefig(FINGER_PLOT_OUTPUT + self.short_properties_string + PLOT_EXT, bbox_inches='tight')
 
     def quadratic_forward_loewner(self):
 
@@ -314,11 +342,18 @@ class LoewnerRun:
             # Plot the data and save it to the filesystem
             self.cubic_forward_plot()
 
-    def fingered_growth(self):
+    def finger_growth(self):
 
         # Declare empty complex arrays for the results
-        self.fing_results_a = empty(self.outer_points, dtype=complex128)
-        self.fing_results_b = empty(self.outer_points, dtype=complex128)
+        self.finger_results_a = empty(self.outer_points, dtype=complex128)
+        self.finger_results_b = empty(self.outer_points, dtype=complex128)
+
+        # Find all the values of the driving function
+        xi_sol = [self.xi(t) for t in self.exact_time_sol]
+
+        # Set the first value of the solution
+        self.finger_results_a[0] = xi_sol[0]
+        self.finger_results_b[0] = -xi_sol[0]
 
         # Define a 'weight' for the equation
         d = 1
@@ -326,10 +361,43 @@ class LoewnerRun:
         # Obtain the value of delta t
         delta_t = self.exact_time_sol[1]
 
+        increment = delta_t * 1j
+
+        # Define a non-linear function for obtaining the fingered growth solution
         def f(g_current, g_previous, xi_t):
             return delta_t * d * HALF_PI * ccos(HALF_PI * g_current) + (g_current - g_previous)*(csin(HALF_PI * g_current) - csin(HALF_PI * xi_t))
 
+        # Iterate through the exact time values
+        for i in range(1,self.outer_points):
 
+            # Use Muller's method for finding the finger solution
+            self.finger_results_a[i] = findroot(lambda g: f(g, self.finger_results_a[i - 1],  xi_sol[i]), self.finger_results_a[i - 1] + increment, solver='secant', tol=TOL)
+            self.finger_results_b[i] = findroot(lambda g: f(g, self.finger_results_b[i - 1], -xi_sol[i]), self.finger_results_b[i - 1] + increment, solver='secant', tol=TOL)
+
+        if self.save_data:
+
+            # Create filenames for the dat files
+            filename_a = FINGER_DATA_OUTPUT + self.short_properties_string + "-A" + DATA_EXT
+            filename_b = FINGER_DATA_OUTPUT + self.short_properties_string + "-B" + DATA_EXT
+
+            # Create 2D arrays from the real and imaginary values of the results
+            array_a = column_stack((self.finger_results_a.real, self.finger_results_a.imag))
+            array_b = column_stack((self.finger_results_b.real, self.finger_results_b.imag))
+
+            # Save the arrays to the filesystem
+            self.save_to_dat(filename_a, array_a)
+            self.save_to_dat(filename_b, array_b)
+
+        if self.save_plot:
+
+            # Clear any preexisting plots to be safe
+            plt.cla()
+
+            # Set the plot title
+            self.set_plot_title()
+
+            # Plot the data and save it to the filesystem
+            self.finger_growth_plot()
 
 class ConstantLoewnerRun(LoewnerRun):
 
@@ -444,7 +512,7 @@ class ConstantLoewnerRun(LoewnerRun):
 
         if self.save_data:
 
-            # Create filenames for the dat file
+            # Create filenames for the dat files
             filename_a = EXACT_CUBIC_DATA_OUTPUT + self.properties_string + "-A" + DATA_EXT
             filename_b = EXACT_CUBIC_DATA_OUTPUT + self.properties_string + "-B" + DATA_EXT
 
@@ -549,6 +617,7 @@ class KappaLoewnerRun(LoewnerRun):
 
         # Generate a properties string for the kappa case (Used for creating filenames)
         self.set_properties_string()
+        self.set_short_properties_string()
 
         # Create the names and lambda function for the given driving function
         self.name = "2 * dsqrt(kappa * (1 - t))"
@@ -568,6 +637,20 @@ class KappaLoewnerRun(LoewnerRun):
 
         # Create a single string to use as a filename template
         self.properties_string = "-".join(desc)
+
+    def set_short_properties_string(self):
+
+        # Convert the kappa parameter to a string
+        sqrt_string = str(self.kappa)[:3].replace(".","point")
+
+        # Create a list from the run parameters
+        properties = [self.index, sqrt_string, self.start_time, self.final_time, self.outer_points]
+
+        # Convert the parameters to strings
+        desc = [str(attr) for attr in properties]
+
+        # Create a single string to use as a filename template
+        self.short_properties_string = "-".join(desc)
 
     def quadratic_forward_loewner(self):
 
@@ -691,6 +774,7 @@ class CAlphaLoewnerRun(LoewnerRun):
 
         # Create a properties string for the calpha case (Used for creating filenames)
         self.set_properties_string()
+        self.set_short_properties_string()
 
         # Create the names and lambda function for the given driving function
         self.name = "dsqrt(t) * c_alpha"
@@ -699,7 +783,7 @@ class CAlphaLoewnerRun(LoewnerRun):
 
     def set_properties_string(self):
 
-        # Convert the kappa parameter to a string
+        # Convert the alpha parameter to a string
         sqrt_string = str(self.alpha)[:3].replace(".","point")
 
         # Create a list from the run parameters
@@ -710,6 +794,20 @@ class CAlphaLoewnerRun(LoewnerRun):
 
         # Create a single string to use as a filename template
         self.properties_string = "-".join(desc)
+
+    def set_short_properties_string(self):
+
+        # Convert the alpha parameter to a string
+        sqrt_string = str(self.alpha)[:3].replace(".","point")
+
+        # Create a list from the run parameters
+        properties = [self.index, sqrt_string, self.start_time, self.final_time, self.outer_points]
+
+        # Convert the parameters to strings
+        desc = [str(attr) for attr in properties]
+
+        # Create a single string to use as a filename template
+        self.short_properties_string = "-".join(desc)
 
     def quadratic_forward_loewner(self):
 

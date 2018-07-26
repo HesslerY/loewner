@@ -322,16 +322,13 @@ class ConstantLoewnerRun(LoewnerRun):
         # Set the constant value
         self.constant = constant
 
-        # Set the constant value for the known exact solution (Foward Cubic case)
-        self.exact_cubic_constant = 1
-
         # Set the names and lambda function for the given driving function
         self.name = "Constant"
         self.latex_name = "$\\xi (t) = " + str(self.constant) + "$"
         self.xi = lambda t: self.constant
 
         # Set the latex name for the exact cubic case
-        self.exact_cubic_latex_name = "$\\xi (t) = " + str(self.exact_cubic_constant) + "$"
+        self.exact_cubic_latex_name = "$\\xi (t) = " + str(EXACT_CUBIC_CONSTANT) + "$"
 
     def quadratic_forward_loewner(self):
 
@@ -623,6 +620,43 @@ class KappaLoewnerRun(LoewnerRun):
                 # Save the plot to the filesystem
                 plt.savefig(filename, bbox_inches='tight')
 
+    def cubic_forward_loewner(self):
+
+        # Import the compiled Forward Loewner module
+        ForwardLoewner = import_module(self.forward_module_name)
+
+        # Declare empty complex arrays for the results
+        self.cubic_results_a = empty(self.outer_points, dtype=complex128)
+        self.cubic_results_b = empty(self.outer_points, dtype=complex128)
+
+        # Solve Loewner's equation with the given parameters
+        ForwardLoewner.cubicloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresulta=self.cubic_results_a, gresultb=self.cubic_results_b, sqrtdrivingarg=self.kappa)
+
+        if self.save_data:
+
+            # Create filenames for the data files
+            filename_a = CUBIC_DATA_OUTPUT + self.properties_string + "-A" + DATA_EXT
+            filename_b = CUBIC_DATA_OUTPUT + self.properties_string + "-B" + DATA_EXT
+
+            # Create 2D arrays from the real and imaginary values of the results
+            array_a = column_stack((self.cubic_results_a.real,self.cubic_results_a.imag))
+            array_b = column_stack((self.cubic_results_b.real,self.cubic_results_b.imag))
+
+            # Save the arrays to the filesystem
+            self.save_to_dat(filename_a, array_a)
+            self.save_to_dat(filename_b, array_b)
+
+        if self.save_plot:
+
+            # Clear any preexisting plots to be safe
+            plt.cla()
+
+            # Set the plot title
+            self.set_plot_title()
+
+            # Plot the data and save it to the filesystem
+            self.cubic_forward_plot()
+
 class CAlphaLoewnerRun(LoewnerRun):
 
     def __init__(self, alpha, start_time, final_time, outer_points, inner_points, compile_modules = True, save_data = True, save_plot = True):
@@ -668,6 +702,43 @@ class CAlphaLoewnerRun(LoewnerRun):
 
         # Solve Loewner's equation with the given parameters
         ForwardLoewner.quadraticloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresult=self.forward_results, sqrtdrivingarg=self.alpha)
+
+    def cubic_forward_loewner(self):
+
+        # Import the compiled Forward Loewner module
+        ForwardLoewner = import_module(self.forward_module_name)
+
+        # Declare empty complex arrays for the results
+        self.cubic_results_a = empty(self.outer_points, dtype=complex128)
+        self.cubic_results_b = empty(self.outer_points, dtype=complex128)
+
+        # Solve Loewner's equation with the given parameters
+        ForwardLoewner.cubicloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresulta=self.cubic_results_a, gresultb=self.cubic_results_b, sqrtdrivingarg=self.alpha)
+
+        if self.save_data:
+
+            # Create filenames for the data files
+            filename_a = CUBIC_DATA_OUTPUT + self.properties_string + "-A" + DATA_EXT
+            filename_b = CUBIC_DATA_OUTPUT + self.properties_string + "-B" + DATA_EXT
+
+            # Create 2D arrays from the real and imaginary values of the results
+            array_a = column_stack((self.cubic_results_a.real,self.cubic_results_a.imag))
+            array_b = column_stack((self.cubic_results_b.real,self.cubic_results_b.imag))
+
+            # Save the arrays to the filesystem
+            self.save_to_dat(filename_a, array_a)
+            self.save_to_dat(filename_b, array_b)
+
+        if self.save_plot:
+
+            # Clear any preexisting plots to be safe
+            plt.cla()
+
+            # Set the plot title
+            self.set_plot_title()
+
+            # Plot the data and save it to the filesystem
+            self.cubic_forward_plot()
 
 class SqrtTPlusOneLoewnerRun(LoewnerRun):
 

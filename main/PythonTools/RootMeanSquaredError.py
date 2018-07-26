@@ -1,9 +1,9 @@
 from Constants import QUADRATIC_FORWARD_RMS, DATA_EXT, DATA_PREC
 from LoewnerRunFactory import LoewnerRunFactory
-from numpy import square, mean, array, savetxt
+from numpy import square, mean, array, savetxt, absolute
 from math import sqrt
 
-class RootMeanSquared:
+class RootMeanSquaredError:
 
     def __init__(self, start_time, final_time, outer_points, inner_points, resolutions):
 
@@ -29,7 +29,7 @@ class RootMeanSquared:
     def calculate_rms(self, array_a, array_b):
 
         diff = array_a - array_b
-        return sqrt(mean(square(diff)))
+        return sqrt(mean(absolute(square(diff))))
 
     def quadratic_forward_error(self, points=None):
 
@@ -59,13 +59,13 @@ class RootMeanSquared:
                 approx_sol.quadratic_forward_loewner()
 
                 # Calculate the root mean squared error
-                rms = self.calculate_rms(exact_sol.exact_quadratic_forward, approx_sol.forward_solution)
+                rms = self.calculate_rms(exact_sol.exact_quadratic_forward, approx_sol.forward_results)
 
                 # Add the RMS value to the list
                 rms_list.append([approx_sol.inner_points, rms])
 
             # Create a filename for the error values
-            filename = str(exact_sol.index) + "-" + QUADRATIC_FORWARD_RMS + DATA_EXT
+            filename = QUADRATIC_FORWARD_RMS + str(exact_sol.index) + "-RMS" + DATA_EXT
 
             # Save the error values to the filesystem
             savetxt(filename, array(rms_list), fmt=DATA_PREC)

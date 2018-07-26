@@ -488,7 +488,7 @@ class LinearLoewnerRun(LoewnerRun):
         for i in range(self.outer_points):
 
             # Use Muller's method for finding the exact solution
-            self.exact_quadratic_forward[i] = findroot(lambda g: exact_solution(g, self.exact_time_sol[i]), initial_guess(self.exact_time_sol[i]), solver='muller')
+            self.exact_quadratic_forward[i] = findroot(lambda g: exact_solution(g, self.exact_time_sol[i]), initial_guess(self.exact_time_sol[i]), solver='muller', tol=1e-10)
 
         if self.save_data:
 

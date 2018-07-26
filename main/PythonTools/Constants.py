@@ -82,6 +82,7 @@ FORWARD_DATA_OUTPUT = "../Output/Data/Quadratic/Forward/"
 FORSHIFT_DATA_OUTPUT = "../Output/Data/Quadratic/TranslatedForward/"
 INVERSE_DATA_OUTPUT = "../Output/Data/Quadratic/Inverse/"
 CUBIC_DATA_OUTPUT = "../Output/Data/Cubic/Forward/"
+FINGER_DATA_OUTPUT = "../Output/Data/FingeredGrowth/"
 
 # Directories for the plot files
 EXACT_FORWARD_PLOT_OUTPUT = "../Output/Plots/Quadratic/ExactSolutions/"
@@ -90,6 +91,7 @@ FORWARD_PLOT_OUTPUT = "../Output/Plots/Quadratic/Forward/"
 FORSHIFT_PLOT_OUTPUT = "../Output/Plots/Quadratic/TranslatedForward/"
 INVERSE_PLOT_OUTPUT = "../Output/Plots/Quadratic/Inverse/"
 CUBIC_PLOT_OUTPUT =  "../Output/Plots/Cubic/Forward/"
+FINGER_PLOT_OUTPUT = "../Output/Plots/FingeredGrowth/"
 
 # Directories for root mean squared error data
 QUADRATIC_FORWARD_RMS =  "../Output/Data/Quadratic/RootMeanSquared/Forward/"

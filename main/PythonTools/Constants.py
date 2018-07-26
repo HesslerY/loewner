@@ -43,6 +43,9 @@ SQRTPLUS_IDX = 14
 PERIODIC_DRIVING = [i for i in range(2,10)]
 MULTIPLE_IDX = TOTAL_DRIVING_FUNCTIONS
 ALL_IDX = TOTAL_DRIVING_FUNCTIONS + 1
+STANDARD_IDXS = [i for i in range (1,10)] + [i for i in range(12,15)] # Driving functions that don't require any extra parameters
+CUBIC_EXACT_IDXS = [0,14]
+QUADRATIC_FORWARD_EXACT_IDXS = [1]
 
 # Inicides of the driving functions
 DRIVING_INDICES = {pair[1] : pair[0] for pair in enumerate(DRIVING_INFO)}
@@ -95,3 +98,6 @@ FOR_PLOT_YL = 'Im($g$)'
 # Plot axis labels for inverse runs
 INV_PLOT_XL = '$t$'
 INV_PLOT_YL = r'$\xi(t)$'
+
+# Define the constant that is used for the exact solutions in the case of xi(t) = Constant
+EXACT_CUBIC_CONSTANT = 1

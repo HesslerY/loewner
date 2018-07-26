@@ -56,6 +56,9 @@ F2PY_FIRST = ["f2py", "-c"]
 def SQUAREROOT_DRIVING(driving_function):
     return driving_function in [KAPPA_IDX, CALPHA_IDX]
 
+# Nonlinear solver tolerance
+TOL = 1e-13
+
 # Extension for data file output
 DATA_EXT = ".dat"
 PLOT_EXT = ".pdf"

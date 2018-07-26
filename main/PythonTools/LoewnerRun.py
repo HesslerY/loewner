@@ -418,7 +418,7 @@ class ConstantLoewnerRun(LoewnerRun):
         for i in range(self.outer_points):
 
             # Use Muller's method for finding the exact solution
-            self.exact_cubic_sol_a[i] = findroot(lambda g: exact_solution(g, self.exact_time_sol[i]), initial_guess(self.exact_time_sol[i]), solver='muller')
+            self.exact_cubic_sol_a[i] = findroot(lambda g: exact_solution(g, self.exact_time_sol[i]), initial_guess(self.exact_time_sol[i]), solver='muller', tol=TOL)
 
             # Obtain the solution to the second trace by changing the sign of the real component
             self.exact_cubic_sol_b[i] = -self.exact_cubic_sol_a[i].real + self.exact_cubic_sol_a[i].imag * 1j
@@ -488,7 +488,7 @@ class LinearLoewnerRun(LoewnerRun):
         for i in range(self.outer_points):
 
             # Use Muller's method for finding the exact solution
-            self.exact_quadratic_forward[i] = findroot(lambda g: exact_solution(g, self.exact_time_sol[i]), initial_guess(self.exact_time_sol[i]), solver='muller', tol=1e-10)
+            self.exact_quadratic_forward[i] = findroot(lambda g: exact_solution(g, self.exact_time_sol[i]), initial_guess(self.exact_time_sol[i]), solver='muller', tol=TOL)
 
         if self.save_data:
 

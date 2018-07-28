@@ -2,8 +2,8 @@
 addpath('../ExactSolutions')
 
 % Discretise time interval
-outerN = 50
-innerN = 5
+outerN = 100
+innerN = 15
 tStart = 0
 tFinal = 10
 tRange = linspace(tStart,tFinal,(outerN-1)*innerN);
@@ -26,7 +26,7 @@ d0 = 1;
 for i = 1:length(drivingFunctions)
 
     % Set 'original' Loewner equation
-    origLoewner = @(gt,gdt,drivingFunction) (gt - gdt)/deltaT - ((2*gdt)/(gdt^piOverAlpha - drivingFunction^piOverAlpha)); 
+    origLoewner = @(gt,gdt,drivingFunction) (gt - gdt)/deltaT - ((2*gdt)/(gdt^piOverAlpha - drivingFunction^piOverAlpha));
 
     % Select a driving function
     df = DrivingFunction(drivingFunctions(i));
@@ -35,7 +35,7 @@ for i = 1:length(drivingFunctions)
     gResultA = SolveWedgeLoewner(tRange,innerN,outerN,df,origLoewner);
 
     % Change the sign of the driving function
-    df.xi = @(t) -df.xi(t); 
+    df.xi = @(t) -df.xi(t);
 
     % Solve the Wedge Loewner function for the second trace
     gResultB = SolveWedgeLoewner(tRange,innerN,outerN,df,origLoewner);

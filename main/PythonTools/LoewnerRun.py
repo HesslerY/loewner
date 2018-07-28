@@ -446,8 +446,6 @@ class LoewnerRun:
         eng.workspace['kappa'] = self.kappa
         eng.workspace['drive_alpha'] = self.alpha
 
-        eng.eval('cd ../PythonTools/')
-
         wedge_result = eng.eval('SolveWedgeLoewner(index,start_time,final_time,inner_points,outer_points,wedge_alpha)',nargout=2)
 
         eng.quit()

@@ -4,7 +4,7 @@ from LoewnerRunFactory import LoewnerRunFactory
 from Constants import HALF_PI
 
 start_time = 0
-final_time = 15
+final_time = 10
 
 outer_points = 50
 inner_points = 10

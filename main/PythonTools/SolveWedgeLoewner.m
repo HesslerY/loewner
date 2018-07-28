@@ -1,7 +1,7 @@
 function [g_result_a, g_result_b] = SolveWedgeLoewner(index,start_time,final_time,inner_points,outer_points,wedge_alpha)
 
     my_cluster = parcluster('local')
-    my_cluster.NumWorkers = 4
+    my_cluster.NumWorkers = 2
 
     time_sol = linspace(double(start_time),double(final_time),(outer_points-1)*inner_points);
     delta_t = time_sol(2);
@@ -18,7 +18,7 @@ function [g_result_a, g_result_b] = SolveWedgeLoewner(index,start_time,final_tim
     end
 
     % Set 'original' Loewner equation
-    origLoewner = @(gt,g_previous,xi_t) (gt - g_previous)/delta_t - ((2*g_previous)/(g_previous^pi_over_alpha - xi_t^pi_over_alpha));
+    orig_loewner = @(g_current,g_previous,xi_t) LoewnersEquation(g_current,g_previous,xi_t,pi_over_alpha,delta_t);
 
     % Set g_0 to driving function at time 0
     g_result_a = zeros(1,outer_points);
@@ -29,7 +29,7 @@ function [g_result_a, g_result_b] = SolveWedgeLoewner(index,start_time,final_tim
     g_result_b(1) = -xi_sol(1);
 
     % Disable print out every time fsolve finds a solution
-    options = optimset('Display','off','UseParallel',true);
+    options = optimset('Display','off','UseParallel',true,'Jacobian','on');
 
     % Iterate to find solutions from g_tFinal-1 to g_0
     for i=1:outer_points-1
@@ -42,8 +42,8 @@ function [g_result_a, g_result_b] = SolveWedgeLoewner(index,start_time,final_tim
         for j = i*inner_points:-1:1
 
             % Set Loewner to be a function of g at current time value
-            new_loewner_a = @(g_previous) origLoewner(g_current_a,g_previous,xi_sol(j));
-            new_loewner_b = @(g_previous) origLoewner(g_current_b,g_previous,-xi_sol(j));
+            new_loewner_a = @(g_previous) orig_loewner(g_current_a,g_previous,xi_sol(j));
+            new_loewner_b = @(g_previous) orig_loewner(g_current_b,g_previous,-xi_sol(j));
 
             % Solve equation for g at previous time value
             [g_current_a,fval,exitflag,output] = fsolve(new_loewner_a,g_current_a + 0.5j,options);
@@ -59,4 +59,5 @@ function [g_result_a, g_result_b] = SolveWedgeLoewner(index,start_time,final_tim
 
     end
 
+    fprintf('Completed.');
 end

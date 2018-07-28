@@ -1,12 +1,14 @@
 from Constants import *
 import matplotlib.pyplot as plt
 from subprocess import check_output, CalledProcessError
+import matlab.engine
 from mpmath import findroot
 from cmath import log, sqrt
 from cmath import cos as ccos
 from cmath import sin as csin
 from math import pi, sin, floor, cos
-from numpy import empty, column_stack, savetxt, complex128, zeros, linspace, copy, roots
+from scipy import optimize
+from numpy import empty, column_stack, savetxt, complex128, zeros, linspace, copy, roots, array
 from importlib import import_module
 plt.style.use('ggplot')
 
@@ -44,6 +46,11 @@ class LoewnerRun:
         # Compile the modules (Not necessary unless the Fortran files have changed since last compilation)
         if compile_modules:
             self.compile_modules()
+
+        # Declare constants used in special driving function cases
+        self.constant = 0
+        self.kappa = 0
+        self.alpha = 0
 
         # Obtain the names and lambda function for the given driving function
         if index == 2:
@@ -232,7 +239,7 @@ class LoewnerRun:
         # Save the plot to the filesystem
         plt.savefig(FINGER_PLOT_OUTPUT + self.short_properties_string + PLOT_EXT, bbox_inches='tight')
 
-    def wedge_growth_plot(self):
+    def wedge_growth_plot(self, wedge_properties_string):
 
         # Plot the values
         plt.plot(self.wedge_results_a.real, self.wedge_results_a.imag, color='crimson')
@@ -246,7 +253,7 @@ class LoewnerRun:
         plt.ylim(bottom=0)
 
         # Save the plot to the filesystem
-        plt.savefig(WEDGE_PLOT_OUTPUT + self.properties_string + PLOT_EXT, bbox_inches='tight')
+        plt.savefig(WEDGE_PLOT_OUTPUT + wedge_properties_string + PLOT_EXT, bbox_inches='tight')
 
     def quadratic_forward_loewner(self):
 
@@ -384,12 +391,16 @@ class LoewnerRun:
         def f(g_current, g_previous, xi_t):
             return delta_t * d * HALF_PI * ccos(HALF_PI * g_current) + (g_current - g_previous)*(csin(HALF_PI * g_current) - csin(HALF_PI * xi_t))
 
+        # Use the Secant method for finding the finger solution
+        self.finger_results_a[1] = findroot(lambda g: f(g, self.finger_results_a[0],  xi_sol[0]), self.finger_results_a[0] + increment, solver='secant', tol=TOL)
+        self.finger_results_b[1] = findroot(lambda g: f(g, self.finger_results_b[0], -xi_sol[0]), self.finger_results_b[0] + increment, solver='secant', tol=TOL)
+
         # Iterate through the exact time values
-        for i in range(1,self.outer_points):
+        for i in range(2,self.outer_points):
 
             # Use the Secant method for finding the finger solution
-            self.finger_results_a[i] = findroot(lambda g: f(g, self.finger_results_a[i - 1],  xi_sol[i]), self.finger_results_a[i - 1] + increment, solver='secant', tol=TOL)
-            self.finger_results_b[i] = findroot(lambda g: f(g, self.finger_results_b[i - 1], -xi_sol[i]), self.finger_results_b[i - 1] + increment, solver='secant', tol=TOL)
+            self.finger_results_a[i] = findroot(lambda g: f(g, self.finger_results_a[i - 1],  xi_sol[i]), self.finger_results_a[i - 1], solver='secant', tol=TOL)
+            self.finger_results_b[i] = findroot(lambda g: f(g, self.finger_results_b[i - 1], -xi_sol[i]), self.finger_results_b[i - 1], solver='secant', tol=TOL)
 
         if self.save_data:
 
@@ -422,63 +433,37 @@ class LoewnerRun:
         self.wedge_results_a = empty(self.outer_points, dtype=complex128)
         self.wedge_results_b = empty(self.outer_points, dtype=complex128)
 
-        # Obtain a high res solution for the change in time
-        high_resolution_time = linspace(self.start_time, self.final_time, (self.outer_points - 1)*self.inner_points)
+        eng = matlab.engine.start_matlab()
 
-        # Find all the values of the driving function
-        xi_sol = [self.xi(t) for t in high_resolution_time]
+        eng.workspace['index'] = self.index
+        eng.workspace['start_time'] = self.start_time
+        eng.workspace['final_time'] = self.final_time
+        eng.workspace['outer_points'] = self.outer_points
+        eng.workspace['inner_points'] = self.inner_points
+        eng.workspace['wedge_alpha'] = wedge_alpha
 
-        # Set the first values of the solution
-        self.wedge_results_a[0] = xi_sol[0]
-        self.wedge_results_b[0] = -xi_sol[0]
+        eng.workspace['constant'] = self.constant
+        eng.workspace['kappa'] = self.kappa
+        eng.workspace['drive_alpha'] = self.alpha
 
-        # Obtain the value of delta t
-        delta_t = self.exact_time_sol[1]
+        eng.eval('cd ../PythonTools/')
 
-        # Compute pi/alpha
-        pi_over_alpha = pi / wedge_alpha
+        wedge_result = eng.eval('SolveWedgeLoewner(index,start_time,final_time,inner_points,outer_points,wedge_alpha)',nargout=2)
 
-        # Set an increment for obtaining an initial guess for the nonlinear solver
-        increment = delta_t * 1j
+        eng.quit()
 
-        # Define a non-linear function for obtaining the fingered growth solution
-        def f(g_previous, g_current, xi_t):
-            return (g_current - g_previous) / delta_t - ((2 * g_previous) / (g_previous**pi_over_alpha - xi_t**pi_over_alpha))
+        for i in range(self.outer_points):
+            self.wedge_results_a[i] = wedge_result[0][0][i]
+            self.wedge_results_b[i] = wedge_result[1][0][i]
 
-        def progress(number):
-            if number < 10:
-                return "000" + str(number)
-            if number < 100:
-                return "00" + str(number)
-            if number < 1000:
-                return "0" + str(number)
-
-        print("Progress:", end="\n")
-
-        # Iterate through the 'outer' exact time values
-        for i in range(1,self.outer_points):
-
-            temp_sol_a = self.xi(high_resolution_time[(i*self.inner_points)-1])
-            temp_sol_b = -temp_sol_a
-
-            # Iterate backwards in time
-            for j in range((i*self.inner_points)-1,-1,-1):
-
-                # Use Muller's method for finding the Wedge solution
-                temp_sol_a = findroot(lambda g: f(g, temp_sol_a,  xi_sol[j]), temp_sol_a + increment, solver='secant', tol=TOL)
-                temp_sol_b = findroot(lambda g: f(g, temp_sol_b, -xi_sol[j]), temp_sol_b + increment, solver='secant', tol=TOL)
-
-            # Place the final values in the arrays
-            self.wedge_results_a[i] = temp_sol_a
-            self.wedge_results_b[i] = temp_sol_b
-
-            print("Found point " + progress(i) + "/" + str(self.outer_points), end="\r")
+        alpha_string = str(wedge_alpha)[:6].replace(".","point")
+        wedge_properties_string = "-".join([str(attr) for attr in [self.index, alpha_string, self.start_time, self.final_time, self.outer_points, self.inner_points]])
 
         if self.save_data:
 
             # Create filenames for the dat files
-            filename_a = WEDGE_DATA_OUTPUT + self.properties_string + "-A" + DATA_EXT
-            filename_b = WEDGE_DATA_OUTPUT + self.properties_string + "-B" + DATA_EXT
+            filename_a = WEDGE_DATA_OUTPUT + wedge_properties_string + "-A" + DATA_EXT
+            filename_b = WEDGE_DATA_OUTPUT + wedge_properties_string + "-B" + DATA_EXT
 
             # Create 2D arrays from the real and imaginary values of the results
             array_a = column_stack((self.wedge_results_a.real, self.wedge_results_a.imag))
@@ -497,7 +482,7 @@ class LoewnerRun:
             self.set_plot_title()
 
             # Plot the data and save it to the filesystem
-            self.wedge_growth_plot()
+            self.wedge_growth_plot(wedge_properties_string)
 
 class ConstantLoewnerRun(LoewnerRun):
 

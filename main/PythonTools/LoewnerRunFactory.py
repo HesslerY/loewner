@@ -20,7 +20,7 @@ class LoewnerRunFactory():
         self.save_plot = save_plot
         self.save_data = save_data
 
-    def select_single_run(self,index,start_time=None,final_time=None,outer_points=None,inner_points=None,constant=None,kappa=None,alpha=None):
+    def select_single_run(self,index,start_time=None,final_time=None,outer_points=None,inner_points=None,constant=0,kappa=None,alpha=None):
 
         # Choose the class variables for the LoewnerRun object if no alternative is given
         if start_time is None:
@@ -59,22 +59,29 @@ class LoewnerRunFactory():
         return LoewnerRun(index,start_time,final_time,outer_points,inner_points,self.compile_modules,self.save_plot,self.save_data)
 
     def create_standard_runs(self):
+        # Create a list of all LoewnerRuns that do not require additional arguments
         return [self.select_single_run(index=i) for i in STANDARD_IDXS]
 
     def vary_kappa(self, kappas):
+        # Create a list of kappa-driving LoewnerRuns with different values for kappa
         return [self.select_single_run(index=KAPPA_IDX, kappa=k) for k in kappas]
 
     def vary_alpha(self, alphas):
+        # Create a list of calpha-driving LoewnerRuns with different values for alpha
         return [self.select_single_run(index=CALPHA_IDX, alpha=a) for a in alphas]
 
     def vary_inner_res(self, index, points, constant=None, kappa=None, alpha=None):
+        # Create a list of LoewnerRuns with the same driving function and different values for 'inner time'
         return [self.select_single_run(index=index, inner_points=p, constant=constant, kappa=kappa, alpha=alpha) for p in points]
 
     def vary_final_time(self, index, times, constant=None, kappa=None, alpha=None):
+        # Create a list of LoewnerRuns with the same driving function and different values for the final time
         return [self.select_single_run(index=index, final_time=t, constant=constant, kappa=kappa, alpha=alpha) for t in times]
 
     def create_exact_cubic(self):
+        # Create a list of LoewnerRuns that have an exact cubic forward solution
         return [self.select_single_run(index=i, constant=EXACT_CUBIC_CONSTANT) for i in CUBIC_EXACT_IDXS]
 
     def create_exact_quadratic_forward(self):
+        # Create a list of LoewnerRuns that have an exact quadratic forward solution
         return [self.select_single_run(index=i) for i in QUADRATIC_FORWARD_EXACT_IDXS]

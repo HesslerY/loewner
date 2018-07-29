@@ -455,7 +455,7 @@ class LoewnerRun:
         # Carry out the algorithm for solving the wedge case of Loewner's equation
         wedge_result = eng.eval('SolveWedgeLoewner(index,start_time,final_time,inner_points,outer_points,wedge_alpha,constant,kappa,drive_alpha)',nargout=2)
 
-        # Stop the engine
+        # Stop the Matlab engine
         eng.quit()
 
         # Convert the Matlab data to a numpy array

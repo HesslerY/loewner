@@ -1,7 +1,7 @@
-function [g_result_a, g_result_b] = SolveWedgeLoewner(index,start_time,final_time,inner_points,outer_points,wedge_alpha)
+function [g_result_a, g_result_b] = SolveWedgeLoewner(index,start_time,final_time,inner_points,outer_points,wedge_alpha,constant,kappa,drive_alpha)
 
-    my_cluster = parcluster('local')
-    my_cluster.NumWorkers = 2
+    my_cluster = parcluster('local');
+    my_cluster.NumWorkers = 15;
 
     time_sol = linspace(double(start_time),double(final_time),(outer_points-1)*inner_points);
     delta_t = time_sol(2);
@@ -11,7 +11,7 @@ function [g_result_a, g_result_b] = SolveWedgeLoewner(index,start_time,final_tim
     xi_sol = zeros(1,length(time_sol));
 
     % Select a driving function
-    df = DrivingFunction(index);
+    df = DrivingFunction(index,constant,kappa,drive_alpha);
 
     for i = 1:length(time_sol)
         xi_sol(i) = df.xi(time_sol(i));
@@ -59,5 +59,5 @@ function [g_result_a, g_result_b] = SolveWedgeLoewner(index,start_time,final_tim
 
     end
 
-    fprintf('Completed.');
+    fprintf('\nCompleted.');
 end

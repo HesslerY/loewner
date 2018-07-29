@@ -433,8 +433,10 @@ class LoewnerRun:
         self.wedge_results_a = empty(self.outer_points, dtype=complex128)
         self.wedge_results_b = empty(self.outer_points, dtype=complex128)
 
+        # Start the Matlab engine
         eng = matlab.engine.start_matlab()
 
+        # Declare variables in the Matlab workspace for solving Loewner's equation
         eng.workspace['index'] = self.index
         eng.workspace['start_time'] = self.start_time
         eng.workspace['final_time'] = self.final_time
@@ -442,21 +444,29 @@ class LoewnerRun:
         eng.workspace['inner_points'] = self.inner_points
         eng.workspace['wedge_alpha'] = wedge_alpha
 
+        # Declare parameters for the 'special' driving functions
         eng.workspace['constant'] = self.constant
         eng.workspace['kappa'] = self.kappa
         eng.workspace['drive_alpha'] = self.alpha
 
+        # Instruct the workspace to look for files in the Wedge directory
         eng.eval('addpath("../PythonTools/")')
 
-        wedge_result = eng.eval('SolveWedgeLoewner(index,start_time,final_time,inner_points,outer_points,wedge_alpha)',nargout=2)
+        # Carry out the algorithm for solving the wedge case of Loewner's equation
+        wedge_result = eng.eval('SolveWedgeLoewner(index,start_time,final_time,inner_points,outer_points,wedge_alpha,constant,kappa,drive_alpha)',nargout=2)
 
+        # Stop the engine
         eng.quit()
 
+        # Convert the Matlab data to a numpy array
         for i in range(self.outer_points):
             self.wedge_results_a[i] = wedge_result[0][0][i]
             self.wedge_results_b[i] = wedge_result[1][0][i]
 
+        # Represent the alpha value as a string
         alpha_string = str(wedge_alpha)[:6].replace(".","point")
+
+        # Create a properties sring for the run
         wedge_properties_string = "-".join([str(attr) for attr in [self.index, alpha_string, self.start_time, self.final_time, self.outer_points, self.inner_points]])
 
         if self.save_data:

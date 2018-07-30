@@ -19,7 +19,7 @@ wedge_runs = [wedge_factory.select_single_run(0,constant=1)] + wedge_factory.cre
 not_good_ones = [3,4,5,7,8,9,12,13]
 
 for i in not_good_ones:
-    run = wedge_factory.select_single_run(index=i,outer_points=5000,inner_points=1)
+    run = wedge_factory.select_single_run(index=i,outer_points=50,inner_points=1)
     run.wedge_growth(4/3)
 
 for run in wedge_runs:

@@ -45,20 +45,24 @@ function df = DrivingFunction(index,constant,kappa,drive_alpha)
 
         case 10
 
-            driving_function.xi = @(t) 2 * sqrt(kappa * (1 - t));
+            df.xi = @(t) 2 * sqrt(kappa * (1 - t));
 
         case 11
 
             calpha = (2 - 4*drive_alpha) / sqrt(drive_alpha - drive_alpha^2)
-            driving_function.xi = @(t) sqrt(t) * calpha;
+            df.xi = @(t) sqrt(t) * calpha;
 
         case 12
 
-            df.xi = @(t) sqrt(t + 0.01)
+            df.xi = @(t) floor(t);
 
-        case 11
+        case 13
 
-            df.xi = @(t) sqrt(1 + t)
+            df.xi = @(t) mod(floor(t),2);
+
+        case 14
+
+            df.xi = @(t) sqrt(1 + t);
             df.cubic_exact = @(N,start_time,end_time,a0,d0) CubicSqrtOnePlusTExact(N,start_time,end_time,a0,d0);
 
         otherwise

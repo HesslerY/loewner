@@ -164,7 +164,7 @@ class LoewnerRun:
 
             # Display an error if the module could not be compiled (Typically means there is a problem in the Fortran code)
             except CalledProcessError:
-                print("Error: Could not compile module " + command)
+                print("Error: Could not compile module " + " ".join(command))
                 exit()
 
     def save_to_dat(self, filename, results_array):

@@ -23,10 +23,10 @@ implicit none
    ! Define imaginary unit
    complex, parameter :: IMUNIT = complex(0,1)
 
-   ! Define 1/3 
+   ! Define 1/3
    real(8), parameter :: THIRD = 1./3
 
-   ! Define 1/2 
+   ! Define 1/2
    real(8), parameter :: HALF = 1./2
 
 end module Constants
@@ -91,7 +91,7 @@ implicit none
 
     ! Return value declaration
     complex(8) :: f
-    
+
     ! Function declaration
     complex(8) :: ComplexPower
 
@@ -145,7 +145,7 @@ implicit none
 
     ! Argument declaration
     complex(8) :: z
-    
+
     ! Return value declarations
     logical :: ComplexZero
 
@@ -164,7 +164,7 @@ implicit none
 
     ! Argument declaration
     complex(8), dimension(3) :: PolynCoeffs
-    
+
     ! Local variable declarations
     integer :: i
     real(8) :: signCheck
@@ -349,7 +349,7 @@ implicit none
     delta  = (endPoint - startPoint)/(numPoints - 1)
 #endif
 
-    ! Create an array that starts at zero and ends at delta*(numPoints - 1) 
+    ! Create an array that starts at zero and ends at delta*(numPoints - 1)
     timeRange = (/((i * delta), i = 0, numPoints - 1)/)
 
     ! Add the starting point to all values in the array
@@ -385,6 +385,7 @@ implicit none
     real(8) :: drivingValue = 0
 
     real(8), dimension(:), allocatable :: timeRange
+    real(8), dimension(:), allocatable :: drivingRange
 
     complex(8) :: gCurrent = 0
     complex(8) :: bTerm = 0
@@ -425,21 +426,21 @@ implicit none
     ! Set the first element to be the driving function at t = 0
     gResult(1) = complex(DrivingFunction(timeRange(1)),0)
 
+    ! Prepare an array for the values of the driving function
+    drivingRange = (/(DrivingFunction(timeRange(i)), i = 1, totalN)/)
+
     ! Compute g_0 outerN - 1 times
     do i = 1, outerN - 1
 
         ! Find the value of g at t = inner max time
-        gCurrent = complex(DrivingFunction(timeRange(i*innerN)),0)
+        gCurrent = complex(drivingRange(i*innerN),0)
 
         ! Iterate backwards from the highest time value to zero
         do j = i*innerN,1,-1
 
-            ! Obtain the current driving value
-            drivingValue = DrivingFunction(timeRange(j))
-
             ! Solve Loewner's equation for the previous time value
-            bTerm = (drivingValue + gCurrent) * HALF 
-            cTerm = (drivingValue * gCurrent) + twoInnerDeltaTime
+            bTerm = (drivingRange(j) + gCurrent) * HALF
+            cTerm = (drivingRange(j) * gCurrent) + twoInnerDeltaTime
             gCurrent = bTerm + cdsqrt(cTerm - ComplexPower(bTerm,2)) * IMUNIT
 
         end do

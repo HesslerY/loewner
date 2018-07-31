@@ -5,7 +5,7 @@ function df = DrivingFunction(index,constant,kappa,drive_alpha)
         case 0
 
             df.xi = @(t) constant;
-            df.cubic_exact = @(N,start_time,end_time) CubicLinearExact(N,start_time,end_time)
+            df.cubic_exact = @(N,start_time,end_time) CubicLinearExact(N,start_time,end_time);
 
         case 1
 
@@ -49,7 +49,7 @@ function df = DrivingFunction(index,constant,kappa,drive_alpha)
 
         case 11
 
-            calpha = (2 - 4*drive_alpha) / sqrt(drive_alpha - drive_alpha^2)
+            calpha = (2 - 4*drive_alpha) / sqrt(drive_alpha - drive_alpha^2);
             df.xi = @(t) sqrt(t) * calpha;
 
         case 12
@@ -68,6 +68,7 @@ function df = DrivingFunction(index,constant,kappa,drive_alpha)
         otherwise
 
             disp('Error')
-    end
+
+        end
 
 end

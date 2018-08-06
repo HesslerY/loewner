@@ -55,7 +55,7 @@ implicit none
     complex(8), intent(in) :: z
     real(8), intent(in) :: lowerDelta
     real(8), intent(in) :: upperDelta
-    
+
     ! Return value declaration
     complex(8) :: ComputeH
 
@@ -73,7 +73,7 @@ implicit none
 end function ComputeH
 
 ! Function for deriving the driving function curve from the trace-points of the quadratic Loewner's equation
-subroutine InverseLoewner(gCurve, numPoints, drivingFunctionValues, timeValues)
+subroutine InverseLoewner(zCurve, numPoints, drivingFunctionValues, timeValues)
 use Constants
 implicit none
 
@@ -81,7 +81,7 @@ implicit none
     integer :: numPoints
     real(8) :: drivingFunctionValues(numPoints)
     real(8) :: timeValues(numPoints)
-    complex(8) :: gCurve(:)
+    complex(8) :: zCurve(:)
 
     ! Local variable declarations
     integer :: i
@@ -95,8 +95,8 @@ implicit none
     complex(8) :: ComputeH
 
     ! Obtain the initial values for lower delta and upper delta
-    lowerDelta(1) = realpart(gCurve(1))
-    upperDelta(1) = RealSquare(imagpart(gCurve(1))) * QUARTER 
+    lowerDelta(1) = realpart(zCurve(1))
+    upperDelta(1) = RealSquare(imagpart(zCurve(1))) * QUARTER
 
     ! Obtain the initial values for the driving function and time
     drivingFunctionValues(1) = lowerDelta(1)
@@ -106,7 +106,7 @@ implicit none
     do i = 2, numPoints
 
         ! Assign the current g-value to h
-        h = gCurve(i)
+        h = zCurve(i)
 
         ! Repeatedly call the compute_h function on the previous value of h
         do j = 1, i - 1
@@ -117,7 +117,7 @@ implicit none
 
         ! Computer lower and upper delta
         lowerDelta(i) = realpart(h)
-        upperDelta(i) = RealSquare(imagpart(h)) * QUARTER 
+        upperDelta(i) = RealSquare(imagpart(h)) * QUARTER
 
         ! Obtain the most recently value for the driving function and time
         drivingFunctionValues(i) = drivingFunctionValues(i - 1) + lowerDelta(i)

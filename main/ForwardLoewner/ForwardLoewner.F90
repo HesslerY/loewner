@@ -358,7 +358,7 @@ implicit none
 end subroutine Linspace
 
 ! Solve Loewner's equation in the quadratic case
-subroutine QuadraticLoewner(outerStartTime, outerFinalTime, outerN, innerN, gResult, sqrtDrivingArg, constantDrivingArg)
+subroutine QuadraticLoewner(outerStartTime, outerFinalTime, outerN, innerN, zResult, sqrtDrivingArg, constantDrivingArg)
 use Constants
 implicit none
 
@@ -373,7 +373,7 @@ implicit none
     real(8), optional :: sqrtDrivingArg
     real(8), optional :: constantDrivingArg
 
-    complex(8) :: gResult(outerN)
+    complex(8) :: zResult(outerN)
 
     ! Local variable declarations
 
@@ -424,7 +424,7 @@ implicit none
     twoInnerDeltaTime = timeRange(2) * 2
 
     ! Set the first element to be the driving function at t = 0
-    gResult(1) = complex(DrivingFunction(timeRange(1)),0)
+    zResult(1) = complex(DrivingFunction(timeRange(1)),0)
 
     ! Prepare an array for the values of the driving function
     drivingRange = (/(DrivingFunction(timeRange(i)), i = 1, totalN)/)
@@ -446,7 +446,7 @@ implicit none
         end do
 
         ! Place the g_0 value in the array
-        gResult(i + 1) = gCurrent
+        zResult(i + 1) = gCurrent
 
     end do
 
@@ -482,6 +482,7 @@ implicit none
     real(8) :: drivingValueSquared = 0
 
     real(8), dimension(:), allocatable :: timeRange
+    real(8), dimension(:), allocatable :: drivingRange
 
     complex(8) :: secondCoeff = 0
     complex(8) :: gCurrentA = 0
@@ -527,18 +528,21 @@ implicit none
     gResultA(1) = complex(DrivingFunction(timeRange(1)),0)
     gResultB(1) = -gResultA(1)
 
+    ! Prepare an array for the values of the driving function
+    drivingRange = (/(DrivingFunction(timeRange(i)), i = 1, totalN)/)
+
     ! Compute g_0 outerN times
     do i = 1, outerN - 1
 
         ! Find the value of g at t = inner max time
-        gCurrentA = complex(DrivingFunction(timeRange(i*innerN)),0)
+        gCurrentA = complex(drivingRange(i*innerN),0)
         gCurrentB = -gCurrentA
 
         ! Iterate backwards from the highest time value to zero
         do j = i*innerN,1,-1
 
             ! Obtain the square of the current driving value
-            drivingValueSquared = RealPower(DrivingFunction(timeRange(j)),2)
+            drivingValueSquared = RealPower(drivingRange(j),2)
 
             ! Obtain the value of the second coefficient
             secondCoeff = twoInnerDeltaTime - drivingValueSquared

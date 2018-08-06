@@ -521,7 +521,7 @@ class ConstantLoewnerRun(LoewnerRun):
         self.forward_results = empty(self.outer_points, dtype=complex128)
 
         # Solve Loewner's equation with the given parameters
-        ForwardLoewner.quadraticloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresult=self.forward_results, constantdrivingarg=self.constant)
+        ForwardLoewner.quadraticloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, zresult=self.forward_results, constantdrivingarg=self.constant)
 
         if self.save_data:
 
@@ -756,7 +756,7 @@ class KappaLoewnerRun(LoewnerRun):
         self.forward_results = empty(self.outer_points, dtype=complex128)
 
         # Solve Loewner's equation with the given parameters
-        ForwardLoewner.quadraticloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresult=self.forward_results, sqrtdrivingarg=self.kappa)
+        ForwardLoewner.quadraticloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, zresult=self.forward_results, sqrtdrivingarg=self.kappa)
 
         # Create a copy of the results
         self.translated_results = copy(self.forward_results)
@@ -913,7 +913,7 @@ class CAlphaLoewnerRun(LoewnerRun):
         self.forward_results = empty(self.outer_points, dtype=complex128)
 
         # Solve Loewner's equation with the given parameters
-        ForwardLoewner.quadraticloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresult=self.forward_results, sqrtdrivingarg=self.alpha)
+        ForwardLoewner.quadraticloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, zresult=self.forward_results, sqrtdrivingarg=self.alpha)
 
     def cubic_forward_loewner(self):
 
@@ -974,21 +974,22 @@ class SqrtTPlusOneLoewnerRun(LoewnerRun):
         a0 = 1
         d0 = 1
 
-        # Define a function for generating the coefficients of the polynomial to be solved
-        def get_coeffs(t):
+        # Define functions for generating the coefficients of the polynomial to be solved
+        def get_coeffs_a(t):
             return [-1, 0, 10*a0**2, 0, -25*a0**4, 16*(a0**2 + d0 * t)**(5./2)]
+        def get_coeffs_b(t):
+            return [-1, 0, 10*a0**2, 0, -25*a0**4, -16*(a0**2 + d0 * t)**(5./2)]
 
         # Iterate through the exact time values
         for i in range(self.outer_points):
 
-            # Find the roots of the polynomial at the given time value
-            exact_roots = roots(get_coeffs(self.exact_time_sol[i]))
+            # Find the roots of the polynomials at the given time value
+            exact_roots_a = roots(get_coeffs_a(self.exact_time_sol[i]))
+            exact_roots_b = roots(get_coeffs_b(self.exact_time_sol[i]))
 
             # Select the third root (this one has the positive imaginary component)
-            self.exact_cubic_sol_a[i] = exact_roots[3]
-
-            # Obtain the solution to the second trace by changing the sign of the real component
-            self.exact_cubic_sol_b[i] = -self.exact_cubic_sol_a[i].real + self.exact_cubic_sol_a[i].imag * 1j
+            self.exact_cubic_sol_a[i] = exact_roots_a[3]
+            self.exact_cubic_sol_b[i] = exact_roots_b[3]
 
         if self.save_data:
 

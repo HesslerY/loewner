@@ -106,8 +106,8 @@ INV_RUN_STR = "Inverse"
 CBC_RUN_STR = "Cubic"
 
 # Plot axis labels for forward/cubic runs
-FOR_PLOT_XL = 'Re($g$)'
-FOR_PLOT_YL = 'Im($g$)'
+FOR_PLOT_XL = 'Re($z$)'
+FOR_PLOT_YL = 'Im($z$)'
 
 # Plot axis labels for inverse runs
 INV_PLOT_XL = '$t$'

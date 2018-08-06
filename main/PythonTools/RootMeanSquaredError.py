@@ -29,7 +29,7 @@ class RootMeanSquaredError:
     def calculate_rms(self, array_a, array_b):
 
         diff = array_a - array_b
-        return sqrt(mean(absolute(square(diff))))
+        return sqrt(mean(square(absolute(diff))))
 
     def quadratic_forward_error(self, points=None):
 

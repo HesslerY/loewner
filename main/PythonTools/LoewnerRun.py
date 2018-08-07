@@ -7,7 +7,6 @@ from cmath import log, sqrt
 from cmath import cos as ccos
 from cmath import sin as csin
 from math import pi, sin, floor, cos
-from scipy import optimize
 from numpy import empty, column_stack, savetxt, complex128, zeros, linspace, copy, roots, array
 from importlib import import_module
 plt.style.use('ggplot')
@@ -242,8 +241,7 @@ class LoewnerRun:
     def wedge_growth_plot(self, wedge_properties_string):
 
         # Plot the values
-        plt.plot(self.wedge_results_a.real, self.wedge_results_a.imag, color='crimson')
-        plt.plot(self.wedge_results_b.real, self.wedge_results_b.imag, color='crimson')
+        plt.plot(self.wedge_results.real, self.wedge_results.imag, color='crimson')
 
         # Set the axes labels
         plt.xlabel(FOR_PLOT_XL)
@@ -430,8 +428,7 @@ class LoewnerRun:
     def wedge_growth(self, wedge_alpha):
 
         # Declare empty complex arrays for the results
-        self.wedge_results_a = empty(self.outer_points, dtype=complex128)
-        self.wedge_results_b = empty(self.outer_points, dtype=complex128)
+        self.wedge_results = empty(self.outer_points, dtype=complex128)
 
         # Start the Matlab engine
         eng = matlab.engine.start_matlab()
@@ -443,6 +440,7 @@ class LoewnerRun:
         eng.workspace['outer_points'] = self.outer_points
         eng.workspace['inner_points'] = self.inner_points
         eng.workspace['wedge_alpha'] = wedge_alpha
+        eng.workspace['fast'] = 0 # Use the 'slow' mode because parfor loops don't seem to work within the Matlab engine for Python :(
 
         # Declare parameters for the 'special' driving functions
         eng.workspace['constant'] = self.constant
@@ -453,15 +451,14 @@ class LoewnerRun:
         eng.eval('addpath("../WedgeLoewner/")')
 
         # Carry out the algorithm for solving the wedge case of Loewner's equation
-        wedge_result = eng.eval('SolveWedgeLoewner(index,start_time,final_time,inner_points,outer_points,wedge_alpha,constant,kappa,drive_alpha)',nargout=2)
+        wedge_result = eng.eval('SolveWedgeLoewner(index,start_time,final_time,inner_points,outer_points,wedge_alpha,fast,constant,kappa,drive_alpha)',nargout=1)
 
-        # Stop the Matlab engine
+        # Stop the Matlab engine once the function returns
         eng.quit()
 
         # Convert the Matlab data to a numpy array
         for i in range(self.outer_points):
-            self.wedge_results_a[i] = wedge_result[0][0][i]
-            self.wedge_results_b[i] = wedge_result[1][0][i]
+            self.wedge_results[i] = wedge_result[0][i]
 
         # Represent the alpha value as a string
         alpha_string = str(wedge_alpha)[:6].replace(".","point")
@@ -471,17 +468,14 @@ class LoewnerRun:
 
         if self.save_data:
 
-            # Create filenames for the dat files
-            filename_a = WEDGE_DATA_OUTPUT + wedge_properties_string + "-A" + DATA_EXT
-            filename_b = WEDGE_DATA_OUTPUT + wedge_properties_string + "-B" + DATA_EXT
+            # Create  a filename for the dat file
+            filename = WEDGE_DATA_OUTPUT + wedge_properties_string + DATA_EXT
 
-            # Create 2D arrays from the real and imaginary values of the results
-            array_a = column_stack((self.wedge_results_a.real, self.wedge_results_a.imag))
-            array_b = column_stack((self.wedge_results_b.real, self.wedge_results_b.imag))
+            # Create a 2D array from the real and imaginary values of the results
+            array = column_stack((self.wedge_results.real, self.wedge_results.imag))
 
-            # Save the arrays to the filesystem
-            self.save_to_dat(filename_a, array_a)
-            self.save_to_dat(filename_b, array_b)
+            # Save the array to the filesystem
+            self.save_to_dat(filename, array)
 
         if self.save_plot:
 

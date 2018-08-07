@@ -1,4 +1,4 @@
-function z_result = SolveWedgeLoewner(index,start_time,final_time,inner_points,outer_points,wedge_alpha,fast,constant,kappa,drive_alpha)
+function z_result = SolveWedgeLoewner(index,start_time,final_time,inner_points,outer_points,wedge_alpha,fast,constant,kappa)
 
     % Create an array of time steps
     time_sol = linspace(double(start_time),double(final_time),(outer_points-1)*inner_points);
@@ -10,7 +10,7 @@ function z_result = SolveWedgeLoewner(index,start_time,final_time,inner_points,o
     pi_over_alpha = pi/wedge_alpha;
 
     % Select a driving function
-    df = DrivingFunction(index,constant,kappa,drive_alpha);
+    df = DrivingFunction(index,constant,kappa);
 
     % Create an array of driving function values
     xi_sol = zeros(1,length(time_sol));
@@ -75,6 +75,7 @@ function z_result = SolveWedgeLoewner(index,start_time,final_time,inner_points,o
 
                 % Print the message once a point has been found
                 fprintf('\rCompleted: %d/%d (%.2f%%)',callsSoFar,numFSolveCalls,(callsSoFar*100)/numFSolveCalls);
+                fprintf('\n');
 
             end
 
@@ -106,16 +107,13 @@ function z_result = SolveWedgeLoewner(index,start_time,final_time,inner_points,o
                     % Solve equation for g at previous time value
                     [g_current,fval,exitflag,output] = fsolve(new_loewner,g_current + 0.5j,options);
 
-                    % Increment calls to fsolve counter
-                    callsSoFar = callsSoFar + 1;
-
                 end
 
                 % Add latest solution to solution array
                 z_result(i + 1) = g_current;
 
                 % Update the wait bar
-                send(dq, callsSoFar);
+                send(dq, i);
 
             end
 
@@ -124,6 +122,6 @@ function z_result = SolveWedgeLoewner(index,start_time,final_time,inner_points,o
     end
 
     % Print a message when the algorithm is complete
-    fprintf('\nCompleted.');
+    fprintf('Completed.\n');
 
 end

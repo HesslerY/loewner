@@ -1,4 +1,4 @@
-from Constants import CONST_IDX, LINR_IDX, KAPPA_IDX, CALPHA_IDX, SQRTPLUS_IDX, EXACT_CUBIC_CONSTANT, STANDARD_IDXS, CUBIC_EXACT_IDXS, QUADRATIC_FORWARD_EXACT_IDXS
+from Constants import CONST_IDX, LINR_IDX, KAPPA_IDX, CALPHA_IDX, SQRTPLUS_IDX, EXACT_CUBIC_CONSTANT, STANDARD_IDXS, CUBIC_EXACT_IDXS, QUADRATIC_FORWARD_EXACT_IDXS, NOTORIGIN_IDXS
 from LoewnerRun import LoewnerRun, ConstantLoewnerRun, LinearLoewnerRun, KappaLoewnerRun, CAlphaLoewnerRun, SqrtTPlusOneLoewnerRun
 
 class LoewnerRunFactory():
@@ -59,8 +59,12 @@ class LoewnerRunFactory():
         return LoewnerRun(index,start_time,final_time,outer_points,inner_points,self.compile_modules,self.save_plot,self.save_data)
 
     def create_standard_runs(self):
-        # Create a list of all LoewnerRuns that do not require additional arguments
+        # Create a list of LoewnerRuns for driving functions that do not require additional arguments
         return [self.select_single_run(index=i) for i in STANDARD_IDXS]
+
+    def create_wedge_runs(self):
+        # Create a list of LoewnerRuns for driving functions that do not start at origin excluding Kappa
+        return [self.select_single_run(index=i,constant=1) for i in NOTORIGIN_IDXS]
 
     def vary_kappa(self, kappas, outer_points=None, inner_points=None):
 

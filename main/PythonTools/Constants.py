@@ -48,6 +48,7 @@ ALL_IDX = TOTAL_DRIVING_FUNCTIONS + 1
 STANDARD_IDXS = [i for i in range (1,10)] + [i for i in range(12,15)] # Driving functions that don't require any extra parameters
 CUBIC_EXACT_IDXS = [0,14]
 QUADRATIC_FORWARD_EXACT_IDXS = [1]
+NOTORIGIN_IDXS = [0,2,4,14]
 
 # Inicides of the driving functions
 DRIVING_INDICES = {pair[1] : pair[0] for pair in enumerate(DRIVING_INFO)}

@@ -32,6 +32,17 @@ function z_result = SolveWedgeLoewner(index,start_time,final_time,inner_points,o
     % Define number of loop iterations
     N = outer_points-1;
 
+    % Set a variable to store the total number of calls to fsolve that are required
+    numFSolveCalls = 0;
+    for i = 1:N
+        for j = i*inner_points:-1:1
+            numFSolveCalls = numFSolveCalls + 1;
+        end
+    end
+
+    % Declare number of fsolve calls that have been made so far
+    callsSoFar = 0;
+
     switch fast
 
         case 0 % 'Slow' Setting - Uses fsolve with parallel set to true
@@ -54,10 +65,16 @@ function z_result = SolveWedgeLoewner(index,start_time,final_time,inner_points,o
                     % Solve equation for g at previous time value
                     [g_current,fval,exitflag,output] = fsolve(new_loewner,g_current + 0.5j,options);
 
+                    % Increment calls to fsolve counter
+                    callsSoFar = callsSoFar + 1;
+
                 end
 
                 % Add latest solution to solution array
                 z_result(i + 1) = g_current;
+
+                % Print the message once a point has been found
+                fprintf('\rCompleted: %d/%d (%.2f%%)',callsSoFar,numFSolveCalls,(callsSoFar*100)/numFSolveCalls);
 
             end
 
@@ -69,14 +86,6 @@ function z_result = SolveWedgeLoewner(index,start_time,final_time,inner_points,o
             % Prepare a wait bar
             dq = parallel.pool.DataQueue;
             wb = waitbar(0, 'Please wait...');
-
-            % Set a variable to store the total number of calls to fsolve that are required
-            numFSolveCalls = 0;
-            for i = 1:N
-                for j = i*inner_points:-1:1
-                    numFSolveCalls = numFSolveCalls + 1;
-                end
-            end
 
             % Initialise the wait bar function
             wb.UserData = [0 0 numFSolveCalls];
@@ -97,13 +106,16 @@ function z_result = SolveWedgeLoewner(index,start_time,final_time,inner_points,o
                     % Solve equation for g at previous time value
                     [g_current,fval,exitflag,output] = fsolve(new_loewner,g_current + 0.5j,options);
 
+                    % Increment calls to fsolve counter
+                    callsSoFar = callsSoFar + 1;
+
                 end
 
                 % Add latest solution to solution array
                 z_result(i + 1) = g_current;
 
                 % Update the wait bar
-                send(dq, i);
+                send(dq, callsSoFar);
 
             end
 

@@ -62,9 +62,15 @@ class LoewnerRunFactory():
         # Create a list of all LoewnerRuns that do not require additional arguments
         return [self.select_single_run(index=i) for i in STANDARD_IDXS]
 
-    def vary_kappa(self, kappas):
+    def vary_kappa(self, kappas, outer_points=None, inner_points=None):
+
+        if outer_points is None:
+            outer_points=self.outer_points
+        if inner_points is None:
+            inner_points=self.inner_points
+
         # Create a list of kappa-driving LoewnerRuns with different values for kappa
-        return [self.select_single_run(index=KAPPA_IDX, kappa=k) for k in kappas]
+        return [self.select_single_run(index=KAPPA_IDX, kappa=k, outer_points=outer_points, inner_points=inner_points) for k in kappas]
 
     def vary_alpha(self, alphas):
         # Create a list of calpha-driving LoewnerRuns with different values for alpha

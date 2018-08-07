@@ -341,13 +341,8 @@ implicit none
     real(8) :: delta
     integer :: i
 
-    ! Compute the value of delta
-#if CASE == 10
-    ! Make the time range stop short of one for the kappa driving function
-    delta  = (endPoint - startPoint)/numPoints
-#else
+    ! Determine the value of delta
     delta  = (endPoint - startPoint)/(numPoints - 1)
-#endif
 
     ! Create an array that starts at zero and ends at delta*(numPoints - 1)
     timeRange = (/((i * delta), i = 0, numPoints - 1)/)

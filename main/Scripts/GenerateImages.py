@@ -8,7 +8,7 @@ start_time = 0
 final_time = 25
 outer_points = 1000
 inner_points = 10
-compile_modules = False
+compile_modules = True
 save_plot = True
 save_data = True
 
@@ -31,10 +31,8 @@ exact_quadratic_runs = loewner_factory.create_exact_quadratic_forward()
 linear_exact_solution_comp = loewner_factory.vary_inner_res(index=LINR_IDX,points=[5,50,100,200,300,400,500])
 
 # Kappa and calpha
-kappa_runs = loewner_factory.vary_kappa(kappas)
+kappa_runs = loewner_factory.vary_kappa(kappas,inner_points=2000)
 calpha_runs = loewner_factory.vary_alpha(alphas)
-
-'''
 
 for run in standard_runs:
 
@@ -70,7 +68,6 @@ for run in calpha_runs:
 
 exact_quadratic_runs = loewner_factory.create_exact_quadratic_forward()
 
-'''
 for run in exact_quadratic_runs:
 
     run.exact_quadratic_forward_loewner()
@@ -98,5 +95,4 @@ for run in exact_cubic_runs:
 
     run.exact_cubic_forward_loewner()
     print("Finished exact cubic forward for driving function " + str(run.name))
-
 

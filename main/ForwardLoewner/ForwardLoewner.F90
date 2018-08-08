@@ -448,7 +448,7 @@ implicit none
 end subroutine QuadraticLoewner
 
 ! Solve Loewner's equation in the cubic case
-subroutine CubicLoewner(outerStartTime, outerFinalTime, outerN, innerN, gResultA, gResultB, sqrtDrivingArg, constDrivingArg)
+subroutine CubicLoewner(outerStartTime, outerFinalTime, outerN, innerN, zResultA, zResultB, sqrtDrivingArg, constDrivingArg)
 use Constants
 use CubicSolver
 implicit none
@@ -464,8 +464,8 @@ implicit none
     real(8), optional :: sqrtDrivingArg
     real(8), optional :: constDrivingArg
 
-    complex(8) :: gResultA(outerN)
-    complex(8) :: gResultB(outerN)
+    complex(8) :: zResultA(outerN)
+    complex(8) :: zResultB(outerN)
 
     ! Local variable declarations
 
@@ -520,8 +520,8 @@ implicit none
     twoInnerDeltaTime = timeRange(2) * 2
 
     ! Set the first elements to be +/-ve value of driving function at t = 0
-    gResultA(1) = complex(DrivingFunction(timeRange(1)),0)
-    gResultB(1) = -gResultA(1)
+    zResultA(1) = complex(DrivingFunction(timeRange(1)),0)
+    zResultB(1) = -zResultA(1)
 
     ! Prepare an array for the values of the driving function
     drivingRange = (/(DrivingFunction(timeRange(i)), i = 1, totalN)/)
@@ -559,8 +559,8 @@ implicit none
         end do
 
         ! Place the g_0 values in the arrays
-        gResultA(i + 1) = gCurrentA
-        gResultB(i + 1) = gCurrentB
+        zResultA(i + 1) = gCurrentA
+        zResultB(i + 1) = gCurrentB
 
     end do
 

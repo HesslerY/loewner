@@ -336,7 +336,7 @@ class LoewnerRun:
         self.cubic_results_b = empty(self.outer_points, dtype=complex128)
 
         # Carry out the Cubic algorithm
-        ForwardLoewner.cubicloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresulta=self.cubic_results_a, gresultb=self.cubic_results_b)
+        ForwardLoewner.cubicloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, zresulta=self.cubic_results_a, zresultb=self.cubic_results_b)
 
         if self.save_data:
 
@@ -548,7 +548,7 @@ class ConstantLoewnerRun(LoewnerRun):
         self.cubic_results_b = empty(self.outer_points, dtype=complex128)
 
         # Solve Loewner's equation with the given parameters
-        ForwardLoewner.cubicloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresulta=self.cubic_results_a, gresultb=self.cubic_results_b, constdrivingarg=self.constant)
+        ForwardLoewner.cubicloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, zresulta=self.cubic_results_a, zresultb=self.cubic_results_b, constdrivingarg=self.constant)
 
         if self.save_data:
 
@@ -820,7 +820,7 @@ class KappaLoewnerRun(LoewnerRun):
         self.cubic_results_b = empty(self.outer_points, dtype=complex128)
 
         # Solve Loewner's equation with the given parameters
-        ForwardLoewner.cubicloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresulta=self.cubic_results_a, gresultb=self.cubic_results_b, sqrtdrivingarg=self.kappa)
+        ForwardLoewner.cubicloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, zresulta=self.cubic_results_a, zresultb=self.cubic_results_b, sqrtdrivingarg=self.kappa)
 
         if self.save_data:
 
@@ -918,7 +918,7 @@ class CAlphaLoewnerRun(LoewnerRun):
         self.cubic_results_b = empty(self.outer_points, dtype=complex128)
 
         # Solve Loewner's equation with the given parameters
-        ForwardLoewner.cubicloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, gresulta=self.cubic_results_a, gresultb=self.cubic_results_b, sqrtdrivingarg=self.alpha)
+        ForwardLoewner.cubicloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, zresulta=self.cubic_results_a, zresultb=self.cubic_results_b, sqrtdrivingarg=self.alpha)
 
         if self.save_data:
 

@@ -4,6 +4,7 @@ function [F, J] = LoewnersEquation(g_current,g_previous,xi_t,pi_over_alpha,delta
 
     term_a = gp_to_poa - xi_t^pi_over_alpha;
 
+    % Define Loewner's equation
     F = (g_current - g_previous)/delta_t - ((2*g_previous)/term_a);
 
     term_1 = 2 * pi_over_alpha * gp_to_poa;
@@ -11,6 +12,7 @@ function [F, J] = LoewnersEquation(g_current,g_previous,xi_t,pi_over_alpha,delta
 
     term_5 = 1 / delta_t;
 
+    % Define the jacobian with respect to g at the previous time step
     J = term_1 / term_2 - 2 / term_a - term_5;
 
 end

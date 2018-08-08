@@ -30,7 +30,7 @@ function z_result = SolveWedgeLoewner(index,start_time,final_time,inner_points,o
     z_result(1) = xi_sol(1);
 
     % Define number of loop iterations
-    N = outer_points-1;
+    N = outer_points - 1;
 
     % Set a variable to store the total number of calls to fsolve that are required
     numFSolveCalls = 0;
@@ -53,7 +53,7 @@ function z_result = SolveWedgeLoewner(index,start_time,final_time,inner_points,o
             % Iterate to find solutions from g_tFinal-1 to g_0
             for i=1:N
 
-                % Set the initial values of g to the driving function values
+                % Set the initial value of g to the driving function value at the current time
                 g_current = xi_sol(i*inner_points);
 
                 % Iterate backwards from the 'inner' max time to 0
@@ -62,7 +62,7 @@ function z_result = SolveWedgeLoewner(index,start_time,final_time,inner_points,o
                     % Set Loewner to be a function of g at current time value
                     new_loewner = @(g_previous) orig_loewner(g_current,g_previous,xi_sol(j));
 
-                    % Solve equation for g at previous time value
+                    % Solve the equation for g at previous time value
                     [g_current,fval,exitflag,output] = fsolve(new_loewner,g_current + 0.5j,options);
 
                     % Increment calls to fsolve counter
@@ -95,7 +95,7 @@ function z_result = SolveWedgeLoewner(index,start_time,final_time,inner_points,o
             % Iterate to find solutions from g_tFinal-1 to g_0
             parfor i=1:N
 
-                % Set the initial values of g to the driving function values
+                % Set the initial value of g to the driving function value at the current time
                 g_current = xi_sol(i*inner_points);
 
                 % Iterate backwards from the 'inner' max time to 0
@@ -104,7 +104,7 @@ function z_result = SolveWedgeLoewner(index,start_time,final_time,inner_points,o
                     % Set Loewner to be a function of g at current time value
                     new_loewner = @(g_previous) orig_loewner(g_current,g_previous,xi_sol(j));
 
-                    % Solve equation for g at previous time value
+                    % Solve the equation for g at previous time value
                     [g_current,fval,exitflag,output] = fsolve(new_loewner,g_current + 0.5j,options);
 
                 end

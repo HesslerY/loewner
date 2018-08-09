@@ -3,10 +3,11 @@ import matplotlib.pyplot as plt
 from subprocess import check_output, CalledProcessError
 import matlab.engine
 from mpmath import findroot
-from cmath import log, sqrt
+from cmath import log
+from cmath import sqrt as csqrt
 from cmath import cos as ccos
 from cmath import sin as csin
-from math import pi, sin, floor, cos
+from math import pi, sin, floor, cos, sqrt
 from numpy import empty, column_stack, savetxt, complex128, zeros, linspace, copy, roots, array
 from importlib import import_module
 plt.style.use('ggplot')
@@ -191,10 +192,22 @@ class LoewnerRun:
         # Save the plot to the filesystem
         plt.savefig(FORWARD_PLOT_OUTPUT + self.properties_string + PLOT_EXT, bbox_inches='tight')
 
-    def quadratic_inverse_plot(self):
+    def quadratic_inverse_plot(self,exact=False):
+
+        # Decide whether the numerical or exact solution is plotted
+        if exact is False:
+            time_arr = self.time_arr
+            driving_arr = self.driving_arr
+            properties = self.properties_string
+            output = INVERSE_PLOT_OUTPUT
+        else:
+            time_arr = self.exact_time_sol
+            driving_arr = self.exact_driving_arr
+            properties = self.short_properties_string
+            output = EXACT_INVERSE_PLOT_OUTPUT
 
         # Plot the values
-        plt.plot(self.time_arr, self.driving_arr, color='crimson')
+        plt.plot(time_arr, driving_arr, color='crimson')
 
         # Set the axes labels
         plt.xlabel(INV_PLOT_XL)
@@ -204,7 +217,7 @@ class LoewnerRun:
         plt.xlim(left=self.start_time)
 
         # Save the plot to the filesystem
-        plt.savefig(INVERSE_PLOT_OUTPUT + self.properties_string + PLOT_EXT, bbox_inches='tight')
+        plt.savefig(output + properties + PLOT_EXT, bbox_inches='tight')
 
     def cubic_forward_plot(self):
 
@@ -326,6 +339,33 @@ class LoewnerRun:
             # Plot the data and save it to the filesystem
             self.quadratic_inverse_plot()
 
+    def exact_quadratic_inverse(self):
+
+        # Find the exact solution for the driving function
+        self.exact_driving_arr = array([self.xi(t) for t in self.exact_time_sol])
+
+        if self.save_data:
+
+            # Convert the results to a 2D array
+            results_array = column_stack((self.exact_time_sol, self.exact_driving_arr))
+
+            # Create a filename for the dat file
+            filename = EXACT_INVERSE_DATA_OUTPUT + self.short_properties_string + DATA_EXT
+
+            # Save the array to the filesystem
+            self.save_to_dat(filename, results_array)
+
+        if self.save_plot:
+
+            # Clear any preexisting plots to be safe
+            plt.cla()
+
+            # Set the plot title
+            self.set_plot_title()
+
+            # Plot the data and save it to the filesystem
+            self.quadratic_inverse_plot(exact=True)
+
     def cubic_forward_loewner(self):
 
         # Import the compiled Forward Loewner module
@@ -389,14 +429,14 @@ class LoewnerRun:
         def f(g_current, g_previous, xi_t):
             return delta_t * d * HALF_PI * ccos(HALF_PI * g_current) + (g_current - g_previous)*(csin(HALF_PI * g_current) - csin(HALF_PI * xi_t))
 
-        # Use the Secant method for finding the finger solution
+        # Use the Secant method for finding the first point of the finger solution
         self.finger_results_a[1] = findroot(lambda g: f(g, self.finger_results_a[0],  xi_sol[0]), self.finger_results_a[0] + increment, solver='secant', tol=TOL)
         self.finger_results_b[1] = findroot(lambda g: f(g, self.finger_results_b[0], -xi_sol[0]), self.finger_results_b[0] + increment, solver='secant', tol=TOL)
 
         # Iterate through the exact time values
         for i in range(2,self.outer_points):
 
-            # Use the Secant method for finding the finger solution
+            # Use the Secant method for finding the remaining finger solution
             self.finger_results_a[i] = findroot(lambda g: f(g, self.finger_results_a[i - 1],  xi_sol[i]), self.finger_results_a[i - 1], solver='secant', tol=TOL)
             self.finger_results_b[i] = findroot(lambda g: f(g, self.finger_results_b[i - 1], -xi_sol[i]), self.finger_results_b[i - 1], solver='secant', tol=TOL)
 
@@ -471,10 +511,10 @@ class LoewnerRun:
             filename = WEDGE_DATA_OUTPUT + wedge_properties_string + DATA_EXT
 
             # Create a 2D array from the real and imaginary values of the results
-            array = column_stack((self.wedge_results.real, self.wedge_results.imag))
+            results_array = column_stack((self.wedge_results.real, self.wedge_results.imag))
 
             # Save the array to the filesystem
-            self.save_to_dat(filename, array)
+            self.save_to_dat(filename, results_array)
 
         if self.save_plot:
 
@@ -671,10 +711,10 @@ class LinearLoewnerRun(LoewnerRun):
             filename = EXACT_FORWARD_DATA_OUTPUT + self.properties_string + DATA_EXT
 
             # Create a 2D array from the real and imaginary values of the results
-            array = column_stack((self.exact_quadratic_forward.real, self.exact_quadratic_forward.imag))
+            results_array = column_stack((self.exact_quadratic_forward.real, self.exact_quadratic_forward.imag))
 
             # Save the array to the filesystem
-            self.save_to_dat(filename, array)
+            self.save_to_dat(filename, results_array)
 
         if self.save_plot:
 

@@ -2,7 +2,7 @@ from Constants import *
 import matplotlib.pyplot as plt
 from subprocess import check_output, CalledProcessError
 import matlab.engine
-from mpmath import findroot
+from mpmath import findroot, cot
 from cmath import log
 from cmath import sqrt as csqrt
 from cmath import cos as ccos
@@ -641,8 +641,8 @@ class ConstantLoewnerRun(LoewnerRun):
         if self.save_data:
 
             # Create filenames for the dat files
-            filename_a = EXACT_CUBIC_DATA_OUTPUT + self.properties_string + "-A" + DATA_EXT
-            filename_b = EXACT_CUBIC_DATA_OUTPUT + self.properties_string + "-B" + DATA_EXT
+            filename_a = EXACT_CUBIC_DATA_OUTPUT + self.short_properties_string + "-A" + DATA_EXT
+            filename_b = EXACT_CUBIC_DATA_OUTPUT + self.short_properties_string + "-B" + DATA_EXT
 
             # Create 2D arrays from the real and imaginary values of the results
             array_a = column_stack((self.exact_cubic_sol_a.real, self.exact_cubic_sol_a.imag))
@@ -704,6 +704,46 @@ class LinearLoewnerRun(LoewnerRun):
 
             # Use Muller's method for finding the exact solution
             self.exact_quadratic_forward[i] = findroot(lambda g: exact_solution(g, self.exact_time_sol[i]), initial_guess(self.exact_time_sol[i]), solver='muller', tol=TOL)
+
+        if self.save_data:
+
+            # Create a filename for the dat file
+            filename = EXACT_FORWARD_DATA_OUTPUT + self.short_properties_string + DATA_EXT
+
+            # Create a 2D array from the real and imaginary values of the results
+            results_array = column_stack((self.exact_quadratic_forward.real, self.exact_quadratic_forward.imag))
+
+            # Save the array to the filesystem
+            self.save_to_dat(filename, results_array)
+
+        if self.save_plot:
+
+            # Clear any preexisting plots to be safe
+            plt.cla()
+
+            # Set the plot title
+            self.set_plot_title()
+
+            # Plo the values
+            plt.plot(self.exact_quadratic_forward.real, self.exact_quadratic_forward.imag, color='crimson')
+
+            # Set the axes labels
+            plt.xlabel(FOR_PLOT_XL)
+            plt.ylabel(FOR_PLOT_YL)
+
+            # Set the lower limit of the y-axis
+            plt.ylim(bottom=0)
+
+            # Save the plot to the filesystem
+            plt.savefig(EXACT_FORWARD_PLOT_OUTPUT + self.properties_string + PLOT_EXT, bbox_inches='tight')
+
+    def phi_quadratic_exact(self):
+
+        # Discretise the interval from 0 to pi
+        discr_pi = linspace(0,pi,self.outer_points)
+
+        # Solve Eq. 24 (Kager et al. 2004) on the range 0 to pi
+        self.phi_exact_quadratic_forward = array([2 - 2 * phi * cot(phi) + 2 * 1j * phi for phi in discr_pi])
 
         if self.save_data:
 
@@ -1027,8 +1067,8 @@ class SqrtTPlusOneLoewnerRun(LoewnerRun):
         if self.save_data:
 
             # Create filenames for the dat file
-            filename_a = EXACT_CUBIC_DATA_OUTPUT + self.properties_string + "-A" + DATA_EXT
-            filename_b = EXACT_CUBIC_DATA_OUTPUT + self.properties_string + "-B" + DATA_EXT
+            filename_a = EXACT_CUBIC_DATA_OUTPUT + self.short_properties_string + "-A" + DATA_EXT
+            filename_b = EXACT_CUBIC_DATA_OUTPUT + self.short_properties_string + "-B" + DATA_EXT
 
             # Create 2D arrays from the real and imaginary values of the results
             array_a = column_stack((self.exact_cubic_sol_a.real, self.exact_cubic_sol_a.imag))
@@ -1049,6 +1089,10 @@ class SqrtTPlusOneLoewnerRun(LoewnerRun):
             # Plot the results
             plt.plot(self.exact_cubic_sol_a.real, self.exact_cubic_sol_a.imag, color='crimson')
             plt.plot(self.exact_cubic_sol_b.real, self.exact_cubic_sol_b.imag, color='crimson')
+
+            # Set the axes labels
+            plt.xlabel(FOR_PLOT_XL)
+            plt.ylabel(FOR_PLOT_YL)
 
             # Set the lower limit of the y-axis
             plt.ylim(bottom=0)

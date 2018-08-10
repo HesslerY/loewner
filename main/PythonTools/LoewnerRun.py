@@ -745,22 +745,25 @@ class LinearLoewnerRun(LoewnerRun):
 
     def phi_quadratic_exact(self,start_phi=0,final_phi=pi):
 
+        # Calculate 'temp' delta
+        delta = (final_phi - start_phi) / self.outer_points
+
+        # Increase starting point if start_phi = 0
+        if start_phi == 0:
+            start_phi = delta
+
+        # Decrease end point if final_phi = pi
+        if final_phi == pi:
+            final_phi = final_phi - delta
+
         # Discretise the interval from start_phi to final_phi
         discr_pi = linspace(start_phi,final_phi,self.outer_points)
 
-        # Remove first entry of phi interval if starting value is 0
-        if start_phi == 0:
-            discr_pi = discr_pi[1:]
-
-        # Remove last entry of phi interval if final value is pi
-        if final_phi == pi:
-            discr_phi = discr_pi[:-1]
-
         # Solve Eq. 24 (Kager et al. 2004) on the range start_phi to final_phi
-        self.phi_exact_quadratic_forward = array([2 - 2 * phi * cot(phi) + 2 * 1j * phi for phi in discr_pi])
+        self.phi_exact_quadratic_forward = array([2 - 2 * phi * cot(phi) + 2 * 1j * phi for phi in discr_pi],dtype=complex128)
 
         # Create a properties string specifically for the phi exact solution
-        properties_string = "-".join([str(prop) for prop in [self.index, "PHI", start_phi, final_phi, self.outer_points]])
+        properties_string = "-".join([str(prop) for prop in [self.index, "PHI", self.number_to_string(start_phi), self.number_to_string(final_phi), self.outer_points]])
 
         if self.save_data:
 
@@ -768,7 +771,7 @@ class LinearLoewnerRun(LoewnerRun):
             filename = EXACT_FORWARD_DATA_OUTPUT + properties_string + DATA_EXT
 
             # Create a 2D array from the real and imaginary values of the results
-            results_array = column_stack((self.exact_quadratic_forward.real, self.exact_quadratic_forward.imag))
+            results_array = column_stack((self.phi_exact_quadratic_forward.real, self.phi_exact_quadratic_forward.imag))
 
             # Save the array to the filesystem
             self.save_to_dat(filename, results_array)
@@ -782,7 +785,11 @@ class LinearLoewnerRun(LoewnerRun):
             self.set_plot_title()
 
             # Plo the values
-            plt.plot(self.exact_quadratic_forward.real, self.exact_quadratic_forward.imag, color='crimson')
+            plt.plot(self.phi_exact_quadratic_forward.real, self.phi_exact_quadratic_forward.imag, color='crimson')
+
+            # Set the axes labels
+            plt.xlabel(FOR_PLOT_XL)
+            plt.ylabel(FOR_PLOT_YL)
 
             # Set the lower limit of the y-axis
             plt.ylim(bottom=0)

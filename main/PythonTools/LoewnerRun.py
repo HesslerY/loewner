@@ -813,8 +813,8 @@ class KappaLoewnerRun(LoewnerRun):
 
         # Create the names and lambda function for the given driving function
         self.name = "2 * dsqrt(kappa * (1 - t))"
-        self.latex_name = "$\\xi (t) = 2 \ \sqrt{" + self.numer_to_string(self.kappa) + "\ (1 - t)}$"
-        self.xi = lambda t: sqrt(self.kappa * (1 - t))
+        self.latex_name = "$\\xi (t) = 2 \ \sqrt{" + self.number_to_string(self.kappa) + "\ (1 - t)}$"
+        self.xi = lambda t: 2 * sqrt(self.kappa * (1 - t))
 
     def set_properties_string(self):
 

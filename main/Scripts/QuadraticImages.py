@@ -34,7 +34,7 @@ for run in standard_runs:
     run.quadratic_inverse_loewner()
     print("Finished quadratic inverse for driving function " + str(run.name))
 
-    run.exact_quadratic_inverse()
+    run.exact_inverse()
     print("Finished exact quadratic inverse for driving function " + str(run.name))
 
 # Carry out the kappa runs
@@ -46,7 +46,7 @@ for run in kappa_runs:
     run.quadratic_inverse_loewner()
     print("Finished quadratic inverse for kappa = " + str(run.kappa)[:3])
 
-    run.exact_quadratic_inverse()
+    run.exact_inverse()
     print("Finished exact quadratic inverse for kappa = " + str(run.kappa)[:3])
 
 # Carry out the calpha runs
@@ -58,6 +58,6 @@ for run in calpha_runs:
     run.quadratic_inverse_loewner()
     print("Finished quadratic inverse for alpha = " + str(run.alpha)[:3])
 
-    run.exact_quadratic_inverse()
+    run.exact_inverse()
     print("Finished exact quadratic inverse for alpha = " + str(run.alpha)[:3])
 

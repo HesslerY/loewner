@@ -339,7 +339,7 @@ class LoewnerRun:
             # Plot the data and save it to the filesystem
             self.quadratic_inverse_plot()
 
-    def exact_quadratic_inverse(self):
+    def exact_inverse(self):
 
         # Find the exact solution for the driving function
         self.exact_driving_arr = array([self.xi(t) for t in self.exact_time_sol])
@@ -672,7 +672,7 @@ class ConstantLoewnerRun(LoewnerRun):
             plt.ylim(bottom=0)
 
             # Save the plot to the filesystem
-            plt.savefig(EXACT_CUBIC_PLOT_OUTPUT + self.properties_string + PLOT_EXT, bbox_inches='tight')
+            plt.savefig(EXACT_CUBIC_PLOT_OUTPUT + self.short_properties_string + PLOT_EXT, bbox_inches='tight')
 
 class LinearLoewnerRun(LoewnerRun):
 
@@ -735,7 +735,7 @@ class LinearLoewnerRun(LoewnerRun):
             plt.ylim(bottom=0)
 
             # Save the plot to the filesystem
-            plt.savefig(EXACT_FORWARD_PLOT_OUTPUT + self.properties_string + PLOT_EXT, bbox_inches='tight')
+            plt.savefig(EXACT_FORWARD_PLOT_OUTPUT + self.short_properties_string + PLOT_EXT, bbox_inches='tight')
 
     def phi_quadratic_exact(self):
 
@@ -1098,5 +1098,5 @@ class SqrtTPlusOneLoewnerRun(LoewnerRun):
             plt.ylim(bottom=0)
 
             # Save the plot to the filesystem
-            plt.savefig(EXACT_CUBIC_PLOT_OUTPUT + self.properties_string + PLOT_EXT, bbox_inches='tight')
+            plt.savefig(EXACT_CUBIC_PLOT_OUTPUT + self.short_properties_string + PLOT_EXT, bbox_inches='tight')
 

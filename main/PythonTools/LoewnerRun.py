@@ -147,7 +147,22 @@ class LoewnerRun:
 
         # Convert a number to a string (used for making filenames)
         # Shows 5 decimal places
-        return str(num)[:7].replace(".","point")
+        num_str = str(num)[:7]
+
+        # Remove any excess zeros
+        num_str = num_str.strip("0")
+        for i in range(len(num_str)-1,0,-1):
+
+            if num_str[i] == "0":
+                num_str = num_str[:-1]
+            else:
+                break
+
+        if num_str[-1] == ".":
+            num_str = num_str[:-1]
+
+        # Put the word point in place of the decimal point (avoid confusing filesystem about extension)
+        return num_str.replace(".","point")
 
     def compile_modules(self):
 
@@ -813,7 +828,7 @@ class KappaLoewnerRun(LoewnerRun):
 
         # Create the names and lambda function for the given driving function
         self.name = "2 * dsqrt(kappa * (1 - t))"
-        self.latex_name = "$\\xi (t) = 2 \ \sqrt{" + self.number_to_string(self.kappa) + "\ (1 - t)}$"
+        self.latex_name = "$\\xi (t) = 2 \ \sqrt{" + str(self.kappa)[:4] + "\ (1 - t)}$"
         self.xi = lambda t: 2 * sqrt(self.kappa * (1 - t))
 
     def set_properties_string(self):
@@ -970,7 +985,7 @@ class CAlphaLoewnerRun(LoewnerRun):
 
         # Create the names and lambda function for the given driving function
         self.name = "dsqrt(t) * c_alpha"
-        self.latex_name = "$\\xi (t) = c_{" + self.number_to_string(self.alpha) + "} \sqrt{t}$"
+        self.latex_name = "$\\xi (t) = c_{" + str(self.alpha)[:4] + "} \sqrt{t}$"
         self.xi = lambda t: self.calpha * sqrt(t)
 
     def set_properties_string(self):

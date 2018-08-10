@@ -2,6 +2,7 @@ import sys
 sys.path.append('../PythonTools')
 from Constants import CONST_IDX, LINR_IDX, KAPPA_IDX, CALPHA_IDX, SQRTPLUS_IDX
 from LoewnerRunFactory import LoewnerRunFactory
+from math import pi
 
 # Declare final time for Loewner runs
 start_time = 0
@@ -25,6 +26,8 @@ linear_exact_solution_comp = loewner_factory.vary_inner_res(index=LINR_IDX,point
 for run in exact_quadratic_runs:
     run.exact_quadratic_forward_loewner()
     print("Finished exact quadratic forward for driving function = " + str(run.name))
+
+exact_quadratic_runs[0].phi_quadratic_exact(0,pi)
 
 # Vary the resolution for xi(t) = t (in order to compare to exact solution)
 for run in linear_exact_solution_comp:

@@ -143,6 +143,12 @@ class LoewnerRun:
         # Create a single string to use as a filename template
         self.short_properties_string = "-".join(desc)
 
+    def number_to_string(self, num):
+
+        # Convert a number to a string (used for making filenames)
+        # Shows 5 decimal places
+        return str(num)[:7].replace(".","point")
+
     def compile_modules(self):
 
         # Create a string that is used to compile the forward fortran file with f2py
@@ -500,7 +506,7 @@ class LoewnerRun:
             self.wedge_results[i] = wedge_result[0][i]
 
         # Represent the alpha value as a string
-        alpha_string = str(wedge_alpha)[:6].replace(".","point")
+        alpha_string = self.number_to_string(wedge_alpha)
 
         # Create a properties sring for the run
         wedge_properties_string = "-".join([str(attr) for attr in [self.index, alpha_string, self.start_time, self.final_time, self.outer_points, self.inner_points]])
@@ -737,18 +743,29 @@ class LinearLoewnerRun(LoewnerRun):
             # Save the plot to the filesystem
             plt.savefig(EXACT_FORWARD_PLOT_OUTPUT + self.short_properties_string + PLOT_EXT, bbox_inches='tight')
 
-    def phi_quadratic_exact(self):
+    def phi_quadratic_exact(self,start_phi=0,final_phi=pi):
 
-        # Discretise the interval from 0 to pi
-        discr_pi = linspace(0,pi,self.outer_points)
+        # Discretise the interval from start_phi to final_phi
+        discr_pi = linspace(start_phi,final_phi,self.outer_points)
 
-        # Solve Eq. 24 (Kager et al. 2004) on the range 0 to pi
+        # Remove first entry of phi interval if starting value is 0
+        if start_phi == 0:
+            discr_pi = discr_pi[1:]
+
+        # Remove last entry of phi interval if final value is pi
+        if final_phi == pi:
+            discr_phi = discr_pi[:-1]
+
+        # Solve Eq. 24 (Kager et al. 2004) on the range start_phi to final_phi
         self.phi_exact_quadratic_forward = array([2 - 2 * phi * cot(phi) + 2 * 1j * phi for phi in discr_pi])
+
+        # Create a properties string specifically for the phi exact solution
+        properties_string = "-".join([str(prop) for prop in [self.index, "PHI", start_phi, final_phi, self.outer_points]])
 
         if self.save_data:
 
             # Create a filename for the dat file
-            filename = EXACT_FORWARD_DATA_OUTPUT + self.properties_string + DATA_EXT
+            filename = EXACT_FORWARD_DATA_OUTPUT + properties_string + DATA_EXT
 
             # Create a 2D array from the real and imaginary values of the results
             results_array = column_stack((self.exact_quadratic_forward.real, self.exact_quadratic_forward.imag))
@@ -771,7 +788,7 @@ class LinearLoewnerRun(LoewnerRun):
             plt.ylim(bottom=0)
 
             # Save the plot to the filesystem
-            plt.savefig(EXACT_FORWARD_PLOT_OUTPUT + self.properties_string + PLOT_EXT, bbox_inches='tight')
+            plt.savefig(EXACT_FORWARD_PLOT_OUTPUT + properties_string + PLOT_EXT, bbox_inches='tight')
 
 class KappaLoewnerRun(LoewnerRun):
 
@@ -789,13 +806,13 @@ class KappaLoewnerRun(LoewnerRun):
 
         # Create the names and lambda function for the given driving function
         self.name = "2 * dsqrt(kappa * (1 - t))"
-        self.latex_name = "$\\xi (t) = 2 \ \sqrt{" + str(self.kappa)[:3] + "\ (1 - t)}$"
+        self.latex_name = "$\\xi (t) = 2 \ \sqrt{" + self.numer_to_string(self.kappa) + "\ (1 - t)}$"
         self.xi = lambda t: sqrt(self.kappa * (1 - t))
 
     def set_properties_string(self):
 
         # Convert the kappa parameter to a string
-        sqrt_string = str(self.kappa)[:3].replace(".","point")
+        sqrt_string = self.number_to_string(self.kappa)
 
         # Create a list from the run parameters
         properties = [self.index, sqrt_string, self.start_time, self.final_time, self.outer_points, self.inner_points]
@@ -809,7 +826,7 @@ class KappaLoewnerRun(LoewnerRun):
     def set_short_properties_string(self):
 
         # Convert the kappa parameter to a string
-        sqrt_string = str(self.kappa)[:3].replace(".","point")
+        sqrt_string = self.number_to_string(self.kappa)
 
         # Create a list from the run parameters
         properties = [self.index, sqrt_string, self.start_time, self.final_time, self.outer_points]
@@ -946,13 +963,13 @@ class CAlphaLoewnerRun(LoewnerRun):
 
         # Create the names and lambda function for the given driving function
         self.name = "dsqrt(t) * c_alpha"
-        self.latex_name = "$\\xi (t) = c_{" + str(self.alpha)[:3] + "} \sqrt{t}$"
+        self.latex_name = "$\\xi (t) = c_{" + self.number_to_string(self.alpha) + "} \sqrt{t}$"
         self.xi = lambda t: self.calpha * sqrt(t)
 
     def set_properties_string(self):
 
         # Convert the alpha parameter to a string
-        sqrt_string = str(self.alpha)[:3].replace(".","point")
+        sqrt_string = self.number_to_string(self.alpha)
 
         # Create a list from the run parameters
         properties = [self.index, sqrt_string, self.start_time, self.final_time, self.outer_points, self.inner_points]
@@ -966,7 +983,7 @@ class CAlphaLoewnerRun(LoewnerRun):
     def set_short_properties_string(self):
 
         # Convert the alpha parameter to a string
-        sqrt_string = str(self.alpha)[:3].replace(".","point")
+        sqrt_string = self.number_to_string(self.alpha)
 
         # Create a list from the run parameters
         properties = [self.index, sqrt_string, self.start_time, self.final_time, self.outer_points]

@@ -3,11 +3,11 @@ from LoewnerRunFactory import LoewnerRunFactory
 from numpy import square, mean, array, savetxt, absolute
 from math import sqrt
 
-class RootMeanSquaredError:
+class RootMeanSquareError:
 
     def __init__(self, start_time, final_time, outer_points, inner_points, resolutions):
 
-        # Set the time parameters for the root mean squared comparisons
+        # Set the time parameters for the root mean sqaure comparisons
         self.start_time = start_time
         self.final_time = final_time
 
@@ -60,7 +60,7 @@ class RootMeanSquaredError:
 
                 print("Finished solution with inner res = " + str(approx_sol.inner_points) + " for driving function " + str(approx_sol.name))
 
-                # Calculate the root mean squared error
+                # Calculate the root mean sqaure error
                 rms = self.calculate_rms(exact_sol.exact_quadratic_forward, approx_sol.forward_results)
 
                 # Add the RMS value to the list
@@ -102,7 +102,7 @@ class RootMeanSquaredError:
 
                 print("Finished solution with inner res = " + str(approx_sol.inner_points) + " for driving function " + str(approx_sol.name))
 
-                # Calculate the root mean squared error
+                # Calculate the root mean sqaure error
                 rms_a = self.calculate_rms(exact_sol.exact_cubic_sol_a, approx_sol.cubic_results_a)
                 rms_b = self.calculate_rms(exact_sol.exact_cubic_sol_b, approx_sol.cubic_results_b)
 

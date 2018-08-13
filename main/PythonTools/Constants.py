@@ -51,7 +51,7 @@ QUADRATIC_FORWARD_EXACT_IDXS = [1]
 NOTORIGIN_IDXS = [0,2,4,14]
 
 # Inicides of the driving functions
-DRIVING_INDICES = {pair[1] : pair[0] for pair in enumerate(DRIVING_INFO)}
+DRIVING_LIST = ["["+str(pair[0])+"] " + pair[1] for pair in enumerate(DRIVING_INFO)]
 
 # Compilation related lists
 F2PY_FIRST = ["f2py", "-c"]
@@ -125,5 +125,12 @@ HALF_PI = pi / 2
 # Prompt message
 LOEWNER_PROMPT = "Loewner > "
 
-# Exit keys for leaving the prompt
-EXIT_KEYS = ["q","Q"]
+# Create a dictionary of response-function pairs for the 'main' menu
+HELPMSG = "Loewner Solver Instructions:\n. Something something something."
+FORSINGLE_HELPMSG = "Forward Single-Trace Instructions:\nSelect one or more driving functions by entering their indices. Enter desired resolution parameters and any additional arguments. Choose to then plot your results, save your results, or both."
+INVSINGLE_HELPMSG = "Inverse Single-Trace Instructions:\nSelect one or more driving functions by enterting their indices. Enter desired resolution parameters and any additional arguments. Choose to then plot your results, save your results, or both."
+FORINV_HELPMSG = "Forward + Inverse Single-Trace Instructions:\nSelect one or more driving functions by enterting their indices. Enter desired resolution parameters and any additional arguments. Choose to then plot your results, save your results, or both."
+TWO_HELPMSG = "Two-Trace Instructions:\nSelect one or more driving functions by enterting their indices. Enter desired resolution parameters and any additional arguments. Choose to then plot your results, save your results, or both."
+WEDGE_HELPMSG = "Wedge Trace Instructions:\nSelect one or more driving functions by enterting their indices. Enter desired resolution parameters and any additional arguments. Choose to then plot your results, save your results, or both."
+
+BACK_COMMAND = "b"

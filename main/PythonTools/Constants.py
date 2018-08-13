@@ -121,3 +121,9 @@ EXACT_CUBIC_CONSTANT = 1
 
 # Define pi/2 constant for solving Gubiec + Szymczak equation
 HALF_PI = pi / 2
+
+# Prompt message
+LOEWNER_PROMPT = "Loewner > "
+
+# Exit keys for leaving the prompt
+EXIT_KEYS = ["q","Q"]

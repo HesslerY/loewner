@@ -123,14 +123,15 @@ EXACT_CUBIC_CONSTANT = 1
 HALF_PI = pi / 2
 
 # Prompt message
-LOEWNER_PROMPT = "Loewner > "
+LOEWNER_PROMPT = "Loewner >> "
 
 # Create a dictionary of response-function pairs for the 'main' menu
-HELPMSG = "Loewner Solver Instructions:\n. Something something something."
-FORSINGLE_HELPMSG = "Forward Single-Trace Instructions:\nSelect one or more driving functions by entering their indices. Enter desired resolution parameters and any additional arguments. Choose to then plot your results, save your results, or both."
+HELPMSG = "Interface/MainHelp"
+FORSINGLE_HELPMSG = "Interface/ForwardInverseHelp"
 INVSINGLE_HELPMSG = "Inverse Single-Trace Instructions:\nSelect one or more driving functions by enterting their indices. Enter desired resolution parameters and any additional arguments. Choose to then plot your results, save your results, or both."
-FORINV_HELPMSG = "Forward + Inverse Single-Trace Instructions:\nSelect one or more driving functions by enterting their indices. Enter desired resolution parameters and any additional arguments. Choose to then plot your results, save your results, or both."
+FORINV_HELPMSG = "Interface/ForwardInverseHelp"
 TWO_HELPMSG = "Two-Trace Instructions:\nSelect one or more driving functions by enterting their indices. Enter desired resolution parameters and any additional arguments. Choose to then plot your results, save your results, or both."
 WEDGE_HELPMSG = "Wedge Trace Instructions:\nSelect one or more driving functions by enterting their indices. Enter desired resolution parameters and any additional arguments. Choose to then plot your results, save your results, or both."
 
-BACK_COMMAND = "b"
+BACK_COMMANDS = ["b","back"]
+HELP_COMMANDS = ["h","help"]

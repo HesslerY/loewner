@@ -1,4 +1,4 @@
-from PythonTools.Constants import LOEWNER_PROMPT, FORSINGLE_HELPMSG, INVSINGLE_HELPMSG, FORINV_HELPMSG, TWO_HELPMSG, WEDGE_HELPMSG, HELPMSG, DRIVING_LIST, BACK_COMMANDS, HELP_COMMANDS
+from PythonTools.Constants import LOEWNER_PROMPT, FORSINGLE_HELPMSG, INVSINGLE_HELPMSG, FORINV_HELPMSG, TWO_HELPMSG, WEDGE_HELPMSG, HELPMSG, DRIVING_LIST, BACK_COMMANDS, HELP_COMMANDS, TOTAL_DRIVING_FUNCTIONS
 #from PythonTools.LoewnerRunFactory import LoewnerRunFactory
 from prompt_toolkit import PromptSession
 from prompt_toolkit.shortcuts import button_dialog
@@ -27,16 +27,20 @@ def print_driving_functions():
     for item in DRIVING_LIST:
         print(item)
 
-def valid_driving_functions(user_input):
+def validate_driving_functions(user_input):
 
-    for item in user_input.split():
+    # Convert the values to integers
+    try:
+        driving_list = [int(item) for item in user_input.split()]
+    except ValueError:
+        return False
 
-        try:
-            temp = float(item)
-        except ValueError:
-            return False
+    # Check that the numbers are in the correct range
+    if not all([df >= 0 and df < TOTAL_DRIVING_FUNCTIONS for df in driving_list]):
+        return False
 
-    return True
+    # Return the driving list - all checks passed
+    return driving_list
 
 # Run the forward single-trace algorithm
 def forward_single_trace():
@@ -48,6 +52,9 @@ def forward_single_trace():
 
         # Await under input
         user_input = session.prompt()
+
+        # Check if valid driving functions were entered
+        driving_list = validate_driving_selection(user_input)
 
         # Check for 'go back' instruction
         if user_input in BACK_COMMANDS:
@@ -62,7 +69,7 @@ def forward_single_trace():
             basic_responses[user_input](user_input)
 
         # Check if a list of driving functions were entered
-        elif valid_driving_functions(user_input):
+        elif validate_driving_functions(user_input) is not False:
             pass
 
         # Print the bad input message
@@ -88,6 +95,9 @@ def forinv_single_trace():
         # Await under input
         user_input = session.prompt()
 
+        # Get a list of driving functions (if any were given)
+        driving_list = validate_driving_functions(user_input)
+
         # Check for 'go back' instruction
         if user_input in BACK_COMMANDS:
             return
@@ -101,8 +111,8 @@ def forinv_single_trace():
             basic_responses[user_input]("forinvsin")
 
         # Check if a list of driving functions were entered
-        elif valid_driving_functions(user_input):
-            pass
+        elif driving_list is not False:
+            print("Driving functions validated.")
 
         # Print the bad input message
         else:
@@ -122,10 +132,18 @@ def wedge_trace():
     while True:
         user_input = session.prompt()
 
-# Run the inverse single-trace algorithm
+# Run the root-mean-sqaure algorithms
 def root_mean_square():
 
     print("Root Mean Square Mode:")
+
+    while True:
+        user_input = session.prompt()
+
+# Run the exact solution algorithms
+def exact_solutions():
+
+    print("Exact Solution Mode:")
 
     while True:
         user_input = session.prompt()
@@ -138,6 +156,7 @@ def main():
                             "forinvsin" : forinv_single_trace,
                             "two" : two_trace,
                             "wedge" : wedge_trace,
+                            "exact" : exact_solutions,
                             "rms" : root_mean_square,
                           }
 

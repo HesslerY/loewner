@@ -1,0 +1,14 @@
+Loewner:
+
+COMMANDS:
+
+     h,help      Display this message.
+     b,back      Return to main menu.
+
+INSTRUCTIONS:
+
+    1. Enter the indices of the driving functions that you wish to run seperated by a space (e.g. 0 2 8)
+    2. Enter the following arguments for the run paramters:
+        [start time] [end time] [outer resolution] [inner resolution] [save plot] [save data] [rest] [all]
+    3. That's it.
+

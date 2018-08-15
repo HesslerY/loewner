@@ -53,7 +53,7 @@ class CommandLineInterface:
             print(line.strip('\n'))
 
         print("")
-        return
+        return ""
 
     def standard_input(self):
 
@@ -62,7 +62,7 @@ class CommandLineInterface:
             user_input = self.session.prompt()
 
             if user_input in self.basic_responses:
-                self.basic_responses[user_input](user_input)
+                user_input = self.basic_responses[user_input](user_input)
 
             return user_input
 
@@ -109,7 +109,12 @@ class CommandLineInterface:
         except ValueError:
             return False
 
-        factory_settings = settings_a + settings_b + [True,True,True]
+        if not all([setting == "y" or setting == "n" for setting in params[4:]]):
+            return False
+
+        settings_c = [setting == "y" for setting in params[4:]]
+
+        factory_settings = settings_a + settings_b + settings_c
 
         return factory_settings
 
@@ -121,12 +126,10 @@ class CommandLineInterface:
 
             user_input = self.standard_input()
 
-            if user_input in BACK_COMMANDS:
-                return
-
             factory_settings = self.validate_factory_parameters(user_input)
 
             if factory_settings is not False:
+                print(factory_settings)
                 loewner_factory = LoewnerRunFactory(*factory_settings)
                 return loewner_factory
 

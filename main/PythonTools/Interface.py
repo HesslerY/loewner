@@ -55,6 +55,17 @@ class CommandLineInterface:
         print("")
         return
 
+    def standard_input(self):
+
+        while True:
+
+            user_input = self.session.prompt()
+
+            if user_input in self.basic_responses:
+                self.basic_responses[user_input](user_input)
+
+            return user_input
+
     def bad_input_message(self,user_input):
         print("Unrecognised instruction: " + user_input + " (Press h for help)")
 
@@ -94,7 +105,7 @@ class CommandLineInterface:
 
         while True:
 
-            user_input = self.session.prompt()
+            user_input = self.standard_input()
 
             if user_input == "a":
                 pass
@@ -114,7 +125,7 @@ class CommandLineInterface:
         while True:
 
             # Await under input
-            user_input = self.session.prompt()
+            user_input = self.standard_input()
 
             # Check if valid driving functions were entered
             driving_list = self.validate_driving_functions(user_input)
@@ -146,7 +157,7 @@ class CommandLineInterface:
 
         while True:
 
-            user_input = self.session.prompt()
+            user_input = self.standard_input()
 
     # Run the forward and inverse single-trace algorithms
     def forinv_single_trace(self):
@@ -157,7 +168,7 @@ class CommandLineInterface:
         while True:
 
             # Await under input
-            user_input = self.session.prompt()
+            user_input = self.standard_input()
 
             # Get a list of driving functions (if any were given)
             driving_list = self.validate_driving_functions(user_input)
@@ -188,14 +199,14 @@ class CommandLineInterface:
         print("Two-Trace Selected.")
 
         while True:
-            user_input = self.session.prompt()
+            user_input = self.standard_input()
 
     def wedge_trace(self):
 
         print("Wedge Trace Selected.")
 
         while True:
-            user_input = self.session.prompt()
+            user_input = self.standard_input()
 
     # Run the root-mean-sqaure algorithms
     def root_mean_square(self):
@@ -203,7 +214,7 @@ class CommandLineInterface:
         print("Root Mean Square Mode:")
 
         while True:
-            user_input = self.session.prompt()
+            user_input = self.standard_input()
 
     # Run the exact solution algorithms
     def exact_solutions(self):
@@ -211,7 +222,7 @@ class CommandLineInterface:
         print("Exact Solution Mode:")
 
         while True:
-            user_input = self.session.prompt()
+            user_input = self.standard_input()
 
     def start(self):
 
@@ -219,7 +230,7 @@ class CommandLineInterface:
         while True:
 
             # Do multiple input calls.
-            user_input = self.session.prompt()
+            user_input = self.standard_input()
 
             # Check if in the response correponds with any of the Loewner algorithms
             if user_input in self.algorithm_responses:

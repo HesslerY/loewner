@@ -96,29 +96,39 @@ class CommandLineInterface:
         # Return the driving list - all checks passed
         return driving_list
 
-    def finalise_driving_choices(self,driving_list):
+    def validate_factory_parameters(self,user_input):
 
-        # Display driving function choice
-        print("Driving functions chosen:")
-        self.print_driving_selection(driving_list)
-        print("[a]ppend / [s]tart again / [c]ontinue?")
+        params = user_input.split()
+
+        if len(params) != 7:
+            return False
+
+        try:
+            settings_a = [float(param) for param in params[:2]]
+            settings_b = [int(param) for param in params[2:4]]
+        except ValueError:
+            return False
+
+        factory_settings = settings_a + settings_b + [True,True,True]
+
+        return factory_settings
+
+    def create_factory(self, driving_list):
 
         while True:
 
+            print("Enter a start-time, end-time, outer-resolution, inner-resolution, compile[y/n], save plots[y/n], save data[y/n] seperated by a space:")
+
             user_input = self.standard_input()
 
-            # Check for 'go back' instruction
             if user_input in BACK_COMMANDS:
                 return
 
-            if user_input == "a":
-                pass
+            factory_settings = self.validate_factory_parameters(user_input)
 
-            if user_input == "s":
-                pass
-
-            if user_input == "c":
-                return driving_list
+            if factory_settings is not False:
+                loewner_factory = LoewnerRunFactory(*factory_settings)
+                return loewner_factory
 
     # Run the forward single-trace algorithm
     def forward_single_trace(self):
@@ -199,7 +209,8 @@ class CommandLineInterface:
 
             # Check if a list of driving functions were entered
             elif driving_list is not False:
-                pass
+
+                forinv_fact = self.create_factory(driving_list)
 
             # Print the bad input message
             else:

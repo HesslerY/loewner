@@ -25,3 +25,4 @@ poly3zerosModule.f90
 *.pdf
 *.dat
 *tempfile
+*.py~

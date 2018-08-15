@@ -107,6 +107,10 @@ class CommandLineInterface:
 
             user_input = self.standard_input()
 
+            # Check for 'go back' instruction
+            if user_input in BACK_COMMANDS:
+                return
+
             if user_input == "a":
                 pass
 
@@ -126,6 +130,10 @@ class CommandLineInterface:
 
             # Await under input
             user_input = self.standard_input()
+
+            # Check for 'go back' instruction
+            if user_input in BACK_COMMANDS:
+                return
 
             # Check if valid driving functions were entered
             driving_list = self.validate_driving_functions(user_input)
@@ -159,6 +167,10 @@ class CommandLineInterface:
 
             user_input = self.standard_input()
 
+            # Check for 'go back' instruction
+            if user_input in BACK_COMMANDS:
+                return
+
     # Run the forward and inverse single-trace algorithms
     def forinv_single_trace(self):
 
@@ -170,15 +182,15 @@ class CommandLineInterface:
             # Await under input
             user_input = self.standard_input()
 
-            # Get a list of driving functions (if any were given)
-            driving_list = self.validate_driving_functions(user_input)
-
             # Check for 'go back' instruction
             if user_input in BACK_COMMANDS:
                 return
 
+            # Get a list of driving functions (if any were given)
+            driving_list = self.validate_driving_functions(user_input)
+
             # check for the help instruction
-            elif user_input == "dr":
+            if user_input == "dr":
                 self.print_driving_functions()
 
             # Check if in the response correponds with help/exit
@@ -187,8 +199,7 @@ class CommandLineInterface:
 
             # Check if a list of driving functions were entered
             elif driving_list is not False:
-
-                driving_list = self.finalise_driving_choices(driving_list)
+                pass
 
             # Print the bad input message
             else:
@@ -199,14 +210,24 @@ class CommandLineInterface:
         print("Two-Trace Selected.")
 
         while True:
+
             user_input = self.standard_input()
+
+            # Check for 'go back' instruction
+            if user_input in BACK_COMMANDS:
+                return
 
     def wedge_trace(self):
 
         print("Wedge Trace Selected.")
 
         while True:
+
             user_input = self.standard_input()
+
+            # Check for 'go back' instruction
+            if user_input in BACK_COMMANDS:
+                return
 
     # Run the root-mean-sqaure algorithms
     def root_mean_square(self):
@@ -214,7 +235,12 @@ class CommandLineInterface:
         print("Root Mean Square Mode:")
 
         while True:
+
             user_input = self.standard_input()
+
+            # Check for 'go back' instruction
+            if user_input in BACK_COMMANDS:
+                return
 
     # Run the exact solution algorithms
     def exact_solutions(self):
@@ -224,6 +250,10 @@ class CommandLineInterface:
         while True:
             user_input = self.standard_input()
 
+            # Check for 'go back' instruction
+            if user_input in BACK_COMMANDS:
+                return
+
     def start(self):
 
         # Run the prompt
@@ -231,6 +261,10 @@ class CommandLineInterface:
 
             # Do multiple input calls.
             user_input = self.standard_input()
+
+            # Check for 'go back' instruction
+            if user_input in BACK_COMMANDS:
+                return
 
             # Check if in the response correponds with any of the Loewner algorithms
             if user_input in self.algorithm_responses:

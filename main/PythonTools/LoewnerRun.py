@@ -23,8 +23,8 @@ class LoewnerRun:
         self.module_code = str(index)
 
         # Determine the filename of the relevant Fortran file
-        self.forward_filename = "../" + FOR_LOEWNER + "/" + FOR_LOEWNER + FORTRAN_EXT
-        self.inverse_filename = "../" + INV_LOEWNER + "/" + INV_LOEWNER + FORTRAN_EXT
+        self.forward_filename =  FOR_LOEWNER + "/" + FOR_LOEWNER + FORTRAN_EXT
+        self.inverse_filename =  INV_LOEWNER + "/" + INV_LOEWNER + FORTRAN_EXT
 
         # Set a filename for the compiled module
         self.forward_module_name = "modules." + FOR_LOEWNER + "_"  + self.module_code

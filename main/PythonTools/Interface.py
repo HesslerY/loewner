@@ -27,10 +27,10 @@ class CommandLineInterface:
 
 
         # Create a dictionary of response-function pairs for the 'main' menu
-        self.algorithm_responses = { "forsin" : self.standard_single_trace,
-                                     "invsin" : self.standard_single_trace,
-                                     "forinvsin" : self.standard_single_trace,
-                                     "two" : self.two_trace,
+        self.algorithm_responses = { "forsin" : self.standard_loewner,
+                                     "invsin" : self.standard_loewner,
+                                     "forinvsin" : self.standard_loewner,
+                                     "two" : self.standard_loewner,
                                      "wedge" : self.wedge_trace,
                                      "exact" : self.exact_solutions,
                                      "rms" : self.root_mean_square,
@@ -44,6 +44,27 @@ class CommandLineInterface:
         self.twotrace = False
         self.exact = False
         self.rms = False
+
+        self.time_settings =    {
+                                  "starttime" : None,
+                                  "finaltime" : None,
+                                }
+
+        self.res_settings =     {
+                                  "outerres" : None,
+                                  "innerres" : None,
+                                }
+
+
+        self.misc_settings =    {
+                                  "compileplots" : None,
+                                  "saveplots" : None,
+                                  "savedata" : None,
+                                }
+
+        self.convert_bool = { "y" : True,
+                              "n" : False,
+                            }
 
     # Exit the program
     def exit_loewner(self,msg_type):
@@ -61,6 +82,23 @@ class CommandLineInterface:
         print("")
         return ""
 
+    def set_mode(self,mode_input):
+
+        if mode_input in ["forsin", "forinvsin"]:
+            self.forsingle = True
+
+        if mode_input in ["invsin", "forinvsin"]:
+            self.invsingle = True
+
+        if mode_input == "two":
+            self.twotrace = True
+
+        if mode_input == "exact":
+            self.exact = True
+
+        if mode_input == "rms":
+            self.rms = True
+
     def standard_input(self):
 
         while True:
@@ -74,6 +112,89 @@ class CommandLineInterface:
 
     def bad_input_message(self,user_input):
         print("Unrecognised instruction: " + user_input + " (Press h for help)")
+
+    def change_parameter(self,user_input):
+
+        inputs = user_input.split()
+
+        if len(inputs) != 2:
+            return
+
+        if inputs[0] in self.time_settings:
+
+            try:
+                temp = float(inputs[1])
+            except ValueError:
+                return
+
+            if inputs[0] == "starttime":
+                if temp >= 0:
+                    self.time_settings["starttime"] = temp
+                    return True
+
+            elif inputs[0] == "finaltime":
+                if temp > 0:
+                    self.time_settings["finaltime"] = temp
+                    return True
+
+        if inputs[0] in self.res_settings:
+
+            try:
+                temp = int(inputs[1])
+            except ValueError:
+                return
+
+            print(inputs[0])
+
+            if inputs[0] == "outerres":
+                if temp > 1:
+                    self.res_settings["outerres"] = temp
+                    return True
+
+            elif inputs[0] == "innerres":
+                if temp > 1:
+                    self.res_settings["innerres"] = temp
+                    return True
+
+        if inputs[0] in self.misc_settings:
+            if inputs[1] in ["y","n"]:
+                self.misc_settings[inputs[0]] = self.convert_bool[inputs[1]]
+                return True
+
+        return False
+
+    def create_factory(self):
+
+        if any([val is None for val in self.time_settings.values()]):
+            return False
+
+        if any([val is None for val in self.res_settings.values()]):
+            return False
+
+        if any([val is None for val in self.misc_settings.values()]):
+            return False
+
+        if self.time_settings["starttime"] < 0:
+            return False
+
+        if self.time_settings["finaltime"] <= self.time_settings["starttime"]:
+            return False
+
+        if self.res_settings["outerres"] < 1:
+            return False
+
+        if self.res_settings["innerres"] < 1:
+            return False
+
+        if not any(self.misc_settings.values()):
+            return False
+
+        self.loewner_fact = LoewnerRunFactory(*list(self.time_settings.values()),*list(self.res_settings.values()),*list(self.misc_settings.values()))
+
+        return True
+
+    def create_loewner_runs(self,driving_list):
+        return [self.loewner_fact.select_single_run(index=i) for i in driving_list]
 
     def print_driving_functions(self):
 
@@ -102,56 +223,19 @@ class CommandLineInterface:
         # Return the driving list - all checks passed
         return driving_list
 
-    def validate_factory_parameters(self,user_input):
-
-        params = user_input.split()
-
-        if len(params) != 7:
-            return False
-
-        try:
-            settings_a = [float(param) for param in params[:2]]
-            settings_b = [int(param) for param in params[2:4]]
-        except ValueError:
-            return False
-
-        if not all([setting == "y" or setting == "n" for setting in params[4:]]):
-            return False
-
-        settings_c = [setting == "y" for setting in params[4:]]
-
-        if not any(settings_c):
-            return False
-
-        factory_settings = settings_a + settings_b + settings_c
-
-        return factory_settings
-
-    def create_factory(self, driving_list):
-
-        while True:
-
-            print("Enter a start-time, end-time, outer-res, inner-res, compile option [y/n], save plots option [y/n], save data option [y/n] seperated by a space:")
-
-            user_input = self.standard_input()
-
-            factory_settings = self.validate_factory_parameters(user_input)
-
-            if factory_settings is not False:
-                print(factory_settings)
-                loewner_factory = LoewnerRunFactory(*factory_settings)
-                return loewner_factory
-
     # Run the forward and inverse single-trace algorithms
-    def standard_single_trace(self,mode):
+    def standard_loewner(self):
 
-        print("Forward + Inverse Single-Trace Mode:")
+        # print("Forward + Inverse Single-Trace Mode:")
 
         # Run the prompt
         while True:
 
             # Await under input
             user_input = self.standard_input()
+
+            if self.change_parameter(user_input):
+                continue
 
             # Check for 'go back' instruction
             if user_input in BACK_COMMANDS:
@@ -171,25 +255,29 @@ class CommandLineInterface:
             # Check if a list of driving functions were entered
             elif driving_list is not False:
 
-                forinv_fact = self.create_factory(driving_list)
-                print("Successfully initialise Loewner run factory.")
-                loewner_runs = self.create_loewner_runs(driving_list,forinv_fact)
-                print("Successfully created Loewner runs.")
+                if self.create_factory():
+                    print("Successfully initialised LoewnerRun factory.")
+                else:
+                    print("Could not create LoewnerRun factory.")
+                    continue
+
+                loewner_runs = self.create_loewner_runs(driving_list)
+                print("Successfully created LoewnerRuns.")
 
                 # Carry out the 'standard' runs (drving functions for which there are no extra parameters)
-                for run in standard_runs:
+                for run in loewner_runs:
 
-                    if self.FORSINGLE is True:
+                    if self.forsingle is True:
 
                         run.quadratic_forward_loewner()
                         print("Finished single-trace forward for driving function " + str(run.name))
 
-                    if self.INVSINGLE is True:
+                    if self.invsingle is True:
 
                         run.quadratic_inverse_loewner()
                         print("Finished single-trace inverse for driving function " + str(run.name))
 
-                    if self.TWOTRACE is True:
+                    if self.twotrace is True:
 
                         run.cubic_forward_loewner()
                         print("Finished two-trace for driving function " + str(run.name))
@@ -258,12 +346,9 @@ class CommandLineInterface:
             # Do multiple input calls.
             user_input = self.standard_input()
 
-            # Check for 'go back' instruction
-            if user_input in BACK_COMMANDS:
-                return
-
             # Check if in the response correponds with any of the Loewner algorithms
             if user_input in self.algorithm_responses:
+                self.set_mode(user_input)
                 self.algorithm_responses[user_input]()
 
             # Check if in the response correponds with help/exit

@@ -27,9 +27,9 @@ class CommandLineInterface:
 
 
         # Create a dictionary of response-function pairs for the 'main' menu
-        self.algorithm_responses = { "forsin" : self.forward_single_trace,
-                                     "invsin" : self.inverse_single_trace,
-                                     "forinvsin" : self.forinv_single_trace,
+        self.algorithm_responses = { "forsin" : self.standard_single_trace,
+                                     "invsin" : self.standard_single_trace,
+                                     "forinvsin" : self.standard_single_trace,
                                      "two" : self.two_trace,
                                      "wedge" : self.wedge_trace,
                                      "exact" : self.exact_solutions,
@@ -38,6 +38,12 @@ class CommandLineInterface:
 
         # Create prompt object.
         self.session = PromptSession(message=LOEWNER_PROMPT)
+
+        self.forsingle = False
+        self.invsingle = False
+        self.twotrace = False
+        self.exact = False
+        self.rms = False
 
     # Exit the program
     def exit_loewner(self,msg_type):
@@ -114,6 +120,9 @@ class CommandLineInterface:
 
         settings_c = [setting == "y" for setting in params[4:]]
 
+        if not any(settings_c):
+            return False
+
         factory_settings = settings_a + settings_b + settings_c
 
         return factory_settings
@@ -122,7 +131,7 @@ class CommandLineInterface:
 
         while True:
 
-            print("Enter a start-time, end-time, outer-resolution, inner-resolution, compile[y/n], save plots[y/n], save data[y/n] seperated by a space:")
+            print("Enter a start-time, end-time, outer-res, inner-res, compile option [y/n], save plots option [y/n], save data option [y/n] seperated by a space:")
 
             user_input = self.standard_input()
 
@@ -133,59 +142,8 @@ class CommandLineInterface:
                 loewner_factory = LoewnerRunFactory(*factory_settings)
                 return loewner_factory
 
-    # Run the forward single-trace algorithm
-    def forward_single_trace(self):
-
-        print("Forward Single-Trace Mode:")
-
-        # Run the prompt
-        while True:
-
-            # Await under input
-            user_input = self.standard_input()
-
-            # Check for 'go back' instruction
-            if user_input in BACK_COMMANDS:
-                return
-
-            # Check if valid driving functions were entered
-            driving_list = self.validate_driving_functions(user_input)
-
-            # Check for 'go back' instruction
-            if user_input in BACK_COMMANDS:
-                return
-
-            # check for the help instruction
-            elif user_input == "dr":
-                self.print_driving_functions()
-
-            # Check if in the response correponds with help/exit
-            elif user_input in self.basic_responses:
-                self.basic_responses[user_input](user_input)
-
-            # Check if a list of driving functions were entered
-            elif self.validate_driving_functions(user_input) is not False:
-                pass
-
-            # Print the bad input message
-            else:
-                self.bad_input_message(user_input)
-
-    # Run the inverse single-trace algorithm
-    def inverse_single_trace(self):
-
-        print("Inverse Single-Trace Selected.")
-
-        while True:
-
-            user_input = self.standard_input()
-
-            # Check for 'go back' instruction
-            if user_input in BACK_COMMANDS:
-                return
-
     # Run the forward and inverse single-trace algorithms
-    def forinv_single_trace(self):
+    def standard_single_trace(self,mode):
 
         print("Forward + Inverse Single-Trace Mode:")
 
@@ -214,6 +172,30 @@ class CommandLineInterface:
             elif driving_list is not False:
 
                 forinv_fact = self.create_factory(driving_list)
+                print("Successfully initialise Loewner run factory.")
+                loewner_runs = self.create_loewner_runs(driving_list,forinv_fact)
+                print("Successfully created Loewner runs.")
+
+                # Carry out the 'standard' runs (drving functions for which there are no extra parameters)
+                for run in standard_runs:
+
+                    if self.FORSINGLE is True:
+
+                        run.quadratic_forward_loewner()
+                        print("Finished single-trace forward for driving function " + str(run.name))
+
+                    if self.INVSINGLE is True:
+
+                        run.quadratic_inverse_loewner()
+                        print("Finished single-trace inverse for driving function " + str(run.name))
+
+                    if self.TWOTRACE is True:
+
+                        run.cubic_forward_loewner()
+                        print("Finished two-trace for driving function " + str(run.name))
+
+                print("Runs completed successfully.")
+                exit()
 
             # Print the bad input message
             else:

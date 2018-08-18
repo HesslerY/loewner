@@ -237,7 +237,7 @@ class CommandLineInterface:
             if self.constant == None:
                 return False
 
-        self.loewner_fact = LoewnerRunFactory(self.time_settings["starttime"],self.time_settings["finaltime"],self.res_settings["outerres"],self.res_settings["innerres"],self.misc_settings["compile"],self.misc_settings["saveplots"],self.misc_settings["savedata"])
+        self.loewner_fact = LoewnerRunFactory(self.time_settings["starttime"],self.time_settings["finaltime"],self.res_settings["outerres"],self.res_settings["innerres"],self.misc_settings["compile"],self.misc_settings["savedata"],self.misc_settings["saveplots"])
 
         self.loewner_fact.alpha = self.drivealpha
         self.loewner_fact.kappa = self.kappa

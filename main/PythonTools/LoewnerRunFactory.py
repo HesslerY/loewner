@@ -3,7 +3,7 @@ from LoewnerRun import LoewnerRun, ConstantLoewnerRun, LinearLoewnerRun, KappaLo
 
 class LoewnerRunFactory():
 
-    def __init__(self, start_time, final_time, outer_points, inner_points, compile_modules = True, save_plot = True, save_data = True):
+    def __init__(self, start_time, final_time, outer_points, inner_points, compile_modules = True, save_data = True, save_plot = True):
 
         # Set the time parameters for the factory
         self.start_time = start_time
@@ -19,9 +19,6 @@ class LoewnerRunFactory():
         # Set the saving options for the factory
         self.save_plot = save_plot
         self.save_data = save_data
-
-        print(self.save_plot)
-        print(self.save_data)
 
         # Give default arguments for the extra parameters
         self.kappa = 0
@@ -54,26 +51,26 @@ class LoewnerRunFactory():
 
         # Create LoewnerRun object based on which driving function was chosen
         if index == CONST_IDX:
-            return ConstantLoewnerRun(constant,start_time,final_time,outer_points,inner_points,self.compile_modules,self.save_plot,self.save_data)
+            return ConstantLoewnerRun(constant,start_time,final_time,outer_points,inner_points,self.compile_modules,self.save_data,self.save_plot)
 
         if index == LINR_IDX:
-            return LinearLoewnerRun(start_time,final_time,outer_points,inner_points,self.compile_modules,self.save_plot,self.save_data)
+            return LinearLoewnerRun(start_time,final_time,outer_points,inner_points,self.compile_modules,self.save_data,self.save_plot)
 
         if index == KAPPA_IDX:
 
             if final_time > 1:
                 final_time = 1
 
-            return KappaLoewnerRun(kappa,start_time,final_time,outer_points,inner_points,self.compile_modules,self.save_plot,self.save_data)
+            return KappaLoewnerRun(kappa,start_time,final_time,outer_points,inner_points,self.compile_modules,self.save_data,self.save_plot)
 
         if index == CALPHA_IDX:
-            return CAlphaLoewnerRun(alpha,start_time,final_time,outer_points,inner_points,self.compile_modules,self.save_plot,self.save_data)
+            return CAlphaLoewnerRun(alpha,start_time,final_time,outer_points,inner_points,self.compile_modules,self.save_data,self.save_plot)
 
         if index == SQRTPLUS_IDX:
-            return SqrtTPlusOneLoewnerRun(start_time,final_time,outer_points,inner_points,self.compile_modules,self.save_plot,self.save_data)
+            return SqrtTPlusOneLoewnerRun(start_time,final_time,outer_points,inner_points,self.compile_modules,self.save_data,self.save_plot)
 
         # Create an ordinary LoewnerRun
-        return LoewnerRun(index,start_time,final_time,outer_points,inner_points,self.compile_modules,self.save_plot,self.save_data)
+        return LoewnerRun(index,start_time,final_time,outer_points,inner_points,self.compile_modules,self.save_data,self.save_plot)
 
     def create_standard_runs(self):
         # Create a list of LoewnerRuns for driving functions that do not require additional arguments

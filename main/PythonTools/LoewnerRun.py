@@ -124,7 +124,7 @@ class LoewnerRun:
     def set_properties_string(self):
 
         # Place the parameters of the run into a list
-        properties = [self.index, self.start_time, self.final_time, self.outer_points, self.inner_points]
+        properties = [self.index, self.number_to_string(self.start_time), self.number_to_string(self.final_time), self.outer_points, self.inner_points]
 
         # Convert the parameters to strings
         desc = [str(attr) for attr in properties]
@@ -135,7 +135,7 @@ class LoewnerRun:
     def set_short_properties_string(self):
 
         # Place the parameters of the run into a list
-        properties = [self.index, self.start_time, self.final_time, self.outer_points]
+        properties = [self.index, self.number_to_string(self.start_time), self.number_to_string(self.final_time), self.outer_points]
 
         # Convert the parameters to strings
         desc = [str(attr) for attr in properties]
@@ -837,7 +837,7 @@ class KappaLoewnerRun(LoewnerRun):
         sqrt_string = self.number_to_string(self.kappa)
 
         # Create a list from the run parameters
-        properties = [self.index, sqrt_string, self.start_time, self.final_time, self.outer_points, self.inner_points]
+        properties = [self.index, sqrt_string, self.number_to_string(self.start_time), self.number_to_string(self.final_time), self.outer_points, self.inner_points]
 
         # Convert the parameters to strings
         desc = [str(attr) for attr in properties]
@@ -851,7 +851,7 @@ class KappaLoewnerRun(LoewnerRun):
         sqrt_string = self.number_to_string(self.kappa)
 
         # Create a list from the run parameters
-        properties = [self.index, sqrt_string, self.start_time, self.final_time, self.outer_points]
+        properties = [self.index, sqrt_string, self.number_to_string(self.start_time), self.number_to_string(self.final_time), self.outer_points]
 
         # Convert the parameters to strings
         desc = [str(attr) for attr in properties]
@@ -994,7 +994,7 @@ class CAlphaLoewnerRun(LoewnerRun):
         sqrt_string = self.number_to_string(self.alpha)
 
         # Create a list from the run parameters
-        properties = [self.index, sqrt_string, self.start_time, self.final_time, self.outer_points, self.inner_points]
+        properties = [self.index, sqrt_string, self.number_to_string(self.start_time), self.number_to_string(self.final_time), self.outer_points, self.inner_points]
 
         # Convert the parameters to strings
         desc = [str(attr) for attr in properties]
@@ -1008,7 +1008,7 @@ class CAlphaLoewnerRun(LoewnerRun):
         sqrt_string = self.number_to_string(self.alpha)
 
         # Create a list from the run parameters
-        properties = [self.index, sqrt_string, self.start_time, self.final_time, self.outer_points]
+        properties = [self.index, sqrt_string, self.number_to_string(self.start_time), self.number_to_string(self.final_time), self.outer_points]
 
         # Convert the parameters to strings
         desc = [str(attr) for attr in properties]

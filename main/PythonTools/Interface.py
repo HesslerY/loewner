@@ -27,7 +27,7 @@ class CommandLineInterface:
                                      "invsin" : self.standard_loewner,
                                      "two" : self.standard_loewner,
                                      "wedge" : self.standard_loewner,
-                                     "exact" : self.exact_solutions,
+                                     "exactsinglelinear" : self.exact_single_linear,
                                      "rms" : self.root_mean_square,
                                    }
 

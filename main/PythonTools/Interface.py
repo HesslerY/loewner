@@ -182,12 +182,12 @@ class CommandLineInterface:
                 return
 
             if inputs[0] == "outerres":
-                if temp > 1:
+                if temp > 0:
                     self.res_settings["outerres"] = temp
                     return True
 
             elif inputs[0] == "innerres":
-                if temp > 1:
+                if temp > 0:
                     self.res_settings["innerres"] = temp
                     return True
 

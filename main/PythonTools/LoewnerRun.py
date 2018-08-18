@@ -129,6 +129,8 @@ class LoewnerRun:
         # Convert the parameters to strings
         desc = [str(attr) for attr in properties]
 
+        print(desc)
+
         # Create a single string to use as a filename template
         self.properties_string = "-".join(desc)
 
@@ -147,10 +149,10 @@ class LoewnerRun:
 
         # Convert a number to a string (used for making filenames)
         # Shows 5 decimal places
-        num_str = str(num)[:7]
+        num_str = "%8.5f" % num
 
-        # Remove any excess zeros
-        num_str = num_str.strip("0")
+        num_str = num_str.strip()
+
         for i in range(len(num_str)-1,0,-1):
 
             if num_str[i] == "0":

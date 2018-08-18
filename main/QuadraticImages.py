@@ -1,5 +1,5 @@
 import sys
-sys.path.append('../PythonTools')
+sys.path.append('PythonTools')
 from Constants import CONST_IDX, LINR_IDX, KAPPA_IDX, CALPHA_IDX, SQRTPLUS_IDX
 from LoewnerRunFactory import LoewnerRunFactory
 
@@ -8,7 +8,7 @@ start_time = 0
 final_time = 25
 outer_points = 1000
 inner_points = 10
-compile_modules = False
+compile_modules = True
 save_plot = True
 save_data = True
 
@@ -30,6 +30,8 @@ for run in standard_runs:
 
     run.quadratic_forward_loewner()
     print("Finished quadratic forward for driving function " + str(run.name))
+
+    exit()
 
     run.quadratic_inverse_loewner()
     print("Finished quadratic inverse for driving function " + str(run.name))

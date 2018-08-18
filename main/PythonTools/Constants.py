@@ -125,13 +125,9 @@ HALF_PI = pi / 2
 # Prompt message
 LOEWNER_PROMPT = "Loewner >> "
 
-# Create a dictionary of response-function pairs for the 'main' menu
+# Define location of help message for interface
 HELPMSG = "PythonTools/HelpMessages/MainHelp"
-FORSINGLE_HELPMSG = "Interface/ForwardInverseHelp"
-INVSINGLE_HELPMSG = "Inverse Single-Trace Instructions:\nSelect one or more driving functions by enterting their indices. Enter desired resolution parameters and any additional arguments. Choose to then plot your results, save your results, or both."
-FORINV_HELPMSG = "PythonTools/HelpMessages/ForwardInverseHelp"
-TWO_HELPMSG = "Two-Trace Instructions:\nSelect one or more driving functions by enterting their indices. Enter desired resolution parameters and any additional arguments. Choose to then plot your results, save your results, or both."
-WEDGE_HELPMSG = "Wedge Trace Instructions:\nSelect one or more driving functions by enterting their indices. Enter desired resolution parameters and any additional arguments. Choose to then plot your results, save your results, or both."
 
+# Create lists of common commands
 BACK_COMMANDS = ["b","back"]
 HELP_COMMANDS = ["h","help"]

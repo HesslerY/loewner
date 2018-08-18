@@ -20,7 +20,15 @@ class LoewnerRunFactory():
         self.save_plot = save_plot
         self.save_data = save_data
 
-    def select_single_run(self,index,start_time=None,final_time=None,outer_points=None,inner_points=None,constant=0,kappa=None,alpha=None):
+        print(self.save_plot)
+        print(self.save_data)
+
+        # Give default arguments for the extra parameters
+        self.kappa = 0
+        self.alpha = 0
+        self.constant = 0
+
+    def select_single_run(self,index,start_time=None,final_time=None,outer_points=None,inner_points=None,constant=None,kappa=None,alpha=None):
 
         # Choose the class variables for the LoewnerRun object if no alternative is given
         if start_time is None:
@@ -34,6 +42,15 @@ class LoewnerRunFactory():
 
         if inner_points is None:
             inner_points = self.inner_points
+
+        if kappa is None:
+            kappa = self.kappa
+
+        if constant is None:
+            constant = self.constant
+
+        if alpha is None:
+            alpha = self.alpha
 
         # Create LoewnerRun object based on which driving function was chosen
         if index == CONST_IDX:

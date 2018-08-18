@@ -1,5 +1,5 @@
 import sys
-sys.path.append('../PythonTools')
+sys.path.append('PythonTools')
 from Constants import CONST_IDX, LINR_IDX, KAPPA_IDX, CALPHA_IDX, SQRTPLUS_IDX
 from LoewnerRunFactory import LoewnerRunFactory
 from math import pi

@@ -1,5 +1,5 @@
 import sys
-sys.path.append('../PythonTools')
+sys.path.append('PythonTools')
 from Constants import CONST_IDX, LINR_IDX, KAPPA_IDX, CALPHA_IDX, SQRTPLUS_IDX
 from LoewnerRunFactory import LoewnerRunFactory
 
@@ -8,7 +8,7 @@ start_time = 0
 final_time = 25
 outer_points = 1000
 inner_points = 10
-compile_modules = False
+compile_modules = True
 save_plot = False
 save_data = True
 

@@ -1,5 +1,5 @@
 import sys
-sys.path.append('../PythonTools')
+sys.path.append('PythonTools')
 from LoewnerRunFactory import LoewnerRunFactory
 
 start_time = 0

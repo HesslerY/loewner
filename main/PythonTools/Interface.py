@@ -1,4 +1,4 @@
-from Constants import LOEWNER_PROMPT, FORSINGLE_HELPMSG, INVSINGLE_HELPMSG, FORINV_HELPMSG, TWO_HELPMSG, WEDGE_HELPMSG, HELPMSG, DRIVING_LIST, BACK_COMMANDS, HELP_COMMANDS, TOTAL_DRIVING_FUNCTIONS
+from Constants import *
 from LoewnerRunFactory import LoewnerRunFactory
 from prompt_toolkit import PromptSession
 from prompt_toolkit.shortcuts import button_dialog
@@ -16,11 +16,7 @@ class CommandLineInterface:
                                }
 
         # Create a dictionary of response-function pairs for the 'main' menu
-        self.help_responses = { "forsin" : FORSINGLE_HELPMSG,
-                                "invsin" : INVSINGLE_HELPMSG,
-                                "forinvsin" : FORINV_HELPMSG,
-                                "two" : TWO_HELPMSG,
-                                "wedge" : WEDGE_HELPMSG,
+        self.help_responses = {
                                 "help" : HELPMSG,
                                 "h" : HELPMSG,
                               }
@@ -29,9 +25,8 @@ class CommandLineInterface:
         # Create a dictionary of response-function pairs for the 'main' menu
         self.algorithm_responses = { "forsin" : self.standard_loewner,
                                      "invsin" : self.standard_loewner,
-                                     "forinvsin" : self.standard_loewner,
                                      "two" : self.standard_loewner,
-                                     "wedge" : self.wedge_trace,
+                                     "wedge" : self.standard_loewner,
                                      "exact" : self.exact_solutions,
                                      "rms" : self.root_mean_square,
                                    }
@@ -39,12 +34,15 @@ class CommandLineInterface:
         # Create prompt object.
         self.session = PromptSession(message=LOEWNER_PROMPT)
 
+        # Declare 'mode' booleans - these decide which LoewnerRun algorithm to use
         self.forsingle = False
         self.invsingle = False
         self.twotrace = False
+        self.wedge = False
         self.exact = False
         self.rms = False
 
+        # Create settings of the LoewnerRunFactory
         self.time_settings =    {
                                   "starttime" : None,
                                   "finaltime" : None,
@@ -57,7 +55,7 @@ class CommandLineInterface:
 
 
         self.misc_settings =    {
-                                  "compileplots" : None,
+                                  "compile" : None,
                                   "saveplots" : None,
                                   "savedata" : None,
                                 }
@@ -66,13 +64,18 @@ class CommandLineInterface:
                               "n" : False,
                             }
 
-    # Exit the program
+        self.wedgealpha = 0
+        self.kappa = 0
+        self.drivealpha = 0
+        self.constant = 0
+
     def exit_loewner(self,msg_type):
+        # Exit the program
         exit()
 
-    # Print a help message
-    def print_help_message(self,msg_type):
+    def print_help_message(self,msg_type=HELPMSG):
 
+        # Print a help message
         help_file_loc = self.help_responses[msg_type]
         help_file = open(help_file_loc)
 
@@ -84,14 +87,18 @@ class CommandLineInterface:
 
     def set_mode(self,mode_input):
 
-        if mode_input in ["forsin", "forinvsin"]:
+        # Set the program mode that determines what algorithm will run
+        if mode_input == "forsin":
             self.forsingle = True
 
-        if mode_input in ["invsin", "forinvsin"]:
+        if mode_input in "invsin":
             self.invsingle = True
 
         if mode_input == "two":
             self.twotrace = True
+
+        if mode_input == "wedge":
+            self.wedge = True
 
         if mode_input == "exact":
             self.exact = True
@@ -101,6 +108,7 @@ class CommandLineInterface:
 
     def standard_input(self):
 
+        # Await the 'standard' input - help or quit
         while True:
 
             user_input = self.session.prompt()
@@ -111,14 +119,43 @@ class CommandLineInterface:
             return user_input
 
     def bad_input_message(self,user_input):
+        # Print a message for unexpected inputs
         print("Unrecognised instruction: " + user_input + " (Press h for help)")
 
     def change_parameter(self,user_input):
 
+        # Change one of the parameters that governs the LoewnerRunFactory
         inputs = user_input.split()
 
         if len(inputs) != 2:
             return
+
+        if inputs[0] == "kappa":
+            try:
+                temp = float(inputs[1])
+            except ValueError:
+                return
+            if temp > 0:
+                self.kappa = temp
+                return True
+
+        if inputs[0] == "drivealpha":
+            try:
+                temp = float(inputs[1])
+            except ValueError:
+                return
+            if temp > 0:
+                self.drivealpha = temp
+                return True
+
+        if inputs[0] == "wedgealpha":
+            try:
+                temp = float(inputs[1])
+            except ValueError:
+                return
+            if temp > 0:
+                self.wedgealpha = temp
+                return True
 
         if inputs[0] in self.time_settings:
 
@@ -144,8 +181,6 @@ class CommandLineInterface:
             except ValueError:
                 return
 
-            print(inputs[0])
-
             if inputs[0] == "outerres":
                 if temp > 1:
                     self.res_settings["outerres"] = temp
@@ -157,14 +192,15 @@ class CommandLineInterface:
                     return True
 
         if inputs[0] in self.misc_settings:
-            if inputs[1] in ["y","n"]:
+            if inputs[1] in self.convert_bool.keys():
                 self.misc_settings[inputs[0]] = self.convert_bool[inputs[1]]
                 return True
 
         return False
 
-    def create_factory(self):
+    def create_factory(self,driving_list):
 
+        # Validate and create a LoewnerRunFactory
         if any([val is None for val in self.time_settings.values()]):
             return False
 
@@ -189,11 +225,28 @@ class CommandLineInterface:
         if not any(self.misc_settings.values()):
             return False
 
-        self.loewner_fact = LoewnerRunFactory(*list(self.time_settings.values()),*list(self.res_settings.values()),*list(self.misc_settings.values()))
+        if CALPHA_IDX in driving_list:
+            if self.drivealpha == 0:
+                return False
+
+        if KAPPA_IDX in driving_list:
+            if self.kappa == 0:
+                return False
+
+        if CONST_IDX in driving_list:
+            if self.constant == None:
+                return False
+
+        self.loewner_fact = LoewnerRunFactory(self.time_settings["starttime"],self.time_settings["finaltime"],self.res_settings["outerres"],self.res_settings["innerres"],self.misc_settings["compile"],self.misc_settings["saveplots"],self.misc_settings["savedata"])
+
+        self.loewner_fact.alpha = self.drivealpha
+        self.loewner_fact.kappa = self.kappa
+        self.loewner_fact.constant = self.constant
 
         return True
 
     def create_loewner_runs(self,driving_list):
+        # Create LoewnerRuns with the LoewnerRunFactory depending on the user's selections
         return [self.loewner_fact.select_single_run(index=i) for i in driving_list]
 
     def print_driving_functions(self):
@@ -201,12 +254,6 @@ class CommandLineInterface:
         # Print all driving functions and their indices
         for item in DRIVING_LIST:
             print(item)
-
-    def print_driving_selection(self,driving_selection):
-
-        # Print the user-selected driving functions
-        for index in driving_selection:
-            print(DRIVING_LIST[index])
 
     def validate_driving_functions(self,user_input):
 
@@ -226,14 +273,13 @@ class CommandLineInterface:
     # Run the forward and inverse single-trace algorithms
     def standard_loewner(self):
 
-        # print("Forward + Inverse Single-Trace Mode:")
-
         # Run the prompt
         while True:
 
             # Await under input
             user_input = self.standard_input()
 
+            # Attempt to change the LoewenerRunFactory parameters
             if self.change_parameter(user_input):
                 continue
 
@@ -247,22 +293,25 @@ class CommandLineInterface:
             # check for the help instruction
             if user_input == "dr":
                 self.print_driving_functions()
+                continue
 
             # Check if in the response correponds with help/exit
-            elif user_input in self.basic_responses:
-                self.basic_responses[user_input]("forinvsin")
+            if user_input in self.basic_responses:
+                self.basic_responses[user_input]()
+                continue
 
             # Check if a list of driving functions were entered
-            elif driving_list is not False:
+            if driving_list is not False:
 
-                if self.create_factory():
+                if self.create_factory(driving_list):
                     print("Successfully initialised LoewnerRun factory.")
                 else:
-                    print("Could not create LoewnerRun factory.")
+                    print("Could not create LoewnerRun factory. Bad or incomplete parameters given.")
                     continue
 
+                # Create a list of LoewnerRuns from the LoewnerRunFactory
                 loewner_runs = self.create_loewner_runs(driving_list)
-                print("Successfully created LoewnerRuns.")
+                print("Successfully created LoewnerRuns for driving functions " + " ".join([str(i) for i in driving_list]))
 
                 # Carry out the 'standard' runs (drving functions for which there are no extra parameters)
                 for run in loewner_runs:
@@ -277,6 +326,11 @@ class CommandLineInterface:
                         run.quadratic_inverse_loewner()
                         print("Finished single-trace inverse for driving function " + str(run.name))
 
+                    if self.wedge is True and self.wedgealpha > 0:
+
+                        run.wedge_growth(self.wedgealpha)
+                        print("Finished wedge-trace for driving function " + str(run.name))
+
                     if self.twotrace is True:
 
                         run.cubic_forward_loewner()
@@ -286,37 +340,10 @@ class CommandLineInterface:
                 exit()
 
             # Print the bad input message
-            else:
-                self.bad_input_message(user_input)
-
-    def two_trace(self):
-
-        print("Two-Trace Selected.")
-
-        while True:
-
-            user_input = self.standard_input()
-
-            # Check for 'go back' instruction
-            if user_input in BACK_COMMANDS:
-                return
-
-    def wedge_trace(self):
-
-        print("Wedge Trace Selected.")
-
-        while True:
-
-            user_input = self.standard_input()
-
-            # Check for 'go back' instruction
-            if user_input in BACK_COMMANDS:
-                return
+            self.bad_input_message(user_input)
 
     # Run the root-mean-sqaure algorithms
     def root_mean_square(self):
-
-        print("Root Mean Square Mode:")
 
         while True:
 
@@ -328,8 +355,6 @@ class CommandLineInterface:
 
     # Run the exact solution algorithms
     def exact_solutions(self):
-
-        print("Exact Solution Mode:")
 
         while True:
             user_input = self.standard_input()

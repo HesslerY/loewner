@@ -1,5 +1,5 @@
 import sys
-sys.path.append('../PythonTools')
+sys.path.append('PythonTools')
 from LoewnerRunFactory import LoewnerRunFactory
 from Constants import HALF_PI
 

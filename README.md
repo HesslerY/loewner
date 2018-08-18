@@ -2,7 +2,7 @@
 
 <p align="center">
   <img src="https://github.com/ucapdak/loewner/blob/master/example.png" 
-  width="800" alt="Forward Single Trace Output - xi(t) = t * cos(t * pi)"/>
+  width="500" alt="Forward Single Trace Output - xi(t) = t * cos(t * pi)"/>
 </p>
 
 ## Setup

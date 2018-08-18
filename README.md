@@ -9,8 +9,18 @@
 * Python3 
 
 #### Python Libraries
-f2py
-Matlab Engine for Python
+* f2py
+* Matlab Engine for Python
+* numpy
+* mpmath
+* cmath
+* prompt_toolkit
+* importlib
+* matplotlib
+
+#### Matlab Toolboxes
+* Parallel Computing Toolbox
+* Optimization Toolbox
 
 ### Installing
 
@@ -26,15 +36,7 @@ git clone https://github.com/ucapdak/loewner.git
 
 ### Usage Instructions
 
-## Authors
-
-* **Dolica Akello-Egwel** - *Initial work* - [udapcak](https://github.com/ucapdak)
-
-## Further Work
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
 

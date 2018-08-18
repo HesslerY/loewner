@@ -129,8 +129,6 @@ class LoewnerRun:
         # Convert the parameters to strings
         desc = [str(attr) for attr in properties]
 
-        print(desc)
-
         # Create a single string to use as a filename template
         self.properties_string = "-".join(desc)
 
@@ -151,8 +149,10 @@ class LoewnerRun:
         # Shows 5 decimal places
         num_str = "%8.5f" % num
 
+        # Remove stray whitespace
         num_str = num_str.strip()
 
+        # Remove excess zeroes
         for i in range(len(num_str)-1,0,-1):
 
             if num_str[i] == "0":
@@ -526,7 +526,7 @@ class LoewnerRun:
         alpha_string = self.number_to_string(wedge_alpha)
 
         # Create a properties sring for the run
-        wedge_properties_string = "-".join([str(attr) for attr in [self.index, alpha_string, self.start_time, self.final_time, self.outer_points, self.inner_points]])
+        wedge_properties_string = "-".join([str(attr) for attr in [self.index, alpha_string, self.number_to_string(self.start_time), self.number_to_string(self.final_time), self.outer_points, self.inner_points]])
 
         if self.save_data:
 

@@ -316,22 +316,24 @@ class CommandLineInterface:
                 # Carry out the 'standard' runs (drving functions for which there are no extra parameters)
                 for run in loewner_runs:
 
-                    if self.forsingle is True:
+                    if self.forsingle or self.invsingle:
 
                         run.quadratic_forward_loewner()
-                        print("Finished single-trace forward for driving function " + str(run.name))
 
-                    if self.invsingle is True:
+                        if self.forsingle:
+                            print("Finished single-trace forward for driving function " + str(run.name))
+
+                    if self.invsingle:
 
                         run.quadratic_inverse_loewner()
                         print("Finished single-trace inverse for driving function " + str(run.name))
 
-                    if self.wedge is True and self.wedgealpha > 0:
+                    if self.wedge and self.wedgealpha > 0:
 
                         run.wedge_growth(self.wedgealpha)
                         print("Finished wedge-trace for driving function " + str(run.name))
 
-                    if self.twotrace is True:
+                    if self.twotrace:
 
                         run.cubic_forward_loewner()
                         print("Finished two-trace for driving function " + str(run.name))

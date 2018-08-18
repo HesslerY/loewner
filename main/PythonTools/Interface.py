@@ -309,6 +309,10 @@ class CommandLineInterface:
                     print("Could not create LoewnerRun factory. Bad or incomplete parameters given.")
                     continue
 
+                if self.wedge and self.wedgealpha <= 0:
+                    print("Can't use wedgde mode with wedge alpha value:" + str(self.wedgealpha))
+                    continue
+
                 # Create a list of LoewnerRuns from the LoewnerRunFactory
                 loewner_runs = self.create_loewner_runs(driving_list)
                 print("Successfully created LoewnerRuns for driving functions " + " ".join([str(i) for i in driving_list]))

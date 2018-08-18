@@ -152,7 +152,7 @@ class LoewnerRun:
         # Remove stray whitespace
         num_str = num_str.strip()
 
-        # Remove excess zeroes
+        # Remove excess zeroes from the end of the string (e.g. 12.000000 -> 12)
         for i in range(len(num_str)-1,0,-1):
 
             if num_str[i] == "0":
@@ -510,7 +510,7 @@ class LoewnerRun:
         eng.workspace['kappa'] = self.kappa
 
         # Instruct the workspace to look for files in the Wedge directory
-        eng.eval('addpath("../WedgeLoewner/")')
+        eng.eval('addpath("WedgeLoewner")')
 
         # Carry out the algorithm for solving the wedge case of Loewner's equation
         wedge_result = eng.eval('SolveWedgeLoewner(index,start_time,final_time,inner_points,outer_points,wedge_alpha,fast,constant,kappa)',nargout=1)

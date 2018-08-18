@@ -1,23 +1,28 @@
 # Numerical Solutions to Loewner's Equation for Single and Two-Trace Evolutions
 
-One Paragraph of project description goes here
-
-## Getting Started
-
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
+## Setup
 
 ### Prerequisites
 
-Matlab
-Python3
-gfortran
+#### Essential
+* Matlab R2017b or later 
+* Python3 
+
+#### Python Libraries
+f2py
 Matlab Engine for Python
 
+### Installing
+
+SSH:
 ```
-Give examples
+git clone git@github.com:ucapdak/loewner.git
 ```
 
-### Installing
+HTTPS:
+```
+git clone https://github.com/ucapdak/loewner.git
+```
 
 ### Usage Instructions
 

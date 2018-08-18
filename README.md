@@ -9,18 +9,18 @@
 * Python3 
 
 #### Python Libraries
-* f2py
-* Matlab Engine for Python
-* numpy
-* mpmath
-* cmath
-* prompt_toolkit
-* importlib
-* matplotlib
+* f2py - Required for using Fortran programs (forward/inverse single-trace and two-trace) within interface.
+* Matlab Engine for Python - Required for using Wedge program within interface.
+* numpy - Essential for handling complex arrays.
+* mpmath - Required for computing exact solutions.
+* cmath - Required for computing exact solutions.
+* prompt_toolkit - Required for using CLI interface.
+* importlib - Essential for loading Fortran modules.
+* matplotlib - Required for saving plots.
 
 #### Matlab Toolboxes
-* Parallel Computing Toolbox
-* Optimization Toolbox
+* Parallel Computing Toolbox - Reccomended for using Wedge program.
+* Optimization Toolbox - Essential for using Wedge program.
 
 ### Installing
 
@@ -35,6 +35,12 @@ git clone https://github.com/ucapdak/loewner.git
 ```
 
 ### Usage Instructions
+
+#### Using the Command-Line-Interface
+
+##### Forward Single-Trace Runs
+
+#### File-Saving
 
 ## License
 

@@ -1,6 +1,9 @@
 # Numerical Solutions to Loewner's Equation for Single and Two-Trace Evolutions
-=============
 ## Setup
+
+<p align="center">
+  <img src="https://github.com/ucapdak/loewner/blob/master/example.png" alt="Forward Single Trace Output - xi(t) = t * cos(t * pi)"/>
+</p>
 
 ### Prerequisites
 

@@ -7,8 +7,6 @@
 
 ## Setup
 
-
-
 ### Prerequisites
 
 #### Essential
@@ -44,6 +42,13 @@ git clone https://github.com/ucapdak/loewner.git
 ### Usage Instructions
 
 #### Using the Command-Line-Interface
+
+From the main directory enter ``python Start.py`` to launch the CLI. This will initialise the "main" menu. From here you can enter the following commands:
+
+* `` forsin `` - Start forward single-trace mode
+* `` invsin `` - Start inverse single-trace mode
+* `` invsin `` - Start two-trace mode
+* `` wedge `` - Start wedge trace mode
 
 ##### Forward Single-Trace Runs
 

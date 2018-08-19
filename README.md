@@ -56,7 +56,7 @@ To run the program in for the various driving functions you have to use the foll
 
 | Index        | Driving Function  | Extra Arguments?  |
 | ------------- |:-------------:| -----:|
-| 0      |  | The constant value: 1, 0, etc |
+| 0      | (https://github.com/ucapdak/loewner/blob/master/readmeimages/01df.png) | The constant value: 1, 0, etc |
 | 1      | centered      |   $12 |
 | 2 | are neat      |    $1 |
 

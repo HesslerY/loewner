@@ -56,7 +56,7 @@ To run the program in for the various driving functions you have to use the foll
 
 | Index  | Driving Function                                                          | Extra Arguments?   | Frd. Single    | Inv. Single (and Exact Inverse) | Frd. Two-Trace | Wedge           | Exact Solution  |
 | ------ |:--------------------------------------------------------------------------| :------------------|:--------------:|:-------------------------------:|:--------------:|:---------------:|:----------------|
-| 0      | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/00df.png) | C                  | Yes            | Yes                             | Yes            | Yes (for C = 1) | Two-Trace       |
+| 0      | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/00df.png) | C                  | Yes            | Yes                             | Yes            | Yes (C = 1)     | Two-Trace (C=1) |
 | 1      | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/01df.png) | None               | Yes            | Yes                             | Yes            | No              | Single-Trace    |
 | 2      | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/02df.png) | None               | Yes            | Yes                             | Yes            | No              | None            |
 | 3      | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/03df.png) | None               | Yes            | Yes                             | Yes            | No              | None            |

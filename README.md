@@ -117,16 +117,17 @@ This mode allows you to run one or more driving functions with the option to sav
 4. Enter `` run ``
 5. If the parameters are successfully validated, then the program will execute these runs and save the output. In the event that the parameters could not be validated, type `` error `` to receive more information. You can then re-enter the parameters and try again.
 
-Upon completion, the output will be saved to:
-\[LOEWNER DIRECTORY\]main/Output/Data/SingleTrace/Forward/
-\[LOEWNER DIRECTORY\]main/Output/Plots/SingleTrace/Forward/
-
-The output file will have the format: 
-``[INDEX]-[START TIME]-[FINAL TIME]-[OUTER RESOLUTION]-[INNER RESOLUTION].EXT`` where ``.EXT`` is either .dat or .pdf depending on the output type.
-
-For kappa and c-alpha the files are saved in the format: 
+Upon completion, the output will be saved to:  
+Plots:  
+\[LOEWNER DIRECTORY\]main/Output/Data/SingleTrace/Forward/  
+\[LOEWNER DIRECTORY\]main/Output/Plots/SingleTrace/Forward/  
+  
+The output file will have the format:  
+``[INDEX]-[START TIME]-[FINAL TIME]-[OUTER RESOLUTION]-[INNER RESOLUTION].EXT`` where ``.EXT`` is either .dat or .pdf depending on the output type.  
+  
+For kappa and c-alpha the files are saved in the format:  
 ``[INDEX]-[KAPPA OR ALPHA VALUE]-[START TIME]-[FINAL TIME]-[OUTER RESOLUTION]-[INNER RESOLUTION].EXT``  
- 
+  
 The float values in the filenames (time, kappa, c-alpha) are saved with up to 5 decimal places of precision. Note: This will be overwritten if you use two nearly identical runs with a final run time of 15.000055 and one with a final time of 15.000059. The data file contents will have 18 decimal places precision.
 
 ## License

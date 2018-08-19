@@ -154,12 +154,14 @@ class CommandLineInterface:
         if inputs[0] != MULTIPLE_TIMES:
             return False
 
+
+
         # Attempt to convert the second and third arguments to floats
         try:
 
             # This still permits bad/negative values, but validation occurs in the next step so it will be caught then
-            self.starttime = float(inputs[1])
-            self.finaltime = float(inputs[2])
+            self.time_settings[START_TIME] = float(inputs[1])
+            self.time_settings[FINAL_TIME] = float(inputs[2])
 
         except ValueError:
 
@@ -183,8 +185,8 @@ class CommandLineInterface:
         try:
 
             # This still permits bad/negative values, but validation occurs in the next step so it will be caught then
-            self.outerres = int(inputs[1])
-            self.innerres = int(inputs[2])
+            self.res_settings[OUTER_RES] = int(inputs[1])
+            self.res_settings[INNER_RES] = int(inputs[2])
 
         except ValueError:
 
@@ -206,7 +208,7 @@ class CommandLineInterface:
 
         # Return false if the input does not consist of two strings and doesn't contain multiple arguments
         if len(inputs) != 2:
-            return self.multiple_times(user_input) or self.multiple_resolutions(user_input)
+            return self.multiple_times(inputs) or self.multiple_resolutions(inputs)
 
         if inputs[0] == KAPPA:
             try:
@@ -492,7 +494,7 @@ class CommandLineInterface:
                         print("Finished two-trace for driving function " + str(run.name))
 
                 print("Runs completed successfully.")
-                exit()
+                return
 
             # Print the bad input message
             self.bad_input_message(user_input)

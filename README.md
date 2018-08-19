@@ -101,44 +101,102 @@ After selecting a mode you have to set certain parameters for the driving functi
 
 e.g. ``Loewner >> starttime 0 `` to use a start time of zero. For compilation and saving data your response must be given in the form of `` y `` or `` n ``, e.g. `` Loewner >>saveplots y ``. In the case of kappa-driving any final time greater than 1 will be automatically changed to 1.
 
-Extra parameters:
+Alternative arguments:  
+  
+* `` times [start time] [final time] `` - Quick time arguments.
+* `` res [outer res] [inner res] `` - Quick res arguments.
+
+Extra parameters:  
+  
 * `` wedgealpha `` - Only required for wedge mode.
 * `` constant `` - Only required if you intend to run constant-driving.
 * `` kappa `` - Only required if you intend to run kappa-driving.
 * `` drivealpha `` - Only required if you intent to run c-alpha-driving.
 
-### Forward Single-Trace Runs - `` forsin `` Mode
+Additional commands:  
+  
+`` cleardriving `` - Clear the driving function selection and start over.  
+`` printdriving `` - Print the current driving function selection.  
+  
+### Forward/Inverse Single-Trace Runs - `` forsin `` or `` invsin `` Mode
 
 This mode allows you to run one or more driving functions with the option to save and/or plot the results. This can only run constant, kappa, and c-alpha runs once.
 
-1. Enter `` forsin `` from the main menu
+1. Enter `` forsin `` or `` invsin `` from the main menu
 2. Enter the run-parameters.
 3. Enter a list of driving functions you wish to use seperated by a space, e.g. ``Loewner >> INDEX1 INDEX2 INDEX3 ``. This can allow 'standard' driving functions more than once, but cannot be used to run the driving functions that require extra arguments more than once.
 4. Enter `` run ``
 5. If the parameters are successfully validated, then the program will execute these runs and save the output. In the event that the parameters could not be validated, type `` error `` to receive more information. You can then re-enter the parameters and try again.
-
-Additional commands:
-`` cleardriving `` - Clear the driving function selection and start over.  
-`` printdriving `` - Print the current driving function selection.  
-`` dr `` - Print all avaliable driving functions and their indices.  
   
 Upon completion, the output will be saved to:  
+  
 Data:  
 ```
-\[LOEWNER DIRECTORY]main/Output/Data/SingleTrace/Forward/  
+[LOEWNER DIRECTORY]/main/Output/Data/SingleTrace/[Forward or Inverse]/  
 ```
 Plots:
 ```
-\[LOEWNER DIRECTORY]main/Output/Plots/SingleTrace/Forward/  
+[LOEWNER DIRECTORY]/main/Output/Plots/SingleTrace/[Forward or Inverse]/  
 ```
+### Forward Two-Trace Runs - `` two `` Mode
+
+This mode allows you to run one or more driving functions with the option to save and/or plot the results. This can only run constant, kappa, and c-alpha runs once.
+
+1. Enter `` two `` from the main menu
+2. Enter the run-parameters.
+3. Enter a list of driving functions you wish to use seperated by a space, e.g. ``Loewner >> INDEX1 INDEX2 INDEX3 ``. This can allow 'standard' driving functions more than once, but cannot be used to run the driving functions that require extra arguments more than once.
+4. Enter `` run ``
+5. If the parameters are successfully validated, then the program will execute these runs and save the output. In the event that the parameters could not be validated, type `` error `` to receive more information. You can then re-enter the parameters and try again.
   
-The output file will have the format:  
+Upon completion, the output will be saved to:  
+  
+Data:  
+```
+[LOEWNER DIRECTORY]/main/Output/Data/TwoTrace/Forward/  
+```
+Plots:
+```
+[LOEWNER DIRECTORY]/main/Output/Plots/TwoTrace/Forward/  
+```
+### Wedge Runs - `` two `` Mode
+
+This mode allows you to run one or more driving functions with the option to save and/or plot the results. This can only run constant, kappa, and c-alpha runs once.
+
+1. Enter `` wedge `` from the main menu
+2. Enter the run-parameters. Also enter a ``wedgealpha`` argument in the form of radians.
+3. Enter a list of driving functions you wish to use seperated by a space, e.g. ``Loewner >> INDEX1 INDEX2 INDEX3 ``. This can allow 'standard' driving functions more than once, but cannot be used to run the driving functions that require extra arguments more than once.
+4. Enter `` run ``
+5. If the parameters are successfully validated, then the program will execute these runs and save the output. In the event that the parameters could not be validated, type `` error `` to receive more information. You can then re-enter the parameters and try again.
+  
+Upon completion, the output will be saved to:  
+  
+Data:  
+```
+[LOEWNER DIRECTORY]/main/Output/Data/WedgeGrowth/  
+```
+Plots:
+```
+[LOEWNER DIRECTORY]/main/Output/Plots/WedgeGrowth/  
+```
+### Output Formats
+
+Plots are saved as PDFs, data is saved in DAT files. The DAT files have 18 decimal places of precision and the columns are seperated by a space. The time/kappa/wegde angle/alpha parameters are represented in the filename with 5 decimal places of precision, so there is a risk of ovewritting results for near-identical results where certain parameters are rounded to the same value.
+
+#### Numerical Single-Trace Forward and Inverse + Two-Trace Forward Results
+
+For numerical single-trace forward and inverse, the output filename will take the form:  
+  
 ``[INDEX]-[START TIME]-[FINAL TIME]-[OUTER RESOLUTION]-[INNER RESOLUTION].EXT`` where ``.EXT`` is either .dat or .pdf depending on the output type.  
   
 For kappa and c-alpha the files are saved in the format:  
+  
 ``[INDEX]-[KAPPA OR ALPHA VALUE]-[START TIME]-[FINAL TIME]-[OUTER RESOLUTION]-[INNER RESOLUTION].EXT``  
   
-The float values in the filenames (time, kappa, c-alpha) are saved with up to 5 decimal places of precision. Note: This will be overwritten if you use two nearly identical runs with a final run time of 15.000055 and one with a final time of 15.000059. The data file contents will have 18 decimal places precision.
+#### Wedge Results
+
+For the wedge algorithm, the output filename will take the form:  
+  
+``[INDEX]-[WEDGE ANGLE]-[FINAL TIME]-[OUTER RESOLUTION]-[INNER RESOLUTION].EXT``
 
 ## License
 

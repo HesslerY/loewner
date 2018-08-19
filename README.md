@@ -39,9 +39,9 @@ HTTPS:
 git clone https://github.com/ucapdak/loewner.git
 ```
 
-### Usage Instructions
+## Usage Instructions
 
-#### Using the Command-Line-Interface
+### Using the Command-Line-Interface
 
 From the main directory enter ``python Start.py`` to launch the CLI. This will initialise the "main" menu. From here you can enter the following commands:
 
@@ -57,7 +57,7 @@ Other Important Commands:
 * `` h `` or  `` help `` - Display a help message
 * `` b `` or  `` back `` - Return to the main menu
 
-#### Driving Function Indices
+### Driving Function Indices
 
 To run the program in for the various driving functions you have to use the following index system:
 
@@ -79,7 +79,7 @@ To run the program in for the various driving functions you have to use the foll
 | 13     | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/13df.png) | None               | Yes            | Yes                             | Yes            | No              | None            |
 | 14     | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/14df.png) | None               | Yes            | Yes                             | Yes            | Yes             | Two-Trace       |
 
-#### Compilation
+### Compilation
 
 Using much of the program within the CLI requires compiling certain files as Python modules.
 
@@ -87,29 +87,32 @@ For most driving functions, using the forward and two-trace modes requires compi
 
 For the kappa, calpha, and constant driving functions you have to recompile the module every time these values are changed.
 
-#### Preparing One or More Runs
+### Preparing One or More Runs
 
 After selecting a mode you have to set certain parameters for the driving functions you wish to run. This is done by entering `` [parameter] [value] `` in the CLI.
 
 * `` starttime `` - Start time for the runs. Must be greater than zero.
 * `` finaltime `` - Final time for the runs. Must be greater than the start time.
 * `` outerres `` - Outer resolution. Must be greater than zero.
-* `` innerres `` - Inner resolution. Must be greater than zero. (Not needed for exact inverse)
-* `` compile `` - Whether or not to compile modules. Typically only has to be done on the first execution of the program, or not at all, depending on the algorithm. See more.
+* `` innerres `` - Inner resolution. Must be greater than zero.
+* `` compile `` - Whether or not to compile modules. Typically only has to be done on the first execution of the program, or not at all, depending on the algorithm. See [more](https://github.com/ucapdak/loewner#compilation).
 * `` savedata `` - Save the output as .dat files. These are seperated by a space.
 * `` saveplots `` - Save the output as .pdf plots.
 
+e.g. ``Loewner >> starttime 0 `` to use a start time of zero. For compilation and saving data your response must be given in the form of `` y `` or `` n ``, e.g. `` Loewner >>saveplots y ``. In the case of kappa-driving any final time greater than 1 will be automatically changed to 1.
+
 Extra parameters:
-* `` wedgealpha `` - Only required for wedge mode
+* `` wedgealpha `` - Only required for wedge mode.
 * `` constant `` - Only required if you intend to run constant-driving.
 * `` kappa `` - Only required if you intend to run kappa-driving.
 * `` drivealpha `` - Only required if you intent to run c-alpha-driving.
 
-#### Forward Single-Trace Runs - `` forsin `` Mode
+### Forward Single-Trace Runs - `` forsin `` Mode
 
 This mode allows you to run one or more driving functions with the option to save and/or plot the results.
 
-
+1. Enter `` forsin `` from the main menu
+2. Enter the run-parameters: 
 
 ## License
 

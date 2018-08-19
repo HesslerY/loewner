@@ -49,6 +49,7 @@ From the main directory enter ``python Start.py`` to launch the CLI. This will i
 * `` invsin `` - Start inverse single-trace mode
 * `` two `` - Start two-trace mode
 * `` wedge `` - Start wedge trace mode
+* ``exactinv`` - Start exact inverse solution mode.
 
 Other Important Commands:
 
@@ -114,18 +115,20 @@ Extra parameters:
 * `` drivealpha `` - Only required if you intend to run c-alpha-driving.
 
 Additional commands:  
+* `` run `` - Enter the list of driving functions you wish to use for a certain algorithm in the form ``run INDEX1 INDEX2``
+* `` start `` Executes the algotihm once parameters and driving functions have been chosen.
+* `` cleardriving `` - Clear the driving function selection and start over.  
+* `` printdriving `` - Print the current driving function selection.  
+* `` error `` - Displays information on why enterting ``start`` failed and algorithm could not be performed. This will be caused when parameters haven't been set or have bad values.
   
-`` cleardriving `` - Clear the driving function selection and start over.  
-`` printdriving `` - Print the current driving function selection.  
-  
-### Forward/Inverse Single-Trace and Forward Two-Trace Runs - `` forsin ``/`` invsin ``/``two`` Mode
+### Forward/Inverse Single-Trace + Forward Two-Trace Runs - `` forsin``/``invsin``/``two`` Mode
 
 This mode allows you to run one or more driving functions with the option to save and/or plot the results. This can only run constant, kappa, and c-alpha runs once.
 
 1. Enter `` forsin ``/`` invsin ``/``two`` from the main menu
 2. Enter the run-parameters.
-3. Enter ``run`` with a list of driving functions you wish to use seperated by a space, e.g. ``Loewner >> run INDEX1 INDEX2 INDEX3 ``. This can allow 'standard' driving functions more than once, but cannot be used to run the driving functions that require extra arguments more than once.
-4. Enter `` start ``
+3. Enter ``run`` with a list of driving functions you wish to use seperated by a space.
+4. Enter `` start ``.
 5. If the parameters are successfully validated, then the program will execute these runs and save the output. In the event that the parameters could not be validated, type `` error `` to receive more information. You can then re-enter the parameters and try again.
   
 Upon completion, the forward single-trace results will be saved to:  
@@ -162,6 +165,26 @@ Plots:
 [LOEWNER DIRECTORY]/main/Output/Plots/TwoTrace/Forward/  
 ```
   
+### Exact Inverse Runs - `` exactinv `` Mode
+  
+This mode allows you to run one or more driving functions with the option to save and/or plot the results. This can only run constant, kappa, and c-alpha runs once.  
+  
+1. Enter `` exactinv `` from the main menu
+2. Enter the run-parameters. The only resolution argument required is ``outerres``. There is no need to set the ``compile`` value as this isn't required for the exact inverse procedure.
+3. Enter ``run`` followed by a list of driving functions you wish to use seperated by a space.
+4. Enter `` start `` to carry out the algorithm.
+5. If the parameters are successfully validated, then the program will execute these runs and save the output. In the event that the parameters could not be validated, type `` error `` to receive more information. You can then re-enter the parameters and try again.
+  
+Upon completion, the results will be saved to:  
+  
+Data:  
+```
+[LOEWNER DIRECTORY]/main/Output/Data/ExactInverse/  
+```
+Plots:
+```
+[LOEWNER DIRECTORY]/main/Output/Plots/ExactInverse/  
+```
 ### Wedge Runs - `` wedge `` Mode
   
 This mode allows you to run one or more driving functions with the option to save and/or plot the results. This can only run constant, kappa, and c-alpha runs once.  

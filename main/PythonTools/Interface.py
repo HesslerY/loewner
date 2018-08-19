@@ -30,7 +30,7 @@ class CommandLineInterface:
                                      EXACT_INVERSE_MODE : self.standard_loewner,
                                      TWO_TRACE_MODE : self.standard_loewner,
                                      WEDGE_TRACE_MODE : self.standard_loewner,
-                                     EXACT_MODE : self.exact_solutions,
+                                     EXACT_MODE : self.standard_loewner,
                                      ERROR_MODE : self.root_mean_square,
                                    }
 
@@ -75,6 +75,15 @@ class CommandLineInterface:
         self.kappa = 0
         self.drivealpha = 0
         self.constant = 0
+
+        # Create booleansto-be for exact solution runs
+        self.linearexplicit = None
+        self.linearimplicit = None
+
+        self.phi =    {
+                        START_PHI : None,
+                        FINAL_PHI : None,
+                    }
 
         # Find the size of the terminal
         rows, columns = popen('stty size', 'r').read().split()
@@ -156,8 +165,6 @@ class CommandLineInterface:
         if inputs[0] != MULTIPLE_TIMES:
             return False
 
-
-
         # Attempt to convert the second and third arguments to floats
         try:
 
@@ -216,7 +223,7 @@ class CommandLineInterface:
             try:
                 temp = float(inputs[1])
             except ValueError:
-                return
+                return False
             if temp > 0:
                 self.kappa = temp
                 return True
@@ -225,7 +232,7 @@ class CommandLineInterface:
             try:
                 temp = float(inputs[1])
             except ValueError:
-                return
+                return False
             if temp > 0:
                 self.drivealpha = temp
                 return True
@@ -234,7 +241,7 @@ class CommandLineInterface:
             try:
                 temp = float(inputs[1])
             except ValueError:
-                return
+                return False
             if temp > 0:
                 self.wedgealpha = temp
                 return True
@@ -244,7 +251,7 @@ class CommandLineInterface:
             try:
                 temp = float(inputs[1])
             except ValueError:
-                return
+                return False
 
             if inputs[0] == START_TIME:
                 if temp >= 0:
@@ -261,7 +268,7 @@ class CommandLineInterface:
             try:
                 temp = int(inputs[1])
             except ValueError:
-                return
+                return False
 
             if inputs[0] == OUTER_RES:
                 if temp > 0:
@@ -278,19 +285,46 @@ class CommandLineInterface:
                 self.misc_settings[inputs[0]] = self.convert_bool[inputs[1]]
                 return True
 
+        if inputs[0] in self.phi:
+
+            try:
+                temp = float(inputs[1])
+                if temp >= 0:
+                    self.phi[inputs[0]] = temp
+                    return True
+                else:
+                    return False
+            except ValueError:
+                return False
+
+        if inputs[0] == LINR_IM:
+            if inputs[1] in self.convert_bool.keys():
+                self.linearimplicit = self.convert_bool[inputs[1]]
+                return True
+
+        if inputs[0] == LINR_EX:
+            if inputs[1] in self.convert_bool.keys():
+                self.linearexplicit = self.convert_bool[inputs[1]]
+                return True
+
         return False
+
+    def only_exact_implicit(self):
+        return self.program_mode[EXACT_MODE] and len(self.driving_list) == 1 and LINR_IDX in self.driving_list and self.linearexplicit
 
     def validate_configuration(self):
 
         # Clear the error message string
         self.error = None
 
+        only_exact_implicit = self.only_exact_implicit()
+
         # Check that all of the relevant parameters have been set to something
-        if any([val is None for val in self.time_settings.values()]):
+        if not only_exact_implicit and any([val is None for val in self.time_settings.values()]):
             self.error = "Validation error: Not all the time values have been set."
             return False
 
-        if not self.program_mode[EXACT_INVERSE_MODE]:
+        if not self.program_mode[EXACT_INVERSE_MODE] and not self.program_mode[EXACT_MODE]:
             if any([val is None for val in self.res_settings.values()]):
                 self.error = "Validation error: Not all the resolution values have been set."
                 return False
@@ -299,7 +333,7 @@ class CommandLineInterface:
             self.error = "Validation error: Resolution value hasn't been set."
             return False
 
-        if not self.program_mode[EXACT_INVERSE_MODE]:
+        if not self.program_mode[EXACT_INVERSE_MODE] and not self.program_mode[EXACT_MODE]:
             if any([val is None for val in self.misc_settings.values()]):
                 self.error = "Validation error: Compilation and/saving values haven't been set."
                 return False
@@ -309,12 +343,12 @@ class CommandLineInterface:
             return False
 
         # Check that the start time is greater than zero
-        if self.time_settings[START_TIME] < 0:
+        if not only_exact_implicit and self.time_settings[START_TIME] < 0:
             self.error = "Validation error: Negative start time."
             return False
 
         # Check that the final time is greater than the start time
-        if self.time_settings[FINAL_TIME] <= self.time_settings[START_TIME]:
+        if not only_exact_implicit and self.time_settings[FINAL_TIME] <= self.time_settings[START_TIME]:
             self.error = "Validation error: Final time is less than or equal to start time."
             return False
 
@@ -324,7 +358,7 @@ class CommandLineInterface:
             return False
 
         # Check that the inner resolution is at least 1
-        if not self.program_mode[EXACT_INVERSE_MODE]:
+        if not self.program_mode[EXACT_INVERSE_MODE] and not self.program_mode[EXACT_MODE]:
             if self.res_settings[INNER_RES] < 1:
                 self.error = "Validation error: Inner resolution is less than one."
                 return False
@@ -357,13 +391,34 @@ class CommandLineInterface:
             self.error = "Validation error: Wedge mode was chosen but wedge angle value is <= 0."
             return False
 
+        if self.program_mode[EXACT_MODE] and LINR_IDX in self.driving_list and self.linearexplicit:
+            if any([val is None for val in list(self.phi.values())]):
+                self.error = "Validation error: Not all phi values have been set for linear exact solution."
+                return False
+
+            if self.phi[START_PHI] < 0:
+                self.error = "Validation error: Start phi has a value less than zero."
+                return False
+
+            if self.phi[FINAL_PHI] <= self.phi[START_PHI]:
+                self.error = "Validation error: Final phi is smaller than or equal to start phi."
+                return False
+
+        if only_exact_implicit:
+            self.time_settings[START_TIME] = 0
+            self.time_settings[FINAL_TIME] = 0
+
         # Create the LoewnerRunFactory object with the user-given parameters
         self.loewner_fact = LoewnerRunFactory(self.time_settings[START_TIME],self.time_settings[FINAL_TIME],self.res_settings[OUTER_RES],self.res_settings[INNER_RES],self.misc_settings[COMPILE],self.misc_settings[SAVE_DATA],self.misc_settings[SAVE_PLOTS])
 
         # Set the 'extra' parameters of the LoewnerRunFactory
         self.loewner_fact.alpha = self.drivealpha
         self.loewner_fact.kappa = self.kappa
-        self.loewner_fact.constant = self.constant
+
+        if self.program_mode[EXACT_MODE]:
+            self.loewner_fact.constant = 1
+        else:
+            self.loewner_fact.constant = self.constant
 
         # Return true to indicate that it was created successfully
         return True
@@ -408,8 +463,13 @@ class CommandLineInterface:
             if not all([df >= 0 and df < TOTAL_DRIVING_FUNCTIONS for df in driving_list]):
                 return False
 
-        elif not all([df in NOTORIGIN_IDXS for df in driving_list]):
-            return False
+        elif self.program_mode[EXACT_MODE]:
+            if not all([df in ALL_EXACT_IDX for df in driving_list]):
+                return False
+
+        else:
+            if not all([df in NOTORIGIN_IDXS for df in driving_list]):
+                return False
 
         # Create the driving list - all checks passed
         self.driving_list = driving_list
@@ -473,12 +533,14 @@ class CommandLineInterface:
             if self.show_error(user_input):
                 continue
 
-            # Check if a list of driving functions were entered
+            # Check if the start command was given
             if self.run_algorithm(user_input):
 
+                # Validate the run parameters that were given and create a LoewnerRunFactory
                 if self.validate_configuration():
-                    print("Successfully initialised LoewnerRun factory.")
+                    print("Successfully initialised a LoewnerRunFactory.")
                 else:
+                    #
                     print("Could not create validate configuration: Bad or incomplete parameters given. Enter 'error' for more information.")
                     continue
 
@@ -486,8 +548,23 @@ class CommandLineInterface:
                 loewner_runs = self.create_loewner_runs()
                 print("Successfully created LoewnerRuns for driving functions " + " ".join([str(i) for i in self.driving_list]))
 
-                # Carry out the 'standard' runs (drving functions for which there are no extra parameters)
+                # Carry out the desired runs
                 for run in loewner_runs:
+
+                    if self.program_mode[EXACT_MODE]:
+
+                        # Run the two-trace exact solution for xi(t) = 1 or xi(t) = sqrt(1 + t)
+                        if run.index == CONST_IDX or run.index == SQRTPLUS_IDX:
+                            run.exact_cubic_forward_loewner()
+
+                        # Run the single-trace exact solutions for xi(t) = t
+                        if run.index == LINR_IDX:
+
+                            if self.linearexplicit:
+                                run.phi_quadratic_exact(self.phi[START_PHI], self.phi[FINAL_PHI])
+
+                            if self.linearimplicit:
+                                run.exact_quadratic_forward_loewner()
 
                     if self.program_mode[FORWARD_SINGLE_MODE] or self.program_mode[INVERSE_SINGLE_MODE]:
 
@@ -523,6 +600,7 @@ class CommandLineInterface:
 
                 print("Runs completed successfully.")
                 # Change all modes back to null here.
+                # Change all parameters back to zero here.
                 return
 
             # Print the bad input message

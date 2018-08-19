@@ -48,6 +48,7 @@ ALL_IDX = TOTAL_DRIVING_FUNCTIONS + 1
 STANDARD_IDXS = [i for i in range (1,10)] + [i for i in range(12,15)] # Driving functions that don't require any extra parameters
 CUBIC_EXACT_IDXS = [0,14]
 QUADRATIC_FORWARD_EXACT_IDXS = [1]
+ALL_EXACT_IDX = CUBIC_EXACT_IDXS + QUADRATIC_FORWARD_EXACT_IDXS
 NOTORIGIN_IDXS = [0,14]
 
 # Inicides of the driving functions
@@ -165,3 +166,7 @@ START_ALG = "start"
 DISP_ERROR = "error"
 MULTIPLE_TIMES = "times"
 MULTIPLE_RES = "res"
+START_PHI = "startphi"
+FINAL_PHI = "finalphi"
+LINR_IM = "linearimplicit"
+LINR_EX = "linearexplicit"

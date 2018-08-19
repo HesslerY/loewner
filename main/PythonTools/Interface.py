@@ -144,6 +144,56 @@ class CommandLineInterface:
     def is_blank(self,user_input):
         return user_input == ""
 
+    def multiple_times(self, inputs):
+
+        # Check that the input array consists of three entries
+        if len(inputs) != 3:
+            return False
+
+        # Check that the first argument is the multiple-time argument string
+        if inputs[0] != MULTIPLE_TIMES:
+            return False
+
+        # Attempt to convert the second and third arguments to floats
+        try:
+
+            # This still permits bad/negative values, but validation occurs in the next step so it will be caught then
+            self.starttime = float(inputs[1])
+            self.finaltime = float(inputs[2])
+
+        except ValueError:
+
+            # Return false if the values could not be converted to floats
+            return False
+
+        # Return true if basic validation was successful
+        return True
+
+    def multiple_resolutions(self, inputs):
+
+        # Check that the input array consists of three entries
+        if len(inputs) != 3:
+            return False
+
+        # Check that the first argument is the multiple-resolution argument string
+        if inputs[0] != MULTIPLE_RES:
+            return False
+
+        # Attempt to convert the second and third arguments to ints
+        try:
+
+            # This still permits bad/negative values, but validation occurs in the next step so it will be caught then
+            self.outerres = int(inputs[1])
+            self.innerres = int(inputs[2])
+
+        except ValueError:
+
+            # Return false if the values could not be converted to ints
+            return False
+
+        # Return true if basic validation was successful
+        return True
+
     def bad_input_message(self,user_input):
 
         # Print a message for unexpected inputs
@@ -154,12 +204,9 @@ class CommandLineInterface:
         # Change one of the parameters that governs the LoewnerRunFactory
         inputs = user_input.split()
 
-        # Create a boolean to indicate that one of the parameters for the LoewnerRunFactory was changed
-        variable_changed = False
-
-        # Return false if the input does not consist of two strings
+        # Return false if the input does not consist of two strings and doesn't contain multiple arguments
         if len(inputs) != 2:
-            return False
+            return self.multiple_times(user_input) or self.multiple_resolutions(user_input)
 
         if inputs[0] == KAPPA:
             try:
@@ -381,10 +428,6 @@ class CommandLineInterface:
             # Check for 'go back' instruction
             if user_input in BACK_COMMANDS:
                 return
-
-            # Attempt to change the LoewenerRunFactory parameters
-            if self.change_parameter(user_input):
-                continue
 
             # Attempt to change the LoewenerRunFactory parameters
             if self.change_parameter(user_input):

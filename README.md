@@ -117,10 +117,20 @@ This mode allows you to run one or more driving functions with the option to sav
 4. Enter `` run ``
 5. If the parameters are successfully validated, then the program will execute these runs and save the output. In the event that the parameters could not be validated, type `` error `` to receive more information. You can then re-enter the parameters and try again.
 
+Additional commands:
+`` cleardriving `` - Clear the driving function selection and start over.
+`` printdriving `` - Print the current driving function selection.
+`` dr `` - Print all avaliable driving functions and their indices.
+
 Upon completion, the output will be saved to:  
-Plots:  
+Data:  
+```
 \[LOEWNER DIRECTORY\]main/Output/Data/SingleTrace/Forward/  
+```
+Plots:
+```
 \[LOEWNER DIRECTORY\]main/Output/Plots/SingleTrace/Forward/  
+```
   
 The output file will have the format:  
 ``[INDEX]-[START TIME]-[FINAL TIME]-[OUTER RESOLUTION]-[INNER RESOLUTION].EXT`` where ``.EXT`` is either .dat or .pdf depending on the output type.  

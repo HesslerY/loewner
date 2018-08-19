@@ -50,11 +50,34 @@ From the main directory enter ``python Start.py`` to launch the CLI. This will i
 * `` invsin `` - Start two-trace mode
 * `` wedge `` - Start wedge trace mode
 
+##### Driving Function Indices
+
+To run the program in for the various driving functions you have to use the following index system:
+
+| Index        | Driving Function  | Extra Arguments?  |
+| ------------- |:-------------:| -----:|
+| 0      |  | The constant value: 1, 0, etc |
+| 1      | centered      |   $12 |
+| 2 | are neat      |    $1 |
+
+
+##### Compilation
+
+Using much of the program within the CLI requires compiling certain files as Python modules.
+
+For most driving functions, using the forward and two-trace modes requires compiling at least once for *each* of the different driving functions. If this isn't done then the program will fail. For subsequent runs, you won't have to recompile the modules so long as  ``ForwardLoewner.F90`` isn't changed.
+
+For the kappa, calpha, and constant driving functions you have to recompile the module every time these values are changed.
+
+##### Compilation
+
 ##### Forward Single-Trace Runs
 
-#### File-Saving
+This mode allows you to run one or more driving functions with the option to save and/or plot the results.
+
+
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 

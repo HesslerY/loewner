@@ -48,7 +48,7 @@ ALL_IDX = TOTAL_DRIVING_FUNCTIONS + 1
 STANDARD_IDXS = [i for i in range (1,10)] + [i for i in range(12,15)] # Driving functions that don't require any extra parameters
 CUBIC_EXACT_IDXS = [0,14]
 QUADRATIC_FORWARD_EXACT_IDXS = [1]
-NOTORIGIN_IDXS = [0,2,4,14]
+NOTORIGIN_IDXS = [0,14]
 
 # Inicides of the driving functions
 DRIVING_LIST = ["["+str(pair[0])+"] " + pair[1] for pair in enumerate(DRIVING_INFO)]
@@ -77,31 +77,31 @@ FOR_LOEWNER = "ForwardLoewner"
 INV_LOEWNER = "InverseLoewner"
 
 # Directories for the data files
-EXACT_FORWARD_DATA_OUTPUT = "Output/Data/Quadratic/ExactForward/"
-EXACT_CUBIC_DATA_OUTPUT = "Output/Data/Cubic/ExactSolutions/"
-FORWARD_DATA_OUTPUT = "Output/Data/Quadratic/Forward/"
-FORSHIFT_DATA_OUTPUT = "Output/Data/Quadratic/TranslatedForward/"
-INVERSE_DATA_OUTPUT = "Output/Data/Quadratic/Inverse/"
+EXACT_FORWARD_DATA_OUTPUT = "Output/Data/SingleTrace/ExactForward/"
+EXACT_CUBIC_DATA_OUTPUT = "Output/Data/TwoTrace/ExactSolutions/"
+FORWARD_DATA_OUTPUT = "Output/Data/SingleTrace/Forward/"
+FORSHIFT_DATA_OUTPUT = "Output/Data/SingleTrace/TranslatedForward/"
+INVERSE_DATA_OUTPUT = "Output/Data/SingleTrace/Inverse/"
 EXACT_INVERSE_DATA_OUTPUT = "Output/Data/ExactInverse/"
-CUBIC_DATA_OUTPUT = "Output/Data/Cubic/Forward/"
+CUBIC_DATA_OUTPUT = "Output/Data/TwoTrace/Forward/"
 FINGER_DATA_OUTPUT = "Output/Data/FingeredGrowth/"
 WEDGE_DATA_OUTPUT = "Output/Data/WedgeGrowth/"
 
 # Directories for the plot files
-EXACT_FORWARD_PLOT_OUTPUT = "Output/Plots/Quadratic/ExactForward/"
-EXACT_CUBIC_PLOT_OUTPUT = "Output/Plots/Cubic/ExactSolutions/"
-FORWARD_PLOT_OUTPUT = "Output/Plots/Quadratic/Forward/"
-FORSHIFT_PLOT_OUTPUT = "Output/Plots/Quadratic/TranslatedForward/"
-INVERSE_PLOT_OUTPUT = "Output/Plots/Quadratic/Inverse/"
+EXACT_FORWARD_PLOT_OUTPUT = "Output/Plots/SingleTrace/ExactForward/"
+EXACT_CUBIC_PLOT_OUTPUT = "Output/Plots/TwoTrace/ExactSolutions/"
+FORWARD_PLOT_OUTPUT = "Output/Plots/SingleTrace/Forward/"
+FORSHIFT_PLOT_OUTPUT = "Output/Plots/SingleTrace/TranslatedForward/"
+INVERSE_PLOT_OUTPUT = "Output/Plots/SingleTrace/Inverse/"
 EXACT_INVERSE_PLOT_OUTPUT = "Output/Plots/ExactInverse/"
-CUBIC_PLOT_OUTPUT =  "Output/Plots/Cubic/Forward/"
+CUBIC_PLOT_OUTPUT =  "Output/Plots/TwoTrace/Forward/"
 FINGER_PLOT_OUTPUT = "Output/Plots/FingeredGrowth/"
 WEDGE_PLOT_OUTPUT = "Output/Plots/WedgeGrowth/"
 
 # Directories for root mean squared error data
-QUADRATIC_FORWARD_RMS =  "Output/Data/Quadratic/RootMeanSquared/Forward/"
-QUADRATIC_INVERSE_RMS =  "Output/Data/Quadratic/RootMeanSquared/Forward/"
-CUBIC_FORWARD_RMS =  "Output/Data/Cubic/RootMeanSquared/Forward/"
+QUADRATIC_FORWARD_RMS =  "Output/Data/SingleTrace/RootMeanSquared/Forward/"
+QUADRATIC_INVERSE_RMS =  "Output/Data/SingleTrace/RootMeanSquared/Forward/"
+CUBIC_FORWARD_RMS =  "Output/Data/TwoTrace/RootMeanSquared/Forward/"
 
 # Names for the different algorithms used
 FOR_RUN_STR = "Forward"
@@ -125,9 +125,38 @@ HALF_PI = pi / 2
 # Prompt message
 LOEWNER_PROMPT = "Loewner >> "
 
+# Define location for start message
+START_MSG = "PythonTools/Misc/Start"
+
 # Define location of help message for interface
 HELPMSG = "PythonTools/HelpMessages/MainHelp"
 
-# Create lists of common commands
+# Create lists/strings of common commands for interface
 BACK_COMMANDS = ["b","back"]
-HELP_COMMANDS = ["h","help"]
+HELP_FULL = "help"
+HELP_SHORT = "h"
+QUIT_FULL = "quit"
+QUIT_SHORT = "q"
+EXIT = "exit"
+DRIVING_FUNCTIONS = "df"
+START_TIME = "starttime"
+FINAL_TIME = "finaltime"
+OUTER_RES = "outerres"
+INNER_RES = "innerres"
+COMPILE = "compile"
+SAVE_PLOTS = "saveplots"
+SAVE_DATA = "savedata"
+KAPPA = "kappa"
+DRIVE_ALPHA = "drivealpha"
+WEDGE_ALPHA = "wedgealpha"
+USER_TRUE = "y"
+USER_FALSE = "n"
+FORWARD_SINGLE_MODE = "forsin"
+INVERSE_SINGLE_MODE = "invsin"
+TWO_TRACE_MODE = "two"
+WEDGE_TRACE_MODE = "wedge"
+EXACT_MODE = "exact"
+ERROR_MODE = "rms"
+CLEAR_DRIVING = "cleardriving"
+PRINT_DRIVING_LIST = "printdriving"
+RUN_ALG = "run"

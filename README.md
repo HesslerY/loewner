@@ -54,23 +54,23 @@ From the main directory enter ``python Start.py`` to launch the CLI. This will i
 
 To run the program in for the various driving functions you have to use the following index system:
 
-| Index  | Driving Function                                                          | Extra Arguments?              |
-| ------ |:--------------------------------------------------------------------------| :-----------------------------|
-| 0      | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/00df.png) | C                             |
-| 1      | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/01df.png) | None                          |
-| 2      | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/02df.png) | None                          |
-| 3      | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/03df.png) | None                          |
-| 4      | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/04df.png) | None                          |
-| 5      | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/05df.png) | None                          |
-| 6      | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/06df.png) | None                          |
-| 7      | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/07df.png) | None                          |
-| 8      | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/08df.png) | None                          |
-| 9      | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/09df.png) | None                          |
-| 10     | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/10df.png) | Kappa                         |
-| 11     | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/11df.png) | Alpha                         |
-| 12     | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/12df.png) | None                          |
-| 13     | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/13df.png) | None                          |
-| 14     | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/14df.png) | None                          |
+| Index  | Driving Function                                                          | Extra Arguments?   | Frd. Single    |
+| ------ |:--------------------------------------------------------------------------| :------------------|:--------------:|
+| 0      | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/00df.png) | C                  | Yes            |
+| 1      | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/01df.png) | None               | Yes            |
+| 2      | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/02df.png) | None               | Yes            |
+| 3      | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/03df.png) | None               | Yes            |
+| 4      | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/04df.png) | None               | Yes            |
+| 5      | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/05df.png) | None               | Yes            |
+| 6      | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/06df.png) | None               | Yes            |
+| 7      | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/07df.png) | None               | Yes            |
+| 8      | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/08df.png) | None               | Yes            |
+| 9      | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/09df.png) | None               | Yes            |
+| 10     | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/10df.png) | Kappa              | Yes            |
+| 11     | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/11df.png) | Alpha              | Yes            |
+| 12     | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/12df.png) | None               | Yes            |
+| 13     | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/13df.png) | None               | Yes            |
+| 14     | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/14df.png) | None               | Yes            |
 
 
 

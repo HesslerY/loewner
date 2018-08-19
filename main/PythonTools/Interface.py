@@ -121,6 +121,14 @@ class CommandLineInterface:
 
         return styles[style] + string + '\033[0m'
 
+    def show_error(self,user_input):
+
+        if user_input != DISP_ERROR:
+            return False
+
+        print(self.error)
+        return True
+
     def standard_input(self):
 
         # Await the 'standard' input - help/quit/print driving functions/etc
@@ -223,51 +231,66 @@ class CommandLineInterface:
 
     def validate_configuration(self):
 
+        # Clear the error message string
+        self.error = None
+
         # Check that all of the relevant parameters have been set to something
         if any([val is None for val in self.time_settings.values()]):
+            self.error = "Validation error: Not all the time values have been set."
             return False
         if any([val is None for val in self.res_settings.values()]):
+            self.error = "Validation error: Not all the resolution values have been set."
             return False
         if any([val is None for val in self.misc_settings.values()]):
+            self.error = "Validation error: Compilation and/saving values haven't been set."
             return False
 
         # Check that the start time is greater than zero
         if self.time_settings[START_TIME] < 0:
+            self.error = "Validation error: Negative start time."
             return False
 
         # Check that the final time is greater than the start time
         if self.time_settings[FINAL_TIME] <= self.time_settings[START_TIME]:
+            self.error = "Validation error: Final time is less than or equal to start time."
             return False
 
         # Check that the outer resolution is at least 1
         if self.res_settings[OUTER_RES] < 1:
+            self.error = "Validation error: Outer resolution is less than one."
             return False
 
         # Check that the inner resolution is at least 1
         if self.res_settings[INNER_RES] < 1:
+            self.error = "Validation error: Inner resolution is less than one."
             return False
 
         # Check that that user has chosen at least one form of saving (data or plot)
-        if not any(self.misc_settings.values()):
+        if not any([self.misc_settings[SAVE_DATA], self.misc_settings[SAVE_PLOTS]]):
+            self.error = "Validation error: Both saving options have been set to false. This means the program will run without preserving its output. Set at least one to true."
             return False
 
         # Check that c-alpha driving is being run with a suitable value
         if CALPHA_IDX in self.driving_list:
-            if self.drivealpha == 0:
+            if self.drivealpha <= 0:
+                self.error = "Validation error: C-Alpha driving was chosen but alpha value is <= 0."
                 return False
 
         # Check that kappa driving is being run with a suitable value
         if KAPPA_IDX in self.driving_list:
             if self.kappa == 0:
+                self.error = "Validation error: Kappa driving was chosen but kappa value is <= 0."
                 return False
 
         # Check that constant driving is being run with a suitable value
         if CONST_IDX in self.driving_list:
             if self.constant == None:
+                self.error = "Validation error: Constant driving was chosen but constant value wasn't set."
                 return False
 
         # Check that the wedge algorithm is being run with a suitable value
         if self.program_mode[WEDGE_TRACE_MODE] and self.wedgealpha <= 0:
+            self.error = "Validation error: Wedge mode was chosen but wedge angle value is <= 0."
             return False
 
         # Create the LoewnerRunFactory object with the user-given parameters
@@ -375,13 +398,21 @@ class CommandLineInterface:
             if self.print_driving_list(user_input):
                 continue
 
+            # Print a list of the current driving-list to be used with the algorithm that the user has chosen
+            if self.print_driving_list(user_input):
+                continue
+
+            # Print the error message if something went wrong
+            if self.show_error(user_input):
+                continue
+
             # Check if a list of driving functions were entered
             if self.run_algorithm(user_input):
 
                 if self.validate_configuration():
                     print("Successfully initialised LoewnerRun factory.")
                 else:
-                    print("Could not create validate configuration: Bad or incomplete parameters given. Enter 'fact' for more information.")
+                    print("Could not create validate configuration: Bad or incomplete parameters given. Enter 'error' for more information.")
                     continue
 
                 # Create a list of LoewnerRuns from the LoewnerRunFactory

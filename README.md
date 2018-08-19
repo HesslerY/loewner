@@ -80,9 +80,7 @@ For most driving functions, using the forward and two-trace modes requires compi
 
 For the kappa, calpha, and constant driving functions you have to recompile the module every time these values are changed.
 
-##### Compilation
-
-##### Forward Single-Trace Runs
+##### Forward Single-Trace Runs - `` forsin `` Mode
 
 This mode allows you to run one or more driving functions with the option to save and/or plot the results.
 

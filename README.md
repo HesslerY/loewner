@@ -47,7 +47,7 @@ From the main directory enter ``python Start.py`` to launch the CLI. This will i
 
 * `` forsin `` - Start forward single-trace mode
 * `` invsin `` - Start inverse single-trace mode
-* `` invsin `` - Start two-trace mode
+* `` two `` - Start two-trace mode
 * `` wedge `` - Start wedge trace mode
 
 ##### Driving Function Indices
@@ -71,12 +71,6 @@ To run the program in for the various driving functions you have to use the foll
 | 12     | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/12df.png) | None               | Yes            | Yes                             | Yes            | No              | None            |
 | 13     | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/13df.png) | None               | Yes            | Yes                             | Yes            | No              | None            |
 | 14     | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/14df.png) | None               | Yes            | Yes                             | Yes            | Yes             | Two-Trace       |
-
-
-
-| Index | Forward Single  | Inverse Single | Forward Cubic | Wedge  |
-|-------|:---------------:|:--------------:|:-------------:|:------:|
-| 0     |                 |                |               |        |
 
 ##### Compilation
 

@@ -44,6 +44,7 @@ class CommandLineInterface:
                                      EXACT_MODE : False,
                                      ERROR_MODE : False,
                                    }
+
         # Create settings of the LoewnerRunFactory
         self.time_settings =    {
                                   START_TIME : None,
@@ -67,12 +68,16 @@ class CommandLineInterface:
                               USER_FALSE : False,
                             }
 
+        # Declare other variables that will be passed to the LoewnerRun factory
         self.wedgealpha = 0
         self.kappa = 0
         self.drivealpha = 0
         self.constant = 0
 
+        # Find the size of the terminal
         rows, columns = popen('stty size', 'r').read().split()
+
+        # Declare a string for placing text in the center of the terminal
         self.shift_string = "{:^" + str(columns) + "}"
 
     def exit_loewner(self,unused_arg):

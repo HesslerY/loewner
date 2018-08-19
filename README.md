@@ -54,7 +54,7 @@ From the main directory enter ``python Start.py`` to launch the CLI. This will i
 
 To run the program in for the various driving functions you have to use the following index system:
 
-| Index  | Driving Function                                                          | Extra Arguments?   | Frd. Single    | Inv. Single | Frd. Cubic | Wedge           |
+| Index  | Driving Function                                                          | Extra Arguments?   | Frd. Single    | Inv. Single (and Exact Inverse) | Frd. Cubic | Wedge           |
 | ------ |:--------------------------------------------------------------------------| :------------------|:--------------:|:-----------:|:----------:|:---------------:|
 | 0      | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/00df.png) | C                  | Yes            | Yes         | Yes        | Yes (for C = 1) |   |
 | 1      | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/01df.png) | None               | Yes            | Yes         | Yes        | No              |

@@ -87,6 +87,24 @@ For most driving functions, using the forward and two-trace modes requires compi
 
 For the kappa, calpha, and constant driving functions you have to recompile the module every time these values are changed.
 
+##### Preparing One or More Runs
+
+After selecting a mode you have to set certain parameters for the driving functions you wish to run. This is done by entering `` [parameter] [value] `` in the CLI.
+
+* `` starttime `` - Start time for the runs. Must be greater than zero.
+* `` finaltime `` - Final time for the runs. Must be greater than the start time.
+* `` outerres `` - Outer resolution. Must be greater than zero.
+* `` innerres `` - Inner resolution. Must be greater than zero. (Not needed for exact inverse)
+* `` compile `` - Whether or not to compile modules. Typically only has to be done on the first execution of the program, or not at all, depending on the algorithm.
+* `` savedata `` - Save the output as .dat files. These are seperated by a space.
+* `` saveplots `` - Save the output as .pdf plots.
+
+Extra parameters:
+* `` wedgealpha `` - Only required for wedge mode
+* `` constant `` - Only required if you intend to run constant-driving.
+* `` kappa `` - Only required if you intend to run kappa-driving.
+* `` drivealpha `` - Only required if you intent to run c-alpha-driving.
+
 ##### Forward Single-Trace Runs - `` forsin `` Mode
 
 This mode allows you to run one or more driving functions with the option to save and/or plot the results.

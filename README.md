@@ -54,11 +54,11 @@ From the main directory enter ``python Start.py`` to launch the CLI. This will i
 
 To run the program in for the various driving functions you have to use the following index system:
 
-| Index        | Driving Function  | Extra Arguments?  |
-| ------------- |:-------------:| -----:|
-| 0      | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/01df.png) | The constant value: 1, 0, etc |
-| 1      | centered      |   $12 |
-| 2 | are neat      |    $1 |
+| Index  | Driving Function                                                          | Extra Arguments?              | Forward Single  | Inverse Single | Forward Cubic | Wedge  |
+| ------ |:-------------------------------------------------------------------------:| -----------------------------:|----------------:|---------------:|--------------:|-------:|
+| 0      | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/01df.png) | The constant value: 1, 0, etc |                 |                |               |        |
+| 1      | ![](https://github.com/ucapdak/loewner/blob/master/readmeimages/02df.png) | None                          |                 |                |               |        |
+| 2      | are neat                                                                  |    $1                         |                 |                |               |        |
 
 
 ##### Compilation

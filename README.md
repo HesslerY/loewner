@@ -50,6 +50,13 @@ From the main directory enter ``python Start.py`` to launch the CLI. This will i
 * `` two `` - Start two-trace mode
 * `` wedge `` - Start wedge trace mode
 
+Other Important Commands:
+
+* `` df `` - Print a list of driving functions
+* `` q `` or  `` quit `` - Exit the program
+* `` h `` or  `` help `` - Display a help message
+* `` b `` or  `` back `` - Return to the main menu
+
 ##### Driving Function Indices
 
 To run the program in for the various driving functions you have to use the following index system:

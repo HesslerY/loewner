@@ -27,6 +27,7 @@ class CommandLineInterface:
         # Create a dictionary of input-function pairs for the main algorithms/modes
         self.algorithm_responses = { FORWARD_SINGLE_MODE : self.standard_loewner,
                                      INVERSE_SINGLE_MODE : self.standard_loewner,
+                                     EXACT_INVERSE_MODE : self.standard_loewner,
                                      TWO_TRACE_MODE : self.standard_loewner,
                                      WEDGE_TRACE_MODE : self.standard_loewner,
                                      EXACT_MODE : self.exact_solutions,
@@ -37,8 +38,9 @@ class CommandLineInterface:
         self.session = PromptSession(message=LOEWNER_PROMPT)
 
         # Declare 'mode' booleans - these decide which LoewnerRun algorithm to use
-        self.program_mode = { FORWARD_SINGLE_MODE : False,
+        self.program_mode = {        FORWARD_SINGLE_MODE : False,
                                      INVERSE_SINGLE_MODE : False,
+                                     EXACT_INVERSE_MODE : False,
                                      TWO_TRACE_MODE : False,
                                      WEDGE_TRACE_MODE : False,
                                      EXACT_MODE : False,
@@ -287,11 +289,23 @@ class CommandLineInterface:
         if any([val is None for val in self.time_settings.values()]):
             self.error = "Validation error: Not all the time values have been set."
             return False
-        if any([val is None for val in self.res_settings.values()]):
-            self.error = "Validation error: Not all the resolution values have been set."
+
+        if not self.program_mode[EXACT_INVERSE_MODE]:
+            if any([val is None for val in self.res_settings.values()]):
+                self.error = "Validation error: Not all the resolution values have been set."
+                return False
+
+        elif self.res_settings[OUTER_RES] is None:
+            self.error = "Validation error: Resolution value hasn't been set."
             return False
-        if any([val is None for val in self.misc_settings.values()]):
-            self.error = "Validation error: Compilation and/saving values haven't been set."
+
+        if not self.program_mode[EXACT_INVERSE_MODE]:
+            if any([val is None for val in self.misc_settings.values()]):
+                self.error = "Validation error: Compilation and/saving values haven't been set."
+                return False
+
+        elif not any([self.misc_settings[SAVE_PLOTS], self.misc_settings[SAVE_DATA]]):
+            self.error = "Validation error: Saving values haven't been set."
             return False
 
         # Check that the start time is greater than zero
@@ -310,9 +324,10 @@ class CommandLineInterface:
             return False
 
         # Check that the inner resolution is at least 1
-        if self.res_settings[INNER_RES] < 1:
-            self.error = "Validation error: Inner resolution is less than one."
-            return False
+        if not self.program_mode[EXACT_INVERSE_MODE]:
+            if self.res_settings[INNER_RES] < 1:
+                self.error = "Validation error: Inner resolution is less than one."
+                return False
 
         # Check that that user has chosen at least one form of saving (data or plot)
         if not any([self.misc_settings[SAVE_DATA], self.misc_settings[SAVE_PLOTS]]):
@@ -481,6 +496,12 @@ class CommandLineInterface:
                         run.quadratic_inverse_loewner()
                         print("Finished single-trace inverse for driving function " + str(run.name))
 
+                    if self.program_mode[EXACT_INVERSE_MODE]:
+
+                        # Run the exact inverse algorithm
+                        run.exact_inverse()
+                        print("Finished exact inverse for driving function " + str(run.name))
+
                     if self.program_mode[WEDGE_TRACE_MODE]:
 
                         # Run the wedge-trace algorithm
@@ -494,6 +515,7 @@ class CommandLineInterface:
                         print("Finished two-trace for driving function " + str(run.name))
 
                 print("Runs completed successfully.")
+                # Change all modes back to null here.
                 return
 
             # Print the bad input message
@@ -545,7 +567,6 @@ class CommandLineInterface:
 
         # Show a start screen
         self.show_start_screen()
-
 
         # Run the prompt
         while True:

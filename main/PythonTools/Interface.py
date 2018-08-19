@@ -305,7 +305,7 @@ class CommandLineInterface:
                 return False
 
         elif not any([self.misc_settings[SAVE_PLOTS], self.misc_settings[SAVE_DATA]]):
-            self.error = "Validation error: Saving values haven't been set."
+            self.error = "Validation error: Saving values are both set to false. At least one must be true."
             return False
 
         # Check that the start time is greater than zero
@@ -386,13 +386,20 @@ class CommandLineInterface:
         return ""
 
     def run_algorithm(self,user_input):
-        return user_input == RUN_ALG
+        return user_input == START_ALG
 
     def create_driving_list(self,user_input):
 
+        # Seperate the inputs by space
+        inputs = user_input.split()
+
+        # Determine if the first argument is the command for creating a list of driving functions to be run
+        if inputs[0] != CREATE_DRIVING_LIST:
+            return False
+
         # Convert the values to integers
         try:
-            driving_list = [int(item) for item in user_input.split()]
+            driving_list = [int(item) for item in inputs[1:]]
         except ValueError:
             return False
 

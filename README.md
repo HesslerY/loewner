@@ -103,52 +103,55 @@ e.g. ``Loewner >> starttime 0 `` to use a start time of zero. For compilation an
 
 Alternative arguments:  
   
-* `` times [start time] [final time] `` - Quick time arguments.
-* `` res [outer res] [inner res] `` - Quick res arguments.
+* `` times [start time] [final time] `` - Quicker way for entering times values.
+* `` res [outer res] [inner res] `` - Quicker way for enterting resolution values.
 
 Extra parameters:  
   
 * `` wedgealpha `` - Only required for wedge mode.
 * `` constant `` - Only required if you intend to run constant-driving.
 * `` kappa `` - Only required if you intend to run kappa-driving.
-* `` drivealpha `` - Only required if you intent to run c-alpha-driving.
+* `` drivealpha `` - Only required if you intend to run c-alpha-driving.
 
 Additional commands:  
   
 `` cleardriving `` - Clear the driving function selection and start over.  
 `` printdriving `` - Print the current driving function selection.  
   
-### Forward/Inverse Single-Trace Runs - `` forsin `` or `` invsin `` Mode
+### Forward/Inverse Single-Trace and Forward Two-Trace Runs - `` forsin ``/`` invsin ``/``two`` Mode
 
 This mode allows you to run one or more driving functions with the option to save and/or plot the results. This can only run constant, kappa, and c-alpha runs once.
 
-1. Enter `` forsin `` or `` invsin `` from the main menu
+1. Enter `` forsin ``/`` invsin ``/``two`` from the main menu
 2. Enter the run-parameters.
-3. Enter a list of driving functions you wish to use seperated by a space, e.g. ``Loewner >> INDEX1 INDEX2 INDEX3 ``. This can allow 'standard' driving functions more than once, but cannot be used to run the driving functions that require extra arguments more than once.
-4. Enter `` run ``
+3. Enter ``run`` with a list of driving functions you wish to use seperated by a space, e.g. ``Loewner >> run INDEX1 INDEX2 INDEX3 ``. This can allow 'standard' driving functions more than once, but cannot be used to run the driving functions that require extra arguments more than once.
+4. Enter `` start ``
 5. If the parameters are successfully validated, then the program will execute these runs and save the output. In the event that the parameters could not be validated, type `` error `` to receive more information. You can then re-enter the parameters and try again.
   
-Upon completion, the output will be saved to:  
+Upon completion, the forward single-trace results will be saved to:  
   
 Data:  
 ```
-[LOEWNER DIRECTORY]/main/Output/Data/SingleTrace/[Forward or Inverse]/  
+[LOEWNER DIRECTORY]/main/Output/Data/SingleTrace/Forward/  
 ```
 Plots:
 ```
-[LOEWNER DIRECTORY]/main/Output/Plots/SingleTrace/[Forward or Inverse]/  
+[LOEWNER DIRECTORY]/main/Output/Plots/SingleTrace/Forward/  
+
 ```
-### Forward Two-Trace Runs - `` two `` Mode
-
-This mode allows you to run one or more driving functions with the option to save and/or plot the results. This can only run constant, kappa, and c-alpha runs once.
-
-1. Enter `` two `` from the main menu
-2. Enter the run-parameters.
-3. Enter a list of driving functions you wish to use seperated by a space, e.g. ``Loewner >> INDEX1 INDEX2 INDEX3 ``. This can allow 'standard' driving functions more than once, but cannot be used to run the driving functions that require extra arguments more than once.
-4. Enter `` run ``
-5. If the parameters are successfully validated, then the program will execute these runs and save the output. In the event that the parameters could not be validated, type `` error `` to receive more information. You can then re-enter the parameters and try again.
   
-Upon completion, the output will be saved to:  
+The numerical inverse single-trace results will be saved to:  
+  
+Data:  
+```
+[LOEWNER DIRECTORY]/main/Output/Data/SingleTrace/Inverse/  
+```
+Plots:
+```
+[LOEWNER DIRECTORY]/main/Output/Plots/SingleTrace/Inverse/  
+```
+
+The two-trace results will be saved to:  
   
 Data:  
 ```
@@ -158,25 +161,26 @@ Plots:
 ```
 [LOEWNER DIRECTORY]/main/Output/Plots/TwoTrace/Forward/  
 ```
-### Wedge Runs - `` two `` Mode
-
-This mode allows you to run one or more driving functions with the option to save and/or plot the results. This can only run constant, kappa, and c-alpha runs once.
-
+  
+### Wedge Runs - `` wedge `` Mode
+  
+This mode allows you to run one or more driving functions with the option to save and/or plot the results. This can only run constant, kappa, and c-alpha runs once.  
+  
 1. Enter `` wedge `` from the main menu
 2. Enter the run-parameters. Also enter a ``wedgealpha`` argument in the form of radians.
-3. Enter a list of driving functions you wish to use seperated by a space, e.g. ``Loewner >> INDEX1 INDEX2 INDEX3 ``. This can allow 'standard' driving functions more than once, but cannot be used to run the driving functions that require extra arguments more than once.
-4. Enter `` run ``
+3. Enter ``run`` followed by a list of driving functions you wish to use seperated by a space, e.g. ``Loewner >> run INDEX1 INDEX2 INDEX3 ``. This can allow 'standard' driving functions more than once, but cannot be used to run the driving functions that require extra arguments more than once.
+4. Enter `` start `` to carry out the algorithm.
 5. If the parameters are successfully validated, then the program will execute these runs and save the output. In the event that the parameters could not be validated, type `` error `` to receive more information. You can then re-enter the parameters and try again.
   
-Upon completion, the output will be saved to:  
+Upon completion, the results will be saved to:  
   
 Data:  
 ```
-[LOEWNER DIRECTORY]/main/Output/Data/WedgeGrowth/  
+[LOEWNER DIRECTORY]/main/Output/Data/WedgeGrowth/Forward/  
 ```
 Plots:
 ```
-[LOEWNER DIRECTORY]/main/Output/Plots/WedgeGrowth/  
+[LOEWNER DIRECTORY]/main/Output/Plots/WedgeGrowth/Forward/  
 ```
 ### Output Formats
 

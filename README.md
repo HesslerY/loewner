@@ -49,6 +49,7 @@ From the main directory enter ``python Start.py`` to launch the CLI. This will i
 * `` invsin `` - Start inverse single-trace mode
 * `` two `` - Start two-trace mode
 * `` wedge `` - Start wedge trace mode
+* `` exact `` - Exact forward or single-trace mode
 * ``exactinv`` - Start exact inverse solution mode.
 
 Other Important Commands:
@@ -129,7 +130,7 @@ This mode allows you to run one or more driving functions with the option to sav
 2. Enter the run-parameters.
 3. Enter ``run`` with a list of driving functions you wish to use seperated by a space.
 4. Enter `` start ``.
-5. If the parameters are successfully validated, then the program will execute these runs and save the output. In the event that the parameters could not be validated, type `` error `` to receive more information. You can then re-enter the parameters and try again.
+5. If the parameters are successfully validated, then the program will execute these runs and save the output. 
   
 Upon completion, the forward single-trace results will be saved to:  
   
@@ -173,7 +174,7 @@ This mode allows you to run one or more driving functions with the option to sav
 2. Enter the run-parameters. The only resolution argument required is ``outerres``. There is no need to set the ``compile`` value as this isn't required for the exact inverse procedure.
 3. Enter ``run`` followed by a list of driving functions you wish to use seperated by a space.
 4. Enter `` start `` to carry out the algorithm.
-5. If the parameters are successfully validated, then the program will execute these runs and save the output. In the event that the parameters could not be validated, type `` error `` to receive more information. You can then re-enter the parameters and try again.
+5. If the parameters are successfully validated, then the program will execute these runs and save the output. 
   
 Upon completion, the results will be saved to:  
   
@@ -193,7 +194,7 @@ This mode allows you to run one or more driving functions with the option to sav
 2. Enter the run-parameters. Also enter a ``wedgealpha`` argument in the form of radians.
 3. Enter ``run`` followed by a list of driving functions you wish to use seperated by a space, e.g. ``Loewner >> run INDEX1 INDEX2 INDEX3 ``. This can allow 'standard' driving functions more than once, but cannot be used to run the driving functions that require extra arguments more than once.
 4. Enter `` start `` to carry out the algorithm.
-5. If the parameters are successfully validated, then the program will execute these runs and save the output. In the event that the parameters could not be validated, type `` error `` to receive more information. You can then re-enter the parameters and try again.
+5. If the parameters are successfully validated, then the program will execute these runs and save the output. 
   
 Upon completion, the results will be saved to:  
   
@@ -204,6 +205,87 @@ Data:
 Plots:
 ```
 [LOEWNER DIRECTORY]/main/Output/Plots/WedgeGrowth/Forward/  
+```
+### Exact Single or Two-Trace Forward Runs - `` exact `` Mode
+  
+This mode allows you to run exact forward solutions for constant, linear, and xi(t) = sqrt(1 + t) driving functions. For linear drviving there is the option to use two different equations.
+
+1. Enter `` exact `` from the main menu
+
+#### Exact Solution - Constant Driving - Two Trace Evolution
+  
+2. Enter the run-parameters: start time, final time, outer resolution, save plots, save data. The constant parmater is automatically set to 1.
+3. Enter ``run 0`` 
+4. Enter `` start `` to carry out the algorithm.
+5. If the parameters are successfully validated, then the program will execute these runs and save the output. 
+  
+Upon completion, the results will be saved to:  
+  
+Data:  
+```
+[LOEWNER DIRECTORY]/main/Output/Data/TwoTrace/ExactSolutions/  
+```
+Plots:
+```
+[LOEWNER DIRECTORY]/main/Output/Plots/TwoTrace/ExactSolutions/  
+```
+#### Exact Solution - Linear Driving - Single-Trace Evolution - Explicit 
+
+For linear driving there is the optoo
+  
+2. Enter the run-parameters: outer resolution, save plots, save data. 
+3. Set the paramters ``startphi`` and ``finalphi``. These must be greater than zero. Any final value greater than pi will be automatically be set to pi.
+4. Set ``linearexplicit`` to True.
+5. Set ``linearimplicit`` to False. (if not desired)
+6. Enter ``run 1`` 
+7. Enter `` start `` to carry out the algorithm.
+8. If the parameters are successfully validated, then the program will execute these runs and save the output. 
+  
+Upon completion, the results will be saved to:  
+  
+Data:  
+```
+[LOEWNER DIRECTORY]/main/Output/Data/SingleTrace/ExactForward/  
+```
+Plots:
+```
+[LOEWNER DIRECTORY]/main/Output/Plots/SingleTrace/ExactForward/  
+```
+#### Exact Solution - Linear Driving - Single-Trace Evolution - Implicit
+  
+2. Enter the run-parameters: start time, final time, outer resolution, save plots, save data. 
+4. Set ``linearexplicit`` to False (if not desired).
+5. Set ``linearimplicit`` to True. 
+6. Enter ``run 1`` 
+7. Enter `` start `` to carry out the algorithm.
+8. If the parameters are successfully validated, then the program will execute these runs and save the output. 
+  
+Upon completion, the results will be saved to:  
+  
+Data:  
+```
+[LOEWNER DIRECTORY]/main/Output/Data/SingleTrace/ExactForward/  
+```
+Plots:
+```
+[LOEWNER DIRECTORY]/main/Output/Plots/SingleTrace/ExactForward/  
+```
+#### Exact Solution - xi(t) = sqrt(1 + t) Drving - Two-Trace Evolution
+  
+2. Enter the run-parameters: start time, final time, outer resolution, save plots, save data. 
+6. Enter ``run 14`` 
+7. Enter `` start `` to carry out the algorithm.
+8. If the parameters are successfully validated, then the program will execute these runs and save the output. 
+  
+Upon completion, the results will be saved to:  
+  
+Data:  
+```
+[LOEWNER DIRECTORY]/main/Output/Data/TwoTrace/ExactSolutions/  
+```
+Plots:
+```
+[LOEWNER DIRECTORY]/main/Output/Plots/TwoTrace/ExactSolutions/  
 ```
 ### Output Formats
 

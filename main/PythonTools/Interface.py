@@ -34,6 +34,7 @@ class CommandLineInterface:
                                         WEDGE_TRACE_MODE : self.standard_loewner,
                                         EXACT_MODE : self.standard_loewner,
                                         KAPPA_MODE : self.standard_loewner,
+                                        CALPHA_MODE : self.standard_loewner,
                                         ERROR_MODE : self.root_mean_square,
                                    }
 
@@ -523,7 +524,63 @@ class CommandLineInterface:
         return False
 
     def set_drive_alphas(self, user_input):
-        pass
+
+        # Return false if the program is not in kappa mode
+        if not self.program_mode[CALPHA_MODE]:
+            return False
+
+        # Split the user input
+        inputs = user_input.split()
+
+        # Return false if the first argument is not the kappa string
+        if inputs[0] != CALPHAS:
+            return False
+
+        # Attempt to convert the next two strings to a starting kappa and a final kappa
+        try:
+            startalpha = float(inputs[1])
+            finalalpha = float(inputs[2])
+        except ValueError:
+            return False
+
+        if startalpha <= 0:
+            return False
+
+        if finalalpha <= startalpha:
+            return False
+
+        if finalalpha >= 1:
+            return False
+
+        # See if the next argument indicates a step value, or a number of kappa runs
+        if inputs[3] not in [SQRT_STEP, NUM_SQRT_RUNS]:
+            return False
+
+        if inputs[3] == SQRT_STEP:
+
+            try:
+                increment = float(inputs[4])
+
+                if increment <= 0:
+                    return False
+
+                self.drivealphas = arange(startalpha,finalalpha,increment)
+            except ValueError:
+                return False
+
+        if inputs[3] == NUM_SQRT_RUNS:
+
+            try:
+               num_steps = int(inputs[4])
+
+               if num_steps <= 0:
+                   return False
+
+               self.drivealphas = linspace(startalpha,finalalpha,num_steps)
+            except ValueError:
+                return False
+
+        return True
 
     def set_kappas(self,user_input):
 

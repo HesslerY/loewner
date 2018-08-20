@@ -1029,6 +1029,28 @@ class CAlphaLoewnerRun(LoewnerRun):
         # Solve Loewner's equation with the given parameters
         ForwardLoewner.quadraticloewner(outerstarttime=self.start_time, outerfinaltime=self.final_time, innern=self.inner_points, zresult=self.forward_results, sqrtdrivingarg=self.alpha)
 
+        if self.save_data:
+
+            # Convert the results to a 2D array
+            results_array = column_stack((self.forward_results.real, self.forward_results.imag))
+
+            # Create a filename for the dat file
+            filename = FORWARD_DATA_OUTPUT + self.properties_string + DATA_EXT
+
+            # Save the array to the filesystem
+            self.save_to_dat(filename, results_array)
+
+        if self.save_plot:
+
+            # Clear any preexisting plots to be safe
+            plt.cla()
+
+            # Set the plot title
+            self.set_plot_title()
+
+            # Plot the data and save it to the filesystem
+            self.quadratic_forward_plot()
+
     def cubic_forward_loewner(self):
 
         # Import the compiled Forward Loewner module

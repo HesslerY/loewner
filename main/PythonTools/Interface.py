@@ -2,6 +2,7 @@ from Constants import *
 from LoewnerRunFactory import LoewnerRunFactory
 from prompt_toolkit import PromptSession
 from os import popen
+from numpy import arange, linspace
 
 class CommandLineInterface:
 
@@ -9,66 +10,74 @@ class CommandLineInterface:
 
         # Create a dictionary of input-function pairs
         self.basic_responses = {
-                                 HELP_FULL : self.print_help_message,
-                                 HELP_SHORT : self.print_help_message,
-                                 QUIT_FULL : self.exit_loewner,
-                                 QUIT_SHORT : self.exit_loewner,
-                                 DRIVING_FUNCTIONS : self.print_driving_functions,
-                                 EXIT : self.exit_loewner,
+                                    HELP_FULL : self.print_help_message,
+                                    HELP_SHORT : self.print_help_message,
+                                    QUIT_FULL : self.exit_loewner,
+                                    QUIT_SHORT : self.exit_loewner,
+                                    DRIVING_FUNCTIONS : self.print_driving_functions,
+                                    EXIT : self.exit_loewner,
                                }
 
         # Create a dictionary of input-message pairs for the help command
         self.help_responses = {
-                                HELP_FULL : HELPMSG,
-                                HELP_SHORT : HELPMSG,
+                                    HELP_FULL : HELPMSG,
+                                    HELP_SHORT : HELPMSG,
                               }
 
 
         # Create a dictionary of input-function pairs for the main algorithms/modes
-        self.algorithm_responses = { FORWARD_SINGLE_MODE : self.standard_loewner,
-                                     INVERSE_SINGLE_MODE : self.standard_loewner,
-                                     EXACT_INVERSE_MODE : self.standard_loewner,
-                                     TWO_TRACE_MODE : self.standard_loewner,
-                                     WEDGE_TRACE_MODE : self.standard_loewner,
-                                     EXACT_MODE : self.standard_loewner,
-                                     ERROR_MODE : self.root_mean_square,
+        self.algorithm_responses = {
+                                        FORWARD_SINGLE_MODE : self.standard_loewner,
+                                        INVERSE_SINGLE_MODE : self.standard_loewner,
+                                        EXACT_INVERSE_MODE : self.standard_loewner,
+                                        TWO_TRACE_MODE : self.standard_loewner,
+                                        WEDGE_TRACE_MODE : self.standard_loewner,
+                                        EXACT_MODE : self.standard_loewner,
+                                        KAPPA_MODE : self.standard_loewner,
+                                        ERROR_MODE : self.root_mean_square,
                                    }
 
         # Create prompt object.
         self.session = PromptSession(message=LOEWNER_PROMPT)
 
         # Declare 'mode' booleans - these decide which LoewnerRun algorithm to use
-        self.program_mode = {        FORWARD_SINGLE_MODE : False,
-                                     INVERSE_SINGLE_MODE : False,
-                                     EXACT_INVERSE_MODE : False,
-                                     TWO_TRACE_MODE : False,
-                                     WEDGE_TRACE_MODE : False,
-                                     EXACT_MODE : False,
-                                     ERROR_MODE : False,
-                                   }
+        self.program_mode = {
+                                FORWARD_SINGLE_MODE : False,
+                                INVERSE_SINGLE_MODE : False,
+                                EXACT_INVERSE_MODE : False,
+                                TWO_TRACE_MODE : False,
+                                WEDGE_TRACE_MODE : False,
+                                EXACT_MODE : False,
+                                KAPPA_MODE : False,
+                                CALPHA_MODE : False,
+                                ERROR_MODE : False,
+                            }
 
         # Create settings of the LoewnerRunFactory
         self.time_settings =    {
-                                  START_TIME : None,
-                                  FINAL_TIME : None,
+                                    START_TIME : None,
+                                    FINAL_TIME : None,
                                 }
 
         self.res_settings =     {
-                                  OUTER_RES : None,
-                                  INNER_RES : None,
+                                    OUTER_RES : None,
+                                    INNER_RES : None,
                                 }
 
 
         self.misc_settings =    {
-                                  COMPILE : None,
-                                  SAVE_PLOTS : None,
-                                  SAVE_DATA : None,
+                                    COMPILE : None,
+                                    SAVE_PLOTS : None,
+                                    SAVE_DATA : None,
                                 }
 
         # Create a dictionary to match user-input to boolean values
-        self.convert_bool = { USER_TRUE : True,
-                              USER_FALSE : False,
+        self.convert_bool = {
+                                USER_TRUE : True,
+                                USER_FALSE : False,
                             }
+
+        self.driving_list = []
 
         # Declare other variables that will be passed to the LoewnerRun factory
         self.wedgealpha = 0
@@ -81,9 +90,13 @@ class CommandLineInterface:
         self.linearimplicit = None
 
         self.phi =    {
-                        START_PHI : None,
-                        FINAL_PHI : None,
-                    }
+                          START_PHI : None,
+                          FINAL_PHI : None,
+                      }
+
+
+        self.kappas = []
+        self.drivealphas = []
 
         # Find the size of the terminal
         rows, columns = popen('stty size', 'r').read().split()
@@ -237,14 +250,16 @@ class CommandLineInterface:
                 self.drivealpha = temp
                 return True
 
-        if inputs[0] == WEDGE_ALPHA:
-            try:
-                temp = float(inputs[1])
-            except ValueError:
-                return False
-            if temp > 0:
-                self.wedgealpha = temp
-                return True
+        if self.program_mode[WEDGE_TRACE_MODE]:
+
+            if inputs[0] == WEDGE_ALPHA:
+                try:
+                    temp = float(inputs[1])
+                except ValueError:
+                    return False
+                if temp > 0:
+                    self.wedgealpha = temp
+                    return True
 
         if inputs[0] in self.time_settings:
 
@@ -285,27 +300,29 @@ class CommandLineInterface:
                 self.misc_settings[inputs[0]] = self.convert_bool[inputs[1]]
                 return True
 
-        if inputs[0] in self.phi:
+        if self.program_mode[EXACT_MODE]:
 
-            try:
-                temp = float(inputs[1])
-                if temp >= 0:
-                    self.phi[inputs[0]] = temp
-                    return True
-                else:
+            if inputs[0] in self.phi:
+
+                try:
+                    temp = float(inputs[1])
+                    if temp >= 0:
+                        self.phi[inputs[0]] = temp
+                        return True
+                    else:
+                        return False
+                except ValueError:
                     return False
-            except ValueError:
-                return False
 
-        if inputs[0] == LINR_IM:
-            if inputs[1] in self.convert_bool.keys():
-                self.linearimplicit = self.convert_bool[inputs[1]]
-                return True
+            if inputs[0] == LINR_IM:
+                if inputs[1] in self.convert_bool.keys():
+                    self.linearimplicit = self.convert_bool[inputs[1]]
+                    return True
 
-        if inputs[0] == LINR_EX:
-            if inputs[1] in self.convert_bool.keys():
-                self.linearexplicit = self.convert_bool[inputs[1]]
-                return True
+            if inputs[0] == LINR_EX:
+                if inputs[1] in self.convert_bool.keys():
+                    self.linearexplicit = self.convert_bool[inputs[1]]
+                    return True
 
         return False
 
@@ -333,13 +350,16 @@ class CommandLineInterface:
             self.error = "Validation error: Resolution value hasn't been set."
             return False
 
-        if not self.program_mode[EXACT_INVERSE_MODE] and not self.program_mode[EXACT_MODE]:
+        if self.program_mode[KAPPA_MODE] or self.program_mode[CALPHA_MODE]:
+            self.misc_settings[COMPILE] =  True
+
+        if not self.program_mode[EXACT_INVERSE_MODE] and not self.program_mode[EXACT_MODE] and not self.program_mode[WEDGE_TRACE_MODE]:
             if any([val is None for val in self.misc_settings.values()]):
-                self.error = "Validation error: Compilation and/saving values haven't been set."
+                self.error = "Validation error: Compilation and/or saving values haven't been set."
                 return False
 
         elif not any([self.misc_settings[SAVE_PLOTS], self.misc_settings[SAVE_DATA]]):
-            self.error = "Validation error: Saving values are both set to false. At least one must be true."
+            self.error = "Validation error: Not all saving values have been set."
             return False
 
         # Check that the start time is greater than zero
@@ -426,6 +446,12 @@ class CommandLineInterface:
     def create_loewner_runs(self):
 
         # Create LoewnerRuns with the LoewnerRunFactory depending on the user's selections
+        if self.program_mode[KAPPA_MODE]:
+            return self.loewner_fact.vary_kappa(self.kappas)
+
+        if self.program_mode[CALPHA_MODE]:
+            return self.loewner_fact.vary_alpha(self.drivealphas)
+
         return [self.loewner_fact.select_single_run(index=i) for i in self.driving_list]
 
     def print_driving_functions(self, unused_arg):
@@ -496,6 +522,65 @@ class CommandLineInterface:
 
         return False
 
+    def set_drive_alphas(self, user_input):
+        pass
+
+    def set_kappas(self,user_input):
+
+        # Return false if the program is not in kappa mode
+        if not self.program_mode[KAPPA_MODE]:
+            return False
+
+        # Split the user input
+        inputs = user_input.split()
+
+        # Return false if the first argument is not the kappa string
+        if inputs[0] != KAPPAS:
+            return False
+
+        # Attempt to convert the next two strings to a starting kappa and a final kappa
+        try:
+            startkappa = float(inputs[1])
+            finalkappa = float(inputs[2])
+        except ValueError:
+            return False
+
+        if startkappa <= 0:
+            return False
+
+        if finalkappa <= startkappa:
+            return False
+
+        # See if the next argument indicates a step value, or a number of kappa runs
+        if inputs[3] not in [SQRT_STEP, NUM_SQRT_RUNS]:
+            return False
+
+        if inputs[3] == SQRT_STEP:
+
+            try:
+                increment = float(inputs[4])
+
+                if increment <= 0:
+                    return False
+
+                self.kappas = arange(startkappa,finalkappa,increment)
+            except ValueError:
+                return False
+
+        if inputs[3] == NUM_SQRT_RUNS:
+
+            try:
+               num_steps = int(inputs[4])
+
+               if num_steps <= 0:
+                   return False
+
+               self.kappas = linspace(startkappa,finalkappa,num_steps)
+            except ValueError:
+                return False
+
+        return True
+
     # Run the forward and inverse single-trace algorithms
     def standard_loewner(self):
 
@@ -533,6 +618,14 @@ class CommandLineInterface:
             if self.show_error(user_input):
                 continue
 
+            # Set a range of kappas (kappa mode)
+            if self.set_kappas(user_input):
+                continue
+
+            # Set a range of alphas (calpha mode)
+            if self.set_drive_alphas(user_input):
+                continue
+
             # Check if the start command was given
             if self.run_algorithm(user_input):
 
@@ -566,7 +659,7 @@ class CommandLineInterface:
                             if self.linearimplicit:
                                 run.exact_quadratic_forward_loewner()
 
-                    if self.program_mode[FORWARD_SINGLE_MODE] or self.program_mode[INVERSE_SINGLE_MODE]:
+                    if self.program_mode[FORWARD_SINGLE_MODE] or self.program_mode[INVERSE_SINGLE_MODE] or self.program_mode[KAPPA_MODE] or self.program_mode[CALPHA_MODE]:
 
                         # Run the single-trace forward algorithm
                         run.quadratic_forward_loewner()
@@ -617,16 +710,6 @@ class CommandLineInterface:
             if user_input in BACK_COMMANDS:
                 return
 
-    # Run the exact solution algorithms
-    def exact_solutions(self):
-
-        while True:
-
-            user_input = self.standard_input()
-
-            # Check for 'go back' instruction
-            if user_input in BACK_COMMANDS:
-                return
     def show_start_screen(self):
 
         # Open the start message file

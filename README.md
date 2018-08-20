@@ -287,6 +287,28 @@ Plots:
 ```
 [LOEWNER DIRECTORY]/main/Output/Plots/TwoTrace/ExactSolutions/  
 ```
+### Multipe Kappa Runs - `` kappa `` Mode
+  
+This mode allows you to run multiple kappa-driving forward single-trace evolutions for a range of driving functions.
+
+1. Enter `` kappa `` from the main menu
+2. Enter the run-parameters: start time, final time, outer resolution, inner resolution, save plots, save data. Final time will be set to set to 1 if you enter a value larger than 1. Compile is automatically set to true.
+3. Enter kappas in the form of ``kappas [start kappa] [final kappa] step [step value]`` or ``kappas [start kappa] [final kappa] num [number of kappa runs]``
+4. Enter `` start `` to carry out the algorithm.
+5. If the parameters are successfully validated, then the program will execute these runs and save the output. 
+  
+Upon completion, the results will be saved to:  
+  
+Data:  
+```
+[LOEWNER DIRECTORY]/main/Output/Data/SingleTrace/Forward/  
+[LOEWNER DIRECTORY]/main/Output/Data/SingleTrace/TranslatedForward/  
+```
+Plots:
+```
+[LOEWNER DIRECTORY]/main/Output/Plots/SingleTrace/Forward/  
+[LOEWNER DIRECTORY]/main/Output/Plots/SingleTrace/TranslatedForward/  
+```
 ### Output Formats
 
 Plots are saved as PDFs, data is saved in DAT files. The DAT files have 18 decimal places of precision and the columns are seperated by a space. The time/kappa/wegde angle/alpha parameters are represented in the filename with 5 decimal places of precision, so there is a risk of ovewritting results for near-identical results where certain parameters are rounded to the same value.

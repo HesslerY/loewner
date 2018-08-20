@@ -307,6 +307,12 @@ For the wedge algorithm, the output filename will take the form:
   
 ``[INDEX]-[WEDGE ANGLE]-[FINAL TIME]-[OUTER RESOLUTION]-[INNER RESOLUTION].EXT``
 
+#### Exact Solution - Linear Driving - Single-Trace Evolution - Explicit Results
+
+For the explicit linear exact solution, the output filename will take the form:  
+  
+``[INDEX]-PHI-[START PHI]-[FINAL PHI]-[OUTER RESOLUTION].EXT``
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.

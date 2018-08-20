@@ -287,13 +287,17 @@ Plots:
 ```
 [LOEWNER DIRECTORY]/main/Output/Plots/TwoTrace/ExactSolutions/  
 ```
-### Multipe Kappa Runs - `` kappa `` Mode
+### Multipe Kappa/C-Alpha Runs - `` kappa `` or ``calpha`` Mode
   
 This mode allows you to run multiple kappa-driving forward single-trace evolutions for a range of driving functions.
 
-1. Enter `` kappa `` from the main menu
-2. Enter the run-parameters: start time, final time, outer resolution, inner resolution, save plots, save data. Final time will be set to set to 1 if you enter a value larger than 1. Compile is automatically set to true.
-3. Enter kappas in the form of ``kappas [start kappa] [final kappa] step [step value]`` or ``kappas [start kappa] [final kappa] num [number of kappa runs]``
+1. Enter `` kappa `` or ``calpha`` from the main menu
+2. Enter the run-parameters: start time, final time, outer resolution, inner resolution, save plots, save data. 
+* For kappa the final time will be set to set to 1 if you enter a value larger than 1. 
+* Compile is automatically set to true.
+3. Enter the parameters in te form:
+* Kappa: ``kappas [start kappa] [final kappa] step [step value]`` or ``kappas [start kappa] [final kappa] num [number of kappa runs]`` depending on how you want to divide the interval.
+* C-Alphas: ``calphas [start alpha] [final alpha] step [step value]`` or ``calphas [start alpha] [final alpha] num [number of calpha runs]`` depending on how you want to divide the interval.
 4. Enter `` start `` to carry out the algorithm.
 5. If the parameters are successfully validated, then the program will execute these runs and save the output. 
   
@@ -301,13 +305,13 @@ Upon completion, the results will be saved to:
   
 Data:  
 ```
-[LOEWNER DIRECTORY]/main/Output/Data/SingleTrace/Forward/  
-[LOEWNER DIRECTORY]/main/Output/Data/SingleTrace/TranslatedForward/  
+[LOEWNER DIRECTORY]/main/Output/Data/SingleTrace/Forward/  (kappa and calpha)
+[LOEWNER DIRECTORY]/main/Output/Data/SingleTrace/TranslatedForward/  (kappa only)
 ```
 Plots:
 ```
-[LOEWNER DIRECTORY]/main/Output/Plots/SingleTrace/Forward/  
-[LOEWNER DIRECTORY]/main/Output/Plots/SingleTrace/TranslatedForward/  
+[LOEWNER DIRECTORY]/main/Output/Plots/SingleTrace/Forward/  (kappa and calpha)
+[LOEWNER DIRECTORY]/main/Output/Plots/SingleTrace/TranslatedForward/  (kappa only)
 ```
 ### Output Formats
 

@@ -77,6 +77,29 @@ class InterfaceMode:
         # Return false if input doesn't match instruction to change time parameters
         return False
 
+    def validate_time(self):
+
+        # Create an array of time values
+        time_values = self.time_settings.values()
+
+        # Check that all the times values have been set
+        if any([val is None for val in time_values]):
+            self.error = "Validation error: Not all the time values have been set."
+            return False
+
+        # Check that the time values are non-negative
+        if any([val < 0 for val in time_values]):
+            self.error = "Validation error: One or both time values are negative."
+            return False
+
+        # Check that the final time is greater than the start time
+        if self.time_settings[FINAL_TIME] <= self.time_settings[START_TIME]:
+            self.error = "Validation error: Final time is equal to or smaller than start time."
+            return False
+
+        # Return true if all checks are passed
+        return True
+
     def change_single_resolution(self,param,value):
 
         # Check if the resolution values are being changed
@@ -151,6 +174,7 @@ class InterfaceMode:
 
     def change_kappa(self,param,value):
 
+        # Check if the kappa value is being changed
         if param == KAPPA:
 
             # Attempt to convert the value to a float
@@ -164,6 +188,7 @@ class InterfaceMode:
 
     def change_drive_alpha(self,param,value):
 
+        # Check if the alpha value (for c-alpha driving) is being changed
         if param == DRIVE_ALPHA:
 
             # Attempt to convert the value to a float
@@ -217,3 +242,8 @@ class SingleTrace(InterfaceMode):
         return False
 
     def validate_settings(self):
+
+        # Check that all the validation methods return True
+        return self.validate_time() and self.validate_resolution() and self.validate_saving() and self.validate_compilation() \
+                and self.validate_kappa() and self.validate_drive_alpha()
+

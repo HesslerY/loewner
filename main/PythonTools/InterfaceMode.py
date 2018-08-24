@@ -31,7 +31,7 @@ class InterfaceMode:
         # Create a list of driving functions that will be used
         self.driving_list = []
 
-    def change_time(self,param,value):
+    def change_single_time(self,param,value):
 
         # Check if the time values are being changed
         if param in self.time_settings:
@@ -56,8 +56,9 @@ class InterfaceMode:
         # Return false if input doesn't match intruction to change time parameters
         return False
 
-    def change_two_time(self,param,value1,value2):
+    def change_both_times(self,param,value1,value2):
 
+        # Check if the times values are being changed
         if param == MULTIPLE_TIMES:
 
             try:
@@ -68,14 +69,15 @@ class InterfaceMode:
                 # Return false if unsuccessful
                 return False
 
-            # Change the start time value
+            # Change the start and final time values
             self.time_settings[START_TIME] = temp1
             self.time_settings[FINAL_TIME] = temp2
             return True
 
+        # Return false if input doesn't match instruction to change time parameters
         return False
 
-    def change_resolution(self,param,value):
+    def change_single_resolution(self,param,value):
 
         # Check if the resolution values are being changed
         if param in self.res_settings:
@@ -136,7 +138,19 @@ class SingleTrace(InterfaceMode):
             param = inputs[0]
             value = inputs[1]
 
-            # See if the inputs match with an instruction to change the parameters
-            return self.change_time(param,value) or self.change_resolution(param,value) or self.change_saving(param,value) or self.change_compilation(param,value)
+            # See if the inputs match with an instruction to change a single parameters
+            return self.change_single_time(param,value) or self.change_single_resolution(param,value) or self.change_saving(param,value) or self.change_compilation(param,value)
+
+        # Check if the input array has three elements
+        if len(inputs) == 3:
+
+            # Assign the parameter and values
+            param = inputs[0]
+            value1 = inputs[1]
+            value2 = inputs[2]
+
+            # See if the inputs match with an instruction to change multiple parameters
+            return self.change_single_time(param,value) or self.change_single_resolution(param,value) or self.change_saving(param,value) or self.change_compilation(param,value)
+
 
     def validate_settings(self):

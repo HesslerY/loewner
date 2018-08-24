@@ -12,6 +12,7 @@ compile_modules = True
 save_plot = True
 save_data = True
 
+# Create a list of kappa and alpha values
 kappas = [i + 0.5 for i in range(1,10)]
 alphas = [i * 0.1 for i in range(1,10)]
 

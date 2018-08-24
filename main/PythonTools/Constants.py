@@ -140,6 +140,8 @@ QUIT_FULL = "quit"
 QUIT_SHORT = "q"
 EXIT = "exit"
 DRIVING_FUNCTIONS = "df"
+
+# Strings for various parameters that can be changed thorough the interface
 START_TIME = "starttime"
 FINAL_TIME = "finaltime"
 OUTER_RES = "outerres"
@@ -152,9 +154,18 @@ KAPPAS = "kappas"
 CALPHAS = "calphas"
 DRIVE_ALPHA = "drivealpha"
 WEDGE_ALPHA = "wedgealpha"
+MULTIPLE_TIMES = "times"
+MULTIPLE_RES = "res"
+START_PHI = "startphi"
+FINAL_PHI = "finalphi"
+LINR_IM = "linearimplicit"
+LINR_EX = "linearexplicit"
+
+# Strings for arguments that are converted to booleans (used for saving and compilation)
 USER_TRUE = "y"
 USER_FALSE = "n"
-CREATE_DRIVING_LIST = "run"
+
+# Strings for the modes that can be selected through the interface:
 FORWARD_SINGLE_MODE = "forsin"
 INVERSE_SINGLE_MODE = "invsin"
 TWO_TRACE_MODE = "two"
@@ -164,15 +175,12 @@ KAPPA_MODE = KAPPA
 CALPHA_MODE = "calpha"
 EXACT_MODE = "exact"
 ERROR_MODE = "rms"
+
+# Other commands
 CLEAR_DRIVING = "cleardriving"
 PRINT_DRIVING_LIST = "printdriving"
 START_ALG = "start"
 DISP_ERROR = "error"
-MULTIPLE_TIMES = "times"
-MULTIPLE_RES = "res"
-START_PHI = "startphi"
-FINAL_PHI = "finalphi"
-LINR_IM = "linearimplicit"
-LINR_EX = "linearexplicit"
 SQRT_STEP = "step"
 NUM_SQRT_RUNS = "num"
+CREATE_DRIVING_LIST = "run"

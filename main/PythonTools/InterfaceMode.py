@@ -101,6 +101,26 @@ class InterfaceMode:
         # Return false if input doesn't match intruction to change resolution parameters
         return False
 
+    def change_both_resolutions(self,param,value1,value2):
+
+        # Check if the resolution values are being changed
+        if param == MULTIPLE_RES:
+
+            try:
+                # Attempt to convert the value to an int
+                temp1 = int(value2)
+                temp2 = int(value2)
+            except ValueError:
+                return False
+
+            # Change the resolution values
+            self.res_settings[OUTER_RES] = temp1
+            self.res_settings[INNER_RES] = temp2
+            return True
+
+        # Return false if input doesn't match intruction to change resolution parameters
+        return False
+
     def change_saving(self,param,value):
 
         # See if the second argument matches a True/False response
@@ -113,6 +133,46 @@ class InterfaceMode:
             return True
 
         # Return false if input doesn't match intruction to change saving parameters
+        return False
+
+    def change_compilation(self,param,value):
+
+        # See if the second argument matches a True/False response
+        if value not in self.convert_bool.keys():
+            return False
+
+        # See if the first argument matches the compile response
+        if param == COMPILE:
+            self.misc_settings[param] = self.convert_bool[value]
+            return True
+
+        # Return false if input doesn't match instruction to compile or not compile the modules
+        return False
+
+    def change_kappa(self,param,value):
+
+        if param == KAPPA:
+
+            # Attempt to convert the value to a float
+            try:
+                self.kappa = float(value)
+            except ValueError:
+                return False
+
+        # Return false if input doesn't match instruction to change kappa value
+        return False
+
+    def change_drive_alpha(self,param,value):
+
+        if param == DRIVE_ALPHA:
+
+            # Attempt to convert the value to a float
+            try:
+                self.drivealpha = float(value)
+            except ValueError:
+                return False
+
+        # Return false if input doesn't match instruction to change alpha value
         return False
 
     def change_parameter(self,param,value):
@@ -139,7 +199,8 @@ class SingleTrace(InterfaceMode):
             value = inputs[1]
 
             # See if the inputs match with an instruction to change a single parameters
-            return self.change_single_time(param,value) or self.change_single_resolution(param,value) or self.change_saving(param,value) or self.change_compilation(param,value)
+            return self.change_single_time(param,value) or self.change_single_resolution(param,value) or self.change_saving(param,value) or self.change_compilation(param,value) \
+                    or self.change_kappa(param,value) or self.change_drive_alpha(param,value)
 
         # Check if the input array has three elements
         if len(inputs) == 3:
@@ -150,7 +211,9 @@ class SingleTrace(InterfaceMode):
             value2 = inputs[2]
 
             # See if the inputs match with an instruction to change multiple parameters
-            return self.change_single_time(param,value) or self.change_single_resolution(param,value) or self.change_saving(param,value) or self.change_compilation(param,value)
+            return self.change_both_times(param,value1,value2) or self.change_both_resolutions(param,value1,value2)
 
+        # Return false if input doesn't match instruction to change any of the parameters
+        return False
 
     def validate_settings(self):

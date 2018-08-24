@@ -127,6 +127,23 @@ class CommandLineInterface:
         # Clear the input to indicate that it was interpreted successfully
         return ""
 
+    def clear_selections(self):
+
+        self.program_mode = dict.fromkeys(self.program_mode, None)
+        self.time_settings = dict.fromkeys(self.time_settings, None)
+        self.res_settings = dict.fromkeys(self.res_settings, None)
+        self.misc_settings = dict.fromkeys(self.misc_settings, None)
+        self.phi = dict.fromkeys(self.phi, None)
+        self.driving_list = []
+
+        self.wedgealpha = 0
+        self.kappa = 0
+        self.drivealpha = 0
+        self.constant = 0
+
+        self.kappas = []
+        self.drivealphas = []
+
     def set_mode(self,mode_input):
 
         # Set the program mode that determines what algorithm will run
@@ -749,8 +766,9 @@ class CommandLineInterface:
                         print("Finished two-trace for driving function " + str(run.name))
 
                 print("Runs completed successfully.")
-                # Change all modes back to null here.
-                # Change all parameters back to zero here.
+
+                self.clear_selections()
+
                 return
 
             # Print the bad input message

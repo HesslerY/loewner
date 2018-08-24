@@ -200,10 +200,35 @@ class InterfaceMode:
         # Return false if input doesn't match instruction to change alpha value
         return False
 
-    def change_parameter(self,param,value):
+    def change_single_parameter(self,param,value):
+        # Implemented in subclasses
         pass
 
+    def change_mult_parameters(self,param,value1,value2):
+        # Implemented in subclasses
+        pass
+
+    def change_parameters(self,user_input):
+
+        # Split the user input by a space
+        inputs = user_input.split()
+
+        # Check if the input array has two elements
+        if len(inputs) == 2:
+
+            # Attempt to change a single parameter
+            return self.change_single_parameter(*inputs)
+
+        # Check if the input array has three elements
+        if len(inputs) == 3:
+
+            # Attempt to change multiple parameters
+            return self.change_single_parameter(*inputs)
+
+        return False
+
     def validate_settings(self):
+        # Implemented in subclasses
         pass
 
 class SingleTrace(InterfaceMode):
@@ -211,29 +236,13 @@ class SingleTrace(InterfaceMode):
     def __init__(self,name):
         InterfaceMode.__init__(name)
 
-    def change_parameter(self,user_input):
+    def change_single_parameter(self,param,value):
 
-        # Split the user input by space
-        inputs = user_input.split()
+        # See if the inputs match with an instruction to change a single parameters
+        return self.change_single_time(param,value) or self.change_single_resolution(param,value) or self.change_saving(param,value) or self.change_compilation(param,value) \
+                or self.change_kappa(param,value) or self.change_drive_alpha(param,value)
 
-        # Check if the input array has two elements
-        if len(inputs) == 2:
-
-            # Assign the parameter and value
-            param = inputs[0]
-            value = inputs[1]
-
-            # See if the inputs match with an instruction to change a single parameters
-            return self.change_single_time(param,value) or self.change_single_resolution(param,value) or self.change_saving(param,value) or self.change_compilation(param,value) \
-                    or self.change_kappa(param,value) or self.change_drive_alpha(param,value)
-
-        # Check if the input array has three elements
-        if len(inputs) == 3:
-
-            # Assign the parameter and values
-            param = inputs[0]
-            value1 = inputs[1]
-            value2 = inputs[2]
+    def change_multiple_parameters(self,param,value1,value2):
 
             # See if the inputs match with an instruction to change multiple parameters
             return self.change_both_times(param,value1,value2) or self.change_both_resolutions(param,value1,value2)

@@ -43,6 +43,23 @@ class InterfaceMode:
         # Create a variable for the LoewnerRunFactory
         self.loewner_fact = None
 
+        # Create a variable for storing error messages in the case of bad paramters
+        self.error = None
+
+    def show_error(user_input):
+
+        # Check if the error message exists
+        if self.error is None:
+            return False
+
+        # Check if the command matches the intruction to print an error message
+        if user_input == DISP_ERROR:
+            print(self.error)
+            return True
+
+        # Return false if the command did not match the instruction to print an error message
+        return False
+
     def change_single_time(self,param,value):
 
         # Check if the time values are being changed

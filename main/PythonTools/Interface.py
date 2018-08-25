@@ -128,8 +128,8 @@ class CommandLineInterface:
                 continue
 
             # Print the error message if something went wrong
-            # if self.program_mode.show_error(user_input):
-                # continue
+            if self.program_mode.show_error(user_input):
+                continue
 
             # Check if the start command was given
             if self.run_algorithm(user_input):

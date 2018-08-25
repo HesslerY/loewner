@@ -29,6 +29,7 @@ class CommandLineInterface:
         self.algorithm_responses = {
                                         FORWARD_SINGLE_MODE : ForwardSingle,
                                         INVERSE_SINGLE_MODE : InverseSingle,
+                                        EXACT_INVERSE_MODE : ExactInverse,
                                    }
 
         # Create prompt object.

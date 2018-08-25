@@ -32,7 +32,7 @@ class InterfaceMode:
                             }
 
         # Create a list of driving functions that will be used during the run
-        self.driving_list = None
+        self.driving_list = set()
 
 
         # Declare extra arguments for the 'special' drving functions
@@ -46,7 +46,7 @@ class InterfaceMode:
         # Create a variable for storing error messages in the case of bad paramters
         self.error = None
 
-    def show_error(user_input):
+    def show_error(self,user_input):
 
         # Check if the error message exists
         if self.error is None:
@@ -173,6 +173,21 @@ class InterfaceMode:
         # Return false if input doesn't match intruction to change resolution parameters
         return False
 
+    def change_outer_resolution(self,param,value):
+
+        # See if the string matches the instruction to change just the outer resolution
+        if param != OUTER_RES:
+            return False
+
+        # Attempt to convert the value to an integer
+        try:
+            self.res_settings[OUTER_RES] = int(value)
+        except ValueError:
+            return False
+
+        # Return true if the conversion was successful
+        return True
+
     def validate_resolution(self):
 
         # Create an array of resolution values
@@ -186,6 +201,21 @@ class InterfaceMode:
         # Check that the resolution values are greater than zero
         if any([val < 1 for val in res_values]):
             self.error = "Validation error: One or both resolution values are less than one."
+            return False
+
+        # Return true if all checks are passed
+        return True
+
+    def validate_outer_resolution(self):
+
+        # Check that the resolution value has been set
+        if self.res_settings[OUTER_RES] is None:
+            self.error = "Validation error: Resolution value hasn't been set."
+            return False
+
+        # Check that the resolution value has an approrpiate value
+        if self.res_settings[OUTER_RES] <= 0:
+            self.error = "Validation error: Resolution value is less than one."
             return False
 
         # Return true if all checks are passed
@@ -348,7 +378,7 @@ class InterfaceMode:
         # Implemented in subclasses
         pass
 
-    def change_mult_parameters(self,param,value1,value2):
+    def change_multiple_parameters(self,param,value1,value2):
         # Implemented in subclasses
         pass
 
@@ -382,6 +412,19 @@ class InterfaceMode:
     def validate_settings(self):
         # Implemented in subclasses
         pass
+
+    def create_loewner_runs(self):
+
+        # Create the LoewnerRunFactory object with the user-given parameters
+        self.loewner_fact = LoewnerRunFactory(self.time_settings[START_TIME],self.time_settings[FINAL_TIME],self.res_settings[OUTER_RES],self.res_settings[INNER_RES],self.compile,self.save_settings[SAVE_DATA],self.save_settings[SAVE_PLOTS])
+
+        # Set the 'extra' parameters of the LoewnerRunFactory
+        self.loewner_fact.alpha = self.drivealpha
+        self.loewner_fact.kappa = self.kappa
+        self.loewner_fact.constant = self.constant
+
+        # Create a list of LoewnerRuns with the LoewnerRunFactory
+        return [self.loewner_fact.select_single_run(index=i) for i in self.driving_list]
 
     def execute(self):
         # Implemented in subclasses
@@ -446,16 +489,8 @@ class ForwardSingle(SingleTrace):
 
     def execute(self):
 
-        # Create the LoewnerRunFactory object with the user-given parameters
-        self.loewner_fact = LoewnerRunFactory(self.time_settings[START_TIME],self.time_settings[FINAL_TIME],self.res_settings[OUTER_RES],self.res_settings[INNER_RES],self.compile,self.save_settings[SAVE_DATA],self.save_settings[SAVE_PLOTS])
-
-        # Set the 'extra' parameters of the LoewnerRunFactory
-        self.loewner_fact.alpha = self.drivealpha
-        self.loewner_fact.kappa = self.kappa
-        self.loewner_fact.constant = self.constant
-
-        # Create a list of LoewnerRuns with the LoewnerRunFactory
-        runs = [self.loewner_fact.select_single_run(index=i) for i in self.driving_list]
+        # Create a list of LoewnerRuns
+        runs = self.create_loewner_runs()
 
         # Carry out the single-trace forward algorithm for each of the chosen driving functions
         for run in runs:
@@ -470,16 +505,8 @@ class InverseSingle(SingleTrace):
 
     def execute(self):
 
-        # Create the LoewnerRunFactory object with the user-given parameters
-        self.loewner_fact = LoewnerRunFactory(self.time_settings[START_TIME],self.time_settings[FINAL_TIME],self.res_settings[OUTER_RES],self.res_settings[INNER_RES],self.compile,self.save_settings[SAVE_DATA],self.save_settings[SAVE_PLOTS])
-
-        # Set the 'extra' parameters of the LoewnerRunFactory
-        self.loewner_fact.alpha = self.drivealpha
-        self.loewner_fact.kappa = self.kappa
-        self.loewner_fact.constant = self.constant
-
-        # Create a list of LoewnerRuns with the LoewnerRunFactory
-        runs = [self.loewner_fact.select_single_run(index=i) for i in self.driving_list]
+        # Create a list of LoewnerRuns
+        runs = self.create_loewner_runs()
 
         # Carry out the single-trace forward and inverse algorithms for each of the chosen driving functions
         for run in runs:
@@ -487,3 +514,37 @@ class InverseSingle(SingleTrace):
             run.quadratic_inverse_loewner()
 
         print("Completed all inverse single-trace runs.")
+
+class ExactInverse(SingleTrace):
+
+    def __init__(self):
+        SingleTrace.__init__(self)
+
+    def change_single_parameter(self,param,value):
+
+        # See if the inputs match with an instruction to change a single parameters
+        return self.change_single_time(param,value) or self.change_outer_resolution(param,value) or self.change_saving(param,value) \
+                or self.change_kappa(param,value) or self.change_drive_alpha(param,value)
+
+    def change_multiple_parameters(self,param,value1,value2):
+
+        # See if the inputs match with an instruction to change multiple parameters
+        return self.change_both_times(param,value1,value2)
+
+    def validate_settings(self):
+
+        # Check that all the validation methods return True
+        return self.validate_time() and self.validate_outer_resolution() and self.validate_saving() \
+                and self.validate_kappa() and self.validate_drive_alpha() and self.validate_constant()
+
+    def execute(self):
+
+        # Create a list of LoewnerRuns
+        runs = self.create_loewner_runs()
+
+        # Carry out the exact inverse algorithms for each of the chosen driving functions
+        for run in runs:
+            run.exact_inverse()
+
+        print("Completed all exact inverse runs.")
+

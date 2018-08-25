@@ -30,6 +30,7 @@ class CommandLineInterface:
                                         FORWARD_SINGLE_MODE : ForwardSingle,
                                         INVERSE_SINGLE_MODE : InverseSingle,
                                         EXACT_INVERSE_MODE : ExactInverse,
+                                        TWO_TRACE_MODE : TwoTrace,
                                    }
 
         # Create prompt object.
@@ -185,8 +186,14 @@ class CommandLineInterface:
 
             # Check if in the response correponds with any of the Loewner algorithms
             if user_input in self.algorithm_responses:
+
+                # Create a program mode object
                 self.program_mode = self.algorithm_responses[user_input]()
+
+                # Prepare and execute the algorithm of the current mode
                 self.run_loewner()
+
+                # Delete the program mode object to allow the use of a different algorithm
                 self.program_mode = None
                 continue
 

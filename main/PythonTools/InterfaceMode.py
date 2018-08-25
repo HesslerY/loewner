@@ -402,57 +402,6 @@ class InterfaceMode:
         return False
 
     def change_driving_functions(self,user_input):
-        # Implemented in subclasses
-        pass
-
-    def validate_driving_list(self):
-        # Implemented in subclasses
-        pass
-
-    def validate_settings(self):
-        # Implemented in subclasses
-        pass
-
-    def create_loewner_runs(self):
-
-        # Create the LoewnerRunFactory object with the user-given parameters
-        self.loewner_fact = LoewnerRunFactory(self.time_settings[START_TIME],self.time_settings[FINAL_TIME],self.res_settings[OUTER_RES],self.res_settings[INNER_RES],self.compile,self.save_settings[SAVE_DATA],self.save_settings[SAVE_PLOTS])
-
-        # Set the 'extra' parameters of the LoewnerRunFactory
-        self.loewner_fact.alpha = self.drivealpha
-        self.loewner_fact.kappa = self.kappa
-        self.loewner_fact.constant = self.constant
-
-        # Create a list of LoewnerRuns with the LoewnerRunFactory
-        return [self.loewner_fact.select_single_run(index=i) for i in self.driving_list]
-
-    def execute(self):
-        # Implemented in subclasses
-        pass
-
-class SingleTrace(InterfaceMode):
-
-    def __init__(self):
-        InterfaceMode.__init__(self)
-
-    def change_single_parameter(self,param,value):
-
-        # See if the inputs match with an instruction to change a single parameters
-        return self.change_single_time(param,value) or self.change_single_resolution(param,value) or self.change_saving(param,value) or self.change_compilation(param,value) \
-                or self.change_kappa(param,value) or self.change_drive_alpha(param,value)
-
-    def change_multiple_parameters(self,param,value1,value2):
-
-        # See if the inputs match with an instruction to change multiple parameters
-        return self.change_both_times(param,value1,value2) or self.change_both_resolutions(param,value1,value2)
-
-    def validate_settings(self):
-
-        # Check that all the validation methods return True
-        return self.validate_time() and self.validate_resolution() and self.validate_saving() and self.validate_compilation() \
-                and self.validate_kappa() and self.validate_drive_alpha() and self.validate_constant()
-
-    def change_driving_functions(self,user_input):
 
         # Split the user input by a space
         inputs = user_input.split()
@@ -482,6 +431,55 @@ class SingleTrace(InterfaceMode):
         # Return true if all checks are passed
         return True
 
+    def validate_driving_list(self):
+        # Implemented in subclasses
+        pass
+
+    def validate_settings(self):
+        # Implemented in subclasses
+        pass
+
+    def create_loewner_runs(self):
+
+        # Create the LoewnerRunFactory object with the user-given parameters
+        self.loewner_fact = LoewnerRunFactory(self.time_settings[START_TIME],self.time_settings[FINAL_TIME],self.res_settings[OUTER_RES],self.res_settings[INNER_RES],self.compile,self.save_settings[SAVE_DATA],self.save_settings[SAVE_PLOTS])
+
+        # Set the 'extra' parameters of the LoewnerRunFactory
+        self.loewner_fact.alpha = self.drivealpha
+        self.loewner_fact.kappa = self.kappa
+        self.loewner_fact.constant = self.constant
+
+        # Create a list of LoewnerRuns with the LoewnerRunFactory
+        return [self.loewner_fact.select_single_run(index=i) for i in self.driving_list]
+
+    def execute(self):
+        # Implemented in subclasses
+        pass
+
+class SingleTrace(InterfaceMode):
+
+    def __init__(self):
+
+        # Initialise superclass
+        InterfaceMode.__init__(self)
+
+    def change_single_parameter(self,param,value):
+
+        # See if the inputs match with an instruction to change a single parameters
+        return self.change_single_time(param,value) or self.change_single_resolution(param,value) or self.change_saving(param,value) or self.change_compilation(param,value) \
+                or self.change_kappa(param,value) or self.change_drive_alpha(param,value) or self.change_constant(param,value)
+
+    def change_multiple_parameters(self,param,value1,value2):
+
+        # See if the inputs match with an instruction to change multiple parameters
+        return self.change_both_times(param,value1,value2) or self.change_both_resolutions(param,value1,value2)
+
+    def validate_settings(self):
+
+        # Check that all the validation methods return True
+        return self.validate_time() and self.validate_resolution() and self.validate_saving() and self.validate_compilation() \
+                and self.validate_kappa() and self.validate_drive_alpha() and self.validate_constant()
+
 class ForwardSingle(SingleTrace):
 
     def __init__(self):
@@ -501,6 +499,8 @@ class ForwardSingle(SingleTrace):
 class InverseSingle(SingleTrace):
 
     def __init__(self):
+
+        # Initialise superclass
         SingleTrace.__init__(self)
 
     def execute(self):
@@ -518,6 +518,8 @@ class InverseSingle(SingleTrace):
 class ExactInverse(SingleTrace):
 
     def __init__(self):
+
+        # Initialise superclass
         SingleTrace.__init__(self)
 
     def change_single_parameter(self,param,value):
@@ -547,4 +549,42 @@ class ExactInverse(SingleTrace):
             run.exact_inverse()
 
         print("Completed all exact inverse runs.")
+
+class TwoTrace(InterfaceMode):
+
+    def __init__(self):
+
+        # Initialise superclass
+        InterfaceMode.__init__(self)
+
+        # Set the constant to one by default for two-trace mode
+        self.constant = 1
+
+    def change_single_parameter(self,param,value):
+
+        # See if the inputs match with an instruction to change a single parameters
+        return self.change_single_time(param,value) or self.change_single_resolution(param,value) or self.change_saving(param,value) or self.change_compilation(param,value) \
+                or self.change_kappa(param,value) or self.change_drive_alpha(param,value)
+
+    def change_multiple_parameters(self,param,value1,value2):
+
+        # See if the inputs match with an instruction to change multiple parameters
+        return self.change_both_times(param,value1,value2) or self.change_both_resolutions(param,value1,value2)
+
+    def validate_settings(self):
+
+        # Check that all the validation methods return True
+        return self.validate_time() and self.validate_resolution() and self.validate_saving() and self.validate_compilation() \
+                and self.validate_kappa() and self.validate_drive_alpha()
+
+    def execute(self):
+
+        # Create a list of LoewnerRuns
+        runs = self.create_loewner_runs()
+
+        # Carry out the two-trace forward algorithm for each of the chosen driving functions
+        for run in runs:
+            run.cubic_forward_loewner()
+
+        print("Completed all forward two-trace runs.")
 

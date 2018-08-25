@@ -16,11 +16,13 @@ class InterfaceMode:
                                 }
 
 
-        self.misc_settings =    {
-                                    COMPILE : None,
+        self.save_settings =    {
                                     SAVE_PLOTS : None,
                                     SAVE_DATA : None,
                                 }
+
+
+        self.compile = None
 
         # Create a dictionary to match user-input to boolean values
         self.convert_bool = {
@@ -144,6 +146,24 @@ class InterfaceMode:
         # Return false if input doesn't match intruction to change resolution parameters
         return False
 
+    def validate_resolution(self):
+
+        # Create an array of resolution values
+        res_values = self.res_settings.values()
+
+        # Check that both the resolution values have been set
+        if any([val is None for val in res_values]):
+            self.error = "Validation error: Not all the resolution values have been set."
+            return False
+
+        # Check that the resolution values are greater than zero
+        if any([val < 1 for val in res_values]):
+            self.error = "Validation error: One or both resolution values are less than one."
+            return False
+
+        # Return true if all checks are passed
+        return True
+
     def change_saving(self,param,value):
 
         # See if the second argument matches a True/False response
@@ -151,12 +171,30 @@ class InterfaceMode:
             return False
 
         # See if the first argument matches the save plots/data response
-        if param in [SAVE_PLOT,SAVE_DATA]:
-            self.misc_settings[param] = self.convert_bool[value]
+        if param in self.save_settings.keys():
+            self.save_settings[param] = self.convert_bool[value]
             return True
 
         # Return false if input doesn't match intruction to change saving parameters
         return False
+
+    def validate_saving(self):
+
+        # Create an array of resolution values
+        save_values = self.save_settings.values()
+
+        # Check that both the save values have been set
+        if any([val is None for val in save_values]):
+            self.error = "Validation error: Not all saving values have been set."
+            return False
+
+        # Check that at least one of the save values is True
+        if not any(save_values):
+            self.error = "Validation error: Both save parameters are false. At least one must be set to true or the output will be lost."
+            return False
+
+        # Return true if all checks are passed
+        return True
 
     def change_compilation(self,param,value):
 
@@ -166,11 +204,21 @@ class InterfaceMode:
 
         # See if the first argument matches the compile response
         if param == COMPILE:
-            self.misc_settings[param] = self.convert_bool[value]
+            self.compile = self.convert_bool[value]
             return True
 
         # Return false if input doesn't match instruction to compile or not compile the modules
         return False
+
+    def validate_compilation(self):
+
+        # Check that the compile value has been set
+        if self.compile is None:
+            self.error = "Validation Error: Compilation parameter hasn't been set."
+            return False
+
+        # Return true if all checks are passed
+        return True
 
     def change_kappa(self,param,value):
 
@@ -186,6 +234,24 @@ class InterfaceMode:
         # Return false if input doesn't match instruction to change kappa value
         return False
 
+    def validate_kappa(self):
+
+        # Return true if kappa-driving isn't in the driving list
+        if KAPPA_IDX not in self.driving_list:
+            return True
+
+        if self.kappa is None:
+            self.error = "Validation Error: Kappa value hasn't been set."
+            return False
+
+        # Check that kappa value is greater than zero
+        if self.kappa <= 0:
+            self.error = "Validation Error: Kappa has non-positive value."
+            return False
+
+        # Return true if all checks are passed
+        return True
+
     def change_drive_alpha(self,param,value):
 
         # Check if the alpha value (for c-alpha driving) is being changed
@@ -199,6 +265,29 @@ class InterfaceMode:
 
         # Return false if input doesn't match instruction to change alpha value
         return False
+
+    def validate_drive_alpha(self):
+
+        # Return true if calpha-driving isn't in the driving list
+        if CALPHA_IDX not in self.driving_list:
+            return True
+
+        if self.drivealpha is None:
+            self.error = "Validation Error: Alpha value hasn't been set."
+            return False
+
+        # Check that alpha value is greater than zero
+        if self.drivealpha <= 0:
+            self.error = "Validation Error: Alpha has non-positive value."
+            return False
+
+        # Check that alpha value is less than one
+        if self.drivealpha >= 1:
+            self.error = "Validation Error: Alpha is greater than or equal to one."
+            return False
+
+        # Return true if all checks are passed
+        return True
 
     def change_single_parameter(self,param,value):
         # Implemented in subclasses

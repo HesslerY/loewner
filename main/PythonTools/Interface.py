@@ -31,6 +31,7 @@ class CommandLineInterface:
                                         INVERSE_SINGLE_MODE : InverseSingle,
                                         EXACT_INVERSE_MODE : ExactInverse,
                                         TWO_TRACE_MODE : TwoTrace,
+                                        WEDGE_TRACE_MODE : WedgeAlpha,
                                    }
 
         # Create prompt object.

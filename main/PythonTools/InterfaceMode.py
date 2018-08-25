@@ -588,3 +588,102 @@ class TwoTrace(InterfaceMode):
 
         print("Completed all forward two-trace runs.")
 
+class WedgeAlpha(InterfaceMode):
+
+    def __init__(self):
+
+        # Initialise superclass
+        InterfaceMode.__init__(self)
+
+        # Set the constant to one by default for two-trace mode
+        self.constant = 1
+
+        # Create a variable for storing the wedge angle
+        self.wedgealpha = None
+
+    def change_wedge_alpha(self,param,value):
+
+        # Check if the wedge alpha value is being changed
+        if param != WEDGE_ALPHA:
+            return False
+
+        try:
+            # Attempt to convert the value to a float
+            self.wedgealpha = float(value)
+        except ValueError:
+            # Return false if unsuccessful
+            return False
+
+        # Return true if the command matches an instruction to change the wedgealpha value
+        return True
+
+    def validate_wedge_alpha(self):
+
+        # Check that the wedge alpha value has been set
+        if self.wedgealpha is None:
+            self.error = "Validation Error: Wedge angle hasn't been set."
+            return False
+
+        # Check that the wedge alpha value is greather than zero
+        if self.wedgealpha <= 0:
+            self.error = "Validation Error: Wedge angle is less than or equal to zero."
+            return False
+
+        # Return true if all checks are passed
+        return True
+
+    def change_driving_functions(self,user_input):
+
+        # Split the user input by a space
+        inputs = user_input.split()
+
+        # Check that the first argument is the instruction for creating a driving-function list
+        if inputs[0] != CREATE_DRIVING_LIST:
+            return False
+
+        # Attempt to convert the inputs to integers
+        try:
+            driving_functions = [int(x) for x in inputs[1:]]
+        except ValueError:
+            return False
+
+        # Check that the driving functions are in the correct range
+        if not all([val in NOTORIGIN_IDXS for val in driving_functions]):
+            return False
+
+        # Create a set from the list of driving functions
+        self.driving_list = set(driving_functions)
+
+        # Check that there are no repeated driving functions
+        if len(self.driving_list) != len(driving_functions):
+            self.driving_list = None
+            return False
+
+        # Return true if all checks are passed
+        return True
+
+    def change_single_parameter(self,param,value):
+
+        # See if the inputs match with an instruction to change a single parameters
+        return self.change_single_time(param,value) or self.change_single_resolution(param,value) or self.change_saving(param,value) \
+                or self.change_wedge_alpha(param,value)
+
+    def change_multiple_parameters(self,param,value1,value2):
+
+        # See if the inputs match with an instruction to change multiple parameters
+        return self.change_both_times(param,value1,value2) or self.change_both_resolutions(param,value1,value2)
+
+    def validate_settings(self):
+
+        # Check that all the validation methods return True
+        return self.validate_time() and self.validate_resolution() and self.validate_saving() \
+                and self.validate_wedge_alpha()
+
+    def execute(self):
+
+        # Create a list of LoewnerRuns
+        runs = self.create_loewner_runs()
+
+        # Carry out the wedge algorithm for each of the chosen driving functions
+        for run in runs:
+            run.wedge_growth(self.wedgealpha)

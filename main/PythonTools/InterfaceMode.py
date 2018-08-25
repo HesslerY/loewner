@@ -1,8 +1,9 @@
+from Constants import *
+from LoewnerRunFactory import LoewnerRunFactory
+
 class InterfaceMode:
 
-    def __init__(self,name):
-        self.name = name
-        self.driving_list = []
+    def __init__(self):
 
         # Create settings of the LoewnerRunFactory
         self.time_settings =    {
@@ -30,8 +31,17 @@ class InterfaceMode:
                                 USER_FALSE : False,
                             }
 
-        # Create a list of driving functions that will be used
-        self.driving_list = []
+        # Create a list of driving functions that will be used during the run
+        self.driving_list = None
+
+
+        # Declare extra arguments for the 'special' drving functions
+        self.drivealpha = None
+        self.kappa = None
+        self.constant = None
+
+        # Create a variable for the LoewnerRunFactory
+        self.loewner_fact = None
 
     def change_single_time(self,param,value):
 
@@ -133,7 +143,7 @@ class InterfaceMode:
 
             try:
                 # Attempt to convert the value to an int
-                temp1 = int(value2)
+                temp1 = int(value1)
                 temp2 = int(value2)
             except ValueError:
                 return False
@@ -289,6 +299,34 @@ class InterfaceMode:
         # Return true if all checks are passed
         return True
 
+    def change_constant(self,param,value):
+
+        # Check if the constant value is being changed
+        if param == CONSTANT:
+
+            # Attempt to convert the value to a float
+            try:
+                self.constant = float(value)
+            except ValueError:
+                return False
+
+        # Return false if input doesn't match an instruction to change constant value
+        return False
+
+    def validate_constant(self):
+
+        # Return true if constant-driving isn't in the driving list
+        if CONST_IDX not in self.driving_list:
+            return True
+
+        # Check that the constant value has been set
+        if self.constant is None:
+            self.error = "Validation Error: Constant value hasn't been set."
+            return False
+
+        # Return true if all checks are passed
+        return True
+
     def change_single_parameter(self,param,value):
         # Implemented in subclasses
         pass
@@ -312,18 +350,30 @@ class InterfaceMode:
         if len(inputs) == 3:
 
             # Attempt to change multiple parameters
-            return self.change_single_parameter(*inputs)
+            return self.change_multiple_parameters(*inputs)
 
         return False
+
+    def change_driving_functions(self,user_input):
+        # Implemented in subclasses
+        pass
+
+    def validate_driving_list(self):
+        # Implemented in subclasses
+        pass
 
     def validate_settings(self):
         # Implemented in subclasses
         pass
 
+    def execute(self):
+        # Implemented in subclasses
+        pass
+
 class SingleTrace(InterfaceMode):
 
-    def __init__(self,name):
-        InterfaceMode.__init__(name)
+    def __init__(self):
+        InterfaceMode.__init__(self)
 
     def change_single_parameter(self,param,value):
 
@@ -333,15 +383,90 @@ class SingleTrace(InterfaceMode):
 
     def change_multiple_parameters(self,param,value1,value2):
 
-            # See if the inputs match with an instruction to change multiple parameters
-            return self.change_both_times(param,value1,value2) or self.change_both_resolutions(param,value1,value2)
-
-        # Return false if input doesn't match instruction to change any of the parameters
-        return False
+        # See if the inputs match with an instruction to change multiple parameters
+        return self.change_both_times(param,value1,value2) or self.change_both_resolutions(param,value1,value2)
 
     def validate_settings(self):
 
         # Check that all the validation methods return True
         return self.validate_time() and self.validate_resolution() and self.validate_saving() and self.validate_compilation() \
-                and self.validate_kappa() and self.validate_drive_alpha()
+                and self.validate_kappa() and self.validate_drive_alpha() and self.validate_constant()
 
+    def change_driving_functions(self,user_input):
+
+        # Split the user input by a space
+        inputs = user_input.split()
+
+        # Check that the first argument is the instruction for creating a driving-function list
+        if inputs[0] != CREATE_DRIVING_LIST:
+            return False
+
+        # Attempt to convert the inputs to integers
+        try:
+            driving_functions = [int(x) for x in inputs[1:]]
+        except ValueError:
+            return False
+
+        # Check that the driving functions are in the correct range
+        if any([val < 0 or val > TOTAL_DRIVING_FUNCTIONS for val in driving_functions]):
+            return False
+
+        # Create a set from the list of driving functions
+        self.driving_list = set(driving_functions)
+
+        # Check that there are no repeated driving functions
+        if len(self.driving_list) != len(driving_functions):
+            self.driving_list = None
+            return False
+
+        # Return true if all checks are passed
+        return True
+
+class ForwardSingle(SingleTrace):
+
+    def __init__(self):
+        SingleTrace.__init__(self)
+
+    def execute(self):
+
+        # Create the LoewnerRunFactory object with the user-given parameters
+        self.loewner_fact = LoewnerRunFactory(self.time_settings[START_TIME],self.time_settings[FINAL_TIME],self.res_settings[OUTER_RES],self.res_settings[INNER_RES],self.compile,self.save_settings[SAVE_DATA],self.save_settings[SAVE_PLOTS])
+
+        # Set the 'extra' parameters of the LoewnerRunFactory
+        self.loewner_fact.alpha = self.drivealpha
+        self.loewner_fact.kappa = self.kappa
+        self.loewner_fact.constant = self.constant
+
+        # Create a list of LoewnerRuns with the LoewnerRunFactory
+        runs = [self.loewner_fact.select_single_run(index=i) for i in self.driving_list]
+
+        # Carry out the single-trace forward algorithm for each of the chosen driving functions
+        for run in runs:
+            run.quadratic_forward_loewner()
+
+        print("Completed all forward single-trace runs.")
+
+class InverseSingle(SingleTrace):
+
+    def __init__(self):
+        SingleTrace.__init__(self)
+
+    def execute(self):
+
+        # Create the LoewnerRunFactory object with the user-given parameters
+        self.loewner_fact = LoewnerRunFactory(self.time_settings[START_TIME],self.time_settings[FINAL_TIME],self.res_settings[OUTER_RES],self.res_settings[INNER_RES],self.compile,self.save_settings[SAVE_DATA],self.save_settings[SAVE_PLOTS])
+
+        # Set the 'extra' parameters of the LoewnerRunFactory
+        self.loewner_fact.alpha = self.drivealpha
+        self.loewner_fact.kappa = self.kappa
+        self.loewner_fact.constant = self.constant
+
+        # Create a list of LoewnerRuns with the LoewnerRunFactory
+        runs = [self.loewner_fact.select_single_run(index=i) for i in self.driving_list]
+
+        # Carry out the single-trace forward and inverse algorithms for each of the chosen driving functions
+        for run in runs:
+            run.quadratic_forward_loewner()
+            run.quadratic_inverse_loewner()
+
+        print("Completed all inverse single-trace runs.")

@@ -160,6 +160,7 @@ START_PHI = "startphi"
 FINAL_PHI = "finalphi"
 LINR_IM = "linearimplicit"
 LINR_EX = "linearexplicit"
+CONSTANT = "constant"
 
 # Strings for arguments that are converted to booleans (used for saving and compilation)
 USER_TRUE = "y"

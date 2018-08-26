@@ -63,48 +63,39 @@ class InterfaceMode:
     def change_single_time(self,param,value):
 
         # Check if the time values are being changed
-        if param in self.time_settings:
+        if param not in self.time_settings:
+            return False
 
-            try:
-                # Attempt to convert the value to a float
-                temp = float(value)
-            except ValueError:
-                # Return false if unsuccessful
-                return False
+        try:
+            # Attempt to convert the value to a float
+            self.time_settings[param] = float(value)
+        except ValueError:
+            # Return false if unsuccessful
+            return False
 
-            # Change the start time value
-            if param == START_TIME:
-                self.time_settings[START_TIME] = temp
-                return True
-
-            # Change the final time valie
-            if param == FINAL_TIME:
-                self.time_settings[FINAL_TIME] = temp
-                return True
-
-        # Return false if input doesn't match intruction to change time parameters
-        return False
+        # Return true if input matches intruction to change time parameters
+        return True
 
     def change_both_times(self,param,value1,value2):
 
         # Check if the times values are being changed
-        if param == MULTIPLE_TIMES:
+        if param not in MULTIPLE_TIMES:
+            return False
 
-            try:
-                # Attempt to convert the values to floats
-                temp1 = float(value1)
-                temp2 = float(value2)
-            except ValueError:
-                # Return false if unsuccessful
-                return False
+        try:
+            # Attempt to convert the values to floats
+            temp1 = float(value1)
+            temp2 = float(value2)
+        except ValueError:
+            # Return false if unsuccessful
+            return False
 
-            # Change the start and final time values
-            self.time_settings[START_TIME] = temp1
-            self.time_settings[FINAL_TIME] = temp2
-            return True
+        # Change the start and final time values
+        self.time_settings[START_TIME] = temp1
+        self.time_settings[FINAL_TIME] = temp2
 
-        # Return false if input doesn't match instruction to change time parameters
-        return False
+        # Return true if input matches instruction to change time parameters
+        return True
 
     def validate_time(self):
 
@@ -132,46 +123,33 @@ class InterfaceMode:
     def change_single_resolution(self,param,value):
 
         # Check if the resolution values are being changed
-        if param in self.res_settings:
+        if param not in self.res_settings:
+            return False
 
-            try:
-                # Attempt to convert the value to an int
-                temp = int(value)
-            except ValueError:
-                return False
+        try:
+            # Attempt to convert the value to an int
+            self.res_settings[param]  = int(value)
+        except ValueError:
+            return False
 
-            # Change the outer resolution value
-            if param == OUTER_RES:
-                self.res_settings[OUTER_RES] = temp
-                return True
-
-            # Change the inner resolution value
-            if param == INNER_RES:
-                self.res_settings[INNER_RES] = temp
-                return True
-
-        # Return false if input doesn't match intruction to change resolution parameters
-        return False
+        # Return true if input matches intruction to change resolution parameters
+        return True
 
     def change_both_resolutions(self,param,value1,value2):
 
         # Check if the resolution values are being changed
-        if param == MULTIPLE_RES:
+        if param != MULTIPLE_RES:
+            return False
 
-            try:
-                # Attempt to convert the value to an int
-                temp1 = int(value1)
-                temp2 = int(value2)
-            except ValueError:
-                return False
+        try:
+            # Attempt to convert the value to an int
+            self.res_settings[OUTER_RES] = int(value1)
+            self.res_settings[INNER_RES] = int(value2)
+        except ValueError:
+            return False
 
-            # Change the resolution values
-            self.res_settings[OUTER_RES] = temp1
-            self.res_settings[INNER_RES] = temp2
-            return True
-
-        # Return false if input doesn't match intruction to change resolution parameters
-        return False
+        # Return true if input matches intruction to change resolution parameters
+        return True
 
     def change_outer_resolution(self,param,value):
 
@@ -280,7 +258,8 @@ class InterfaceMode:
     def change_kappa(self,param,value):
 
         # Check if the kappa value is being changed
-        if param == KAPPA:
+        if param != KAPPA:
+            return False
 
             # Attempt to convert the value to a float
             try:
@@ -288,8 +267,8 @@ class InterfaceMode:
             except ValueError:
                 return False
 
-        # Return false if input doesn't match instruction to change kappa value
-        return False
+        # Return true if input matches instruction to change kappa value
+        return True
 
     def validate_kappa(self):
 
@@ -312,16 +291,17 @@ class InterfaceMode:
     def change_drive_alpha(self,param,value):
 
         # Check if the alpha value (for c-alpha driving) is being changed
-        if param == DRIVE_ALPHA:
+        if param != DRIVE_ALPHA:
+            return False
 
-            # Attempt to convert the value to a float
-            try:
-                self.drivealpha = float(value)
-            except ValueError:
-                return False
+        # Attempt to convert the value to a float
+        try:
+            self.drivealpha = float(value)
+        except ValueError:
+            return False
 
-        # Return false if input doesn't match instruction to change alpha value
-        return False
+        # Return true if input matches instruction to change alpha value
+        return True
 
     def validate_drive_alpha(self):
 
@@ -349,16 +329,17 @@ class InterfaceMode:
     def change_constant(self,param,value):
 
         # Check if the constant value is being changed
-        if param == CONSTANT:
+        if param != CONSTANT:
+            return False
 
-            # Attempt to convert the value to a float
-            try:
-                self.constant = float(value)
-            except ValueError:
-                return False
+        # Attempt to convert the value to a float
+        try:
+            self.constant = float(value)
+        except ValueError:
+            return False
 
-        # Return false if input doesn't match an instruction to change constant value
-        return False
+        # Return true if input matches an instruction to change constant value
+        return True
 
     def validate_constant(self):
 
@@ -399,6 +380,7 @@ class InterfaceMode:
             # Attempt to change multiple parameters
             return self.change_multiple_parameters(*inputs)
 
+        # Return false if input doesn't have correct number of arguments
         return False
 
     def change_driving_functions(self,user_input):
@@ -483,6 +465,8 @@ class SingleTrace(InterfaceMode):
 class ForwardSingle(SingleTrace):
 
     def __init__(self):
+
+        # Initialise superclass
         SingleTrace.__init__(self)
 
     def execute(self):
@@ -687,3 +671,130 @@ class WedgeAlpha(InterfaceMode):
         # Carry out the wedge algorithm for each of the chosen driving functions
         for run in runs:
             run.wedge_growth(self.wedgealpha)
+
+class ExactLinear(InterfaceMode):
+
+    def __init__(self):
+
+        # Initialise superclass
+        InterfaceMode.__init__(self)
+
+        # Create variables to control if the implicit or explicit algorithm is used
+        self.equation_type = {
+                                LINR_EX : None,
+                                LINR_IM : None,
+                              }
+
+        # Create variables to control phi values
+        self.phi = {
+                     START_PHI : None,
+                     FINAL_PHI : None,
+                    }
+
+    def change_phi(self,param,value):
+
+        # Check that the parameter matches an intruction to change the phi values
+        if param not in self.phi.keys():
+            return False
+
+        # Attempt to to convert the value to a float
+        try:
+            self.phi[param] = float(value)
+        except ValueError:
+            return False
+
+        # Return true if the float conversion was successful
+        return True
+
+    def validate_phi(self):
+
+        # Check that the phi values have been set
+        if any([val is None for val in self.phi.values()]):
+            self.error = "Validation Error: Phi valies haven't been set."
+            return False
+
+        # Check that start phi is greater than or equal to zero
+        if self.phi[START_PHI] < 0:
+            self.error = "Validation Error: Start phi is less than zero."
+            return False
+
+        # Check that final phi is less than pi
+        if self.phi[FINAL_PHI] > pi:
+            self.error = "Validation Error: Final phi is greater than pi."
+            return False
+
+        # Return True if all checks are passed
+        return True
+
+    def change_equation_type(self,param,value):
+
+        # See if the second argument matches a True/False response
+        if value not in self.conver_bool.keys():
+            return False
+
+        # Check that the parameter matches an instruction to change the equation settings
+        if param not in self.equation_type.keys():
+            return False
+
+        # Set the corresponding equation type to true
+        self.equation_type[param] = self.convert_bool[value]
+
+        # Return true when parameter change is successful
+        return True
+
+    def validate_equation_type(self):
+
+        # Create a list from the equation type values
+        eq_type_values = self.equation_type.values()
+
+        # Check that the equation types have been set
+        if any([val is None for val in eq_type_values]):
+            self.error = "Validation Error: Function type hasn't been set. Need to chose implicit and/or explicit exact solution."
+            return False
+
+        # Check that one or both of the equation type parameters has been set to True
+        if not any(eq_type_values):
+            self.error = "Validation Error: Both equation types have been set to False. At least one must be True."
+            return False
+
+        # Return True if all checks have been passed
+        return True
+
+    def change_single_parameter(self,param,value):
+
+        # See if the inputs match with an instruction to change a single parameters
+        return self.change_single_time(param,value) or self.change_outer_resolution(param,value) or self.change_saving(param,value) \
+                or self.change_phi(param,value) or self.change_equation_type(param,value)
+
+    def change_multiple_parameters(self,param,value1,value2):
+
+        # See if the inputs match with an instruction to change multiple parameters
+        return self.change_both_times(param,value1,value2)
+
+    def validate_settings(self):
+
+        # Check that all the validation methods return True
+        return self.validate_time() and self.validate_outer_resolution() and self.validate_saving() \
+                and self.validate_phi() and self.validate_equation_type()
+
+    def create_loewner_runs(self):
+
+        # Create the LoewnerRunFactory object with the user-given parameters
+        self.loewner_fact = LoewnerRunFactory(self.time_settings[START_TIME],self.time_settings[FINAL_TIME],self.res_settings[OUTER_RES],self.res_settings[INNER_RES],self.compile,self.save_settings[SAVE_DATA],self.save_settings[SAVE_PLOTS])
+
+        # Create a single LoewnerRun
+        return self.loewner_fact.select_single_run(index=LINR_IDX)
+
+    def execute(self):
+
+        # Create a single LoewnerRun
+        run = self.create_loewner_runs()
+
+        # Carry out the wedge algorithm for each of the chosen driving functions
+        if self.equation_type[LINR_IM]:
+            run.exact_quadratic_forward_loewner()
+
+        if self.equation_type[LINR_EX]:
+            run.phi_quadratic_exact(self.phi[START_PHI],self.phi[FINAL_PHI])
+
+        print("Completed linear single-trace exact solution runs.")

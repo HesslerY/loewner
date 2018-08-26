@@ -158,8 +158,8 @@ MULTIPLE_TIMES = "times"
 MULTIPLE_RES = "res"
 START_PHI = "startphi"
 FINAL_PHI = "finalphi"
-LINR_IM = "linearimplicit"
-LINR_EX = "linearexplicit"
+LINR_IM = "implicit"
+LINR_EX = "explicit"
 CONSTANT = "constant"
 
 # Strings for arguments that are converted to booleans (used for saving and compilation)
@@ -175,6 +175,7 @@ EXACT_INVERSE_MODE = "exactinv"
 KAPPA_MODE = KAPPA
 CALPHA_MODE = "calpha"
 EXACT_MODE = "exact"
+EXACT_LINEAR = EXACT_MODE + " single linear"
 ERROR_MODE = "rms"
 
 # Other commands

@@ -28,7 +28,7 @@ class LoewnerRun:
 
         # Set a filename for the compiled module
         self.forward_module_name = "modules." + FOR_LOEWNER + "_"  + self.module_code
-        self.inverse_module_name = "modules." + INV_LOEWNER + "_"  + self.module_code
+        self.inverse_module_name = "modules." + INV_LOEWNER
 
         # Set the data-saving parameters
         self.save_data = save_data

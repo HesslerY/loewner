@@ -177,6 +177,7 @@ CALPHA_MODE = "calpha"
 EXACT_MODE = "exact"
 EXACT_LINEAR = EXACT_MODE + " single linear"
 EXACT_CONST = EXACT_MODE + " two constant"
+EXACT_SQRT = EXACT_MODE + " two sqrt"
 ERROR_MODE = "rms"
 
 # Other commands

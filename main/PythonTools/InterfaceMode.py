@@ -865,3 +865,39 @@ class ExactConstant(InterfaceMode):
         run.exact_cubic_forward_loewner()
 
         print("Completed constant two-trace exact solution run.")
+
+class ExactSquareRoot(InterfaceMode):
+
+    def __init__(self):
+
+        # Initailise superclass
+        InterfaceMode.__init__(self)
+
+        # Create a driving list containing only the index for xi(t) = sqrt(1 + t) driving
+        self.driving_list = [SQRTPLUS_IDX]
+
+    def change_single_parameter(self,param,value):
+
+        # See if the inputs match with an instruction to change a single parameters
+        return self.change_single_time(param,value) or self.change_outer_resolution(param,value) or self.change_saving(param,value)
+
+    def change_multiple_parameters(self,param,value1,value2):
+
+        # See if the inputs match with an instruction to change multiple parameters
+        return self.change_both_times(param,value1,value2)
+
+    def validate_settings(self):
+
+        # Check that all the validation methods return True
+        return self.validate_time() and self.validate_outer_resolution() and self.validate_saving()
+
+    def execute(self):
+
+        # Obtain a single LoewnerRun object for constant driving
+        run = self.create_loewner_runs()[0]
+
+        # Carry out the exact solution
+        run.exact_cubic_forward_loewner()
+
+        print("Completed sqrt(1 + t) two-trace exact solution run.")
+

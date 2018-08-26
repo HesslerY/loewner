@@ -34,6 +34,7 @@ class CommandLineInterface:
                                         WEDGE_TRACE_MODE : WedgeAlpha,
                                         EXACT_LINEAR : ExactLinear,
                                         EXACT_CONST : ExactConstant,
+                                        EXACT_SQRT : ExactSquareRoot,
                                    }
 
         # Create prompt object.

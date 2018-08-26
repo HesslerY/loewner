@@ -691,6 +691,9 @@ class ExactLinear(InterfaceMode):
                      FINAL_PHI : None,
                     }
 
+        # Create a driving list containing only the index for linear driving
+        self.driving_list = [LINR_IDX]
+
     def change_phi(self,param,value):
 
         # Check that the parameter matches an intruction to change the phi values
@@ -808,14 +811,6 @@ class ExactLinear(InterfaceMode):
         return self.validate_time() and self.validate_outer_resolution() and self.validate_saving() \
                 and self.validate_phi() and self.validate_equation_type()
 
-    def create_loewner_runs(self):
-
-        # Create the LoewnerRunFactory object with the user-given parameters
-        self.loewner_fact = LoewnerRunFactory(self.time_settings[START_TIME],self.time_settings[FINAL_TIME],self.res_settings[OUTER_RES],self.res_settings[INNER_RES],self.compile,self.save_settings[SAVE_DATA],self.save_settings[SAVE_PLOTS])
-
-        # Create a single LoewnerRun
-        return self.loewner_fact.select_single_run(index=LINR_IDX)
-
     def execute(self):
 
         # Set the time values to integers if only the explicit solution is used (prevents initialisation problem for LoewnerRun)
@@ -825,7 +820,7 @@ class ExactLinear(InterfaceMode):
             self.time_settings[FINAL_TIME] = 0
 
         # Create a single LoewnerRun
-        run = self.create_loewner_runs()
+        run = self.create_loewner_runs()[0]
 
         # Find the explicit and/or implicit solutions
         if self.equation_type[LINR_IM]:
@@ -835,3 +830,38 @@ class ExactLinear(InterfaceMode):
             run.phi_quadratic_exact(self.phi[START_PHI],self.phi[FINAL_PHI])
 
         print("Completed linear single-trace exact solution runs.")
+
+class ExactConstant(InterfaceMode):
+
+    def __init__(self):
+
+        # Initailise superclass
+        InterfaceMode.__init__(self)
+
+        # Create a driving list containing only the index for constant driving
+        self.driving_list = [CONST_IDX]
+
+    def change_single_parameter(self,param,value):
+
+        # See if the inputs match with an instruction to change a single parameters
+        return self.change_single_time(param,value) or self.change_outer_resolution(param,value) or self.change_saving(param,value)
+
+    def change_multiple_parameters(self,param,value1,value2):
+
+        # See if the inputs match with an instruction to change multiple parameters
+        return self.change_both_times(param,value1,value2)
+
+    def validate_settings(self):
+
+        # Check that all the validation methods return True
+        return self.validate_time() and self.validate_outer_resolution() and self.validate_saving()
+
+    def execute(self):
+
+        # Obtain a single LoewnerRun object for constant driving
+        run = self.create_loewner_runs()[0]
+
+        # Carry out the exact solution
+        run.exact_cubic_forward_loewner()
+
+        print("Completed constant two-trace exact solution run.")

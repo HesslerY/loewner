@@ -33,6 +33,7 @@ class CommandLineInterface:
                                         TWO_TRACE_MODE : TwoTrace,
                                         WEDGE_TRACE_MODE : WedgeAlpha,
                                         EXACT_LINEAR : ExactLinear,
+                                        EXACT_CONST : ExactConstant,
                                    }
 
         # Create prompt object.

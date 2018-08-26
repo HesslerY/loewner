@@ -708,6 +708,10 @@ class ExactLinear(InterfaceMode):
 
     def validate_phi(self):
 
+        # Check if the explicit equation is being used
+        if not self.equation_type[LINR_EX]:
+            return True
+
         # Check that the phi values have been set
         if any([val is None for val in self.phi.values()]):
             self.error = "Validation Error: Phi valies haven't been set."
@@ -729,7 +733,7 @@ class ExactLinear(InterfaceMode):
     def change_equation_type(self,param,value):
 
         # See if the second argument matches a True/False response
-        if value not in self.conver_bool.keys():
+        if value not in self.convert_bool.keys():
             return False
 
         # Check that the parameter matches an instruction to change the equation settings
@@ -771,6 +775,33 @@ class ExactLinear(InterfaceMode):
         # See if the inputs match with an instruction to change multiple parameters
         return self.change_both_times(param,value1,value2)
 
+    def validate_time(self):
+
+        # Check if only the explicit equation is being used
+        if not self.equation_type[LINR_IM]:
+            return True
+
+        # Create an array of time values
+        time_values = self.time_settings.values()
+
+        # Check that all the times values have been set
+        if any([val is None for val in time_values]):
+            self.error = "Validation error: Not all the time values have been set."
+            return False
+
+        # Check that the time values are non-negative
+        if any([val < 0 for val in time_values]):
+            self.error = "Validation error: One or both time values are negative."
+            return False
+
+        # Check that the final time is greater than the start time
+        if self.time_settings[FINAL_TIME] <= self.time_settings[START_TIME]:
+            self.error = "Validation error: Final time is equal to or smaller than start time."
+            return False
+
+        # Return true if all checks are passed
+        return True
+
     def validate_settings(self):
 
         # Check that all the validation methods return True
@@ -786,6 +817,12 @@ class ExactLinear(InterfaceMode):
         return self.loewner_fact.select_single_run(index=LINR_IDX)
 
     def execute(self):
+
+        if self.time_settings[START_TIME] is None:
+            self.time_settings[START_TIME] = 0
+
+        if self.time_settings[FINAL_TIME] is None:
+            self.time_settings[FINAL_TIME] = 0
 
         # Create a single LoewnerRun
         run = self.create_loewner_runs()

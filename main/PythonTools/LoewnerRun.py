@@ -14,7 +14,7 @@ plt.style.use('ggplot')
 
 class LoewnerRun:
 
-    def __init__(self, index, start_time, final_time, outer_points, inner_points, compile_modules = True, save_data = True, save_plot = True):
+    def __init__(self, index, start_time, final_time, outer_points, inner_points, compile_fortran = True, save_data = True, save_plot = True):
 
         # Assign the driving function index
         self.index = index
@@ -43,8 +43,11 @@ class LoewnerRun:
         # Create a null variable for the quadratic forward results (Used to check if the quadratic forward algorithm has been executed)
         self.forward_resuls = None
 
+        # Set the compilation parameter
+        self.compile_fortran = compile_fortran
+
         # Compile the modules (Not necessary unless the Fortran files have changed since last compilation)
-        if compile_modules:
+        if compile_fortran:
             self.compile_modules()
 
         # Declare constants used in special driving function cases

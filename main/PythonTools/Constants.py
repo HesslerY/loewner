@@ -176,6 +176,7 @@ KAPPA_MODE = KAPPA
 CALPHA_MODE = "calpha"
 EXACT_MODE = "exact"
 EXACT_LINEAR = EXACT_MODE + " single linear"
+EXACT_TWO_CONST = EXACT_MODE + " two constant"
 ERROR_MODE = "rms"
 
 # Other commands

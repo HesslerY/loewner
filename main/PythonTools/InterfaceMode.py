@@ -818,16 +818,16 @@ class ExactLinear(InterfaceMode):
 
     def execute(self):
 
+        # Set the time values to integers if only the explicit solution is used (prevents initialisation problem for LoewnerRun)
         if self.time_settings[START_TIME] is None:
             self.time_settings[START_TIME] = 0
-
         if self.time_settings[FINAL_TIME] is None:
             self.time_settings[FINAL_TIME] = 0
 
         # Create a single LoewnerRun
         run = self.create_loewner_runs()
 
-        # Carry out the wedge algorithm for each of the chosen driving functions
+        # Find the explicit and/or implicit solutions
         if self.equation_type[LINR_IM]:
             run.exact_quadratic_forward_loewner()
 

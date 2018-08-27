@@ -1,5 +1,6 @@
 from Constants import *
 from LoewnerRunFactory import LoewnerRunFactory
+from numpy import arange, linspace
 
 class InterfaceMode:
 
@@ -900,4 +901,127 @@ class ExactSquareRoot(InterfaceMode):
         run.exact_cubic_forward_loewner()
 
         print("Completed sqrt(1 + t) two-trace exact solution run.")
+
+class KappaAlpha(InterfaceMode):
+
+    def __init__(self,varname):
+
+        # Initialise superclass
+        InterfaceMode.__init__(self)
+
+        # Set variable name
+        self.varname = varname
+
+        # Create a vaiable for the calpha/kappa values
+        self.sqrt_param = None
+
+        # Create a dictionary of argument-function pairs for creating kappa/calpha array
+        self.input_type = {
+                            NUM_SQRT_RUNS : linspace,
+                            SQRT_STEP : arange,
+                          }
+
+        # Create a variable for storing the array of kappa/calpha values
+        self.sqrt_arr = None
+
+    def sqrt_param_interval(self,param,values):
+
+        # Check that a list of kappa/calpha values is being entered
+        if param != self.varname + LIST_ENTRY:
+            return False
+
+        # Check that the next argument indicated that the start kappa/calpha value is being given
+        if values[0] != FIRST_VALUE:
+            return False
+
+        try:
+            # Attempt to convert the value to a float
+            start_val = float(values[1])
+        except ValueError:
+            # Return false if unsuccessful
+            return False
+
+        # Check that the next argument indicated that the start kappa/calpha value is being given
+        if values[3] != LAST_VALUE:
+            return False
+
+        try:
+            # Attempt to convert the value to a float
+            final_val = float(values[4])
+        except ValueError:
+            # Return false if unsuccessful
+            return False
+
+        # See if the next argument matches an instruction to create an array of kappa/calpha values
+        if values[5] not in self.input_type.keys():
+            return False
+
+        if values[5] == NUM_SQRT_RUNS:
+
+            try:
+                # Attempt to convert the value to an int
+                third_arg = int(values[6])
+            except ValueError:
+                # Return False if unsuccessful
+                return False
+
+        if values[5] == SQRT_STEP:
+
+            try:
+                # Attempt to convert the value to an int
+                third_arg = float(values[6])
+            except ValueError:
+                # Return False if unsuccessful
+                return False
+
+        if not self.validate_range(start_val,final_val):
+            return True
+
+        # Use the inputs to create a list of kappa/calpha values
+        self.sqrt_arr = self.input_type[param](start_val,final_val,third_arg)
+
+        # Return true if input matches intruction to change kappa/calpha parameters
+        return True
+
+    def validate_range(self,start_val,final_val):
+        pass
+
+    def change_parameters(self,user_input):
+
+        # Split the user input by a space
+        inputs = user_input.split()
+
+        # Check if the input array has two elements
+        if len(inputs) == 2:
+
+            # Attempt to change a single parameter
+            return self.change_single_parameter(*inputs)
+
+        # Check if the input array has three elements
+        if len(inputs) == 3:
+
+            # Attempt to change multiple parameters
+            return self.change_multiple_parameters(*inputs)
+
+        # Check if the input array has seven elements
+        if len(inputs) == 7:
+
+            # Attempt to create an araay of kappa/calpha values
+            return self.sqrt_param_interval(inputs[0],inputs[1:])
+
+        # Return false if input doesn't have correct number of arguments
+        return False
+
+    def validate_kappas(self):
+        pass
+
+class ForSinKappa(KappaAlpha):
+
+    def __init__(self):
+
+        # Initialise superclass
+        KappaAlpha.__init__(self,KAPPA)
+
+    def validate_settings(self):
+        pass
 

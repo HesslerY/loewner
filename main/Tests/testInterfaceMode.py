@@ -156,7 +156,7 @@ class InterfaceModeTests(unittest.TestCase):
                 self.assertEqual(mode.time_settings[START_TIME],start_time,mode.time_settings[START_TIME])
                 self.assertEqual(mode.time_settings[FINAL_TIME],final_time,mode.time_settings[FINAL_TIME])
 
-                ## BAD INPUT TESTS - See that input function rejects unusual input (e.g. "starttime aaaa", "starttime starttime" rather than "starttime 2")
+                ## BAD INPUT TESTS - See that input function rejects unusual input (e.g. "times 0 aaaa", "times times times" rather than "times 0 2")
 
                 '''
 

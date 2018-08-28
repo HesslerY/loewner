@@ -42,6 +42,10 @@ mult_float_args = [MULTIPLE_TIMES]
 # Create a list 'multiple' commands (i.e. take the form PARAM VAL1 VAL2) that only accept int values
 mult_only_int_args = [MULTIPLE_RES]
 
+# Create a list of all InterfaceMode objects
+interface_modes = [InterfaceMode(),SingleTrace(),ForwardSingle(),InverseSingle(),ExactInverse(),TwoTrace(),WedgeAlpha(),ExactLinear(),ExactConstant(),ExactSquareRoot(),KappaAlpha(""), \
+        ForSinKappa()]
+
 class InterfaceModeTests(unittest.TestCase):
 
     # Create an valid y boolean argument
@@ -60,9 +64,13 @@ class InterfaceModeTests(unittest.TestCase):
     def valid_int_multiple(self,first_arg):
         return " ".join([first_arg, str(randint(min_rand,max_rand)), str(randint(min_rand,max_rand))])
 
+    # Create a random string of length rand_str_length
+    def random_string(self):
+        return "".join([chars[randint(min_rand,max_rand) % len(chars)] for _ in range(rand_str_length)])
+
     # Create an invalid argument in the form of a random string
-    def random_string(self,first_arg):
-        return first_arg + " " + "".join([chars[randint(min_rand,max_rand) % len(chars)] for _ in range(rand_str_length)])
+    def random_string_command(self,first_arg):
+        return first_arg + " " + self.random_string()
 
     # Create a valid float argument
     def valid_float_single(self,first_arg):
@@ -76,14 +84,15 @@ class InterfaceModeTests(unittest.TestCase):
     def two_command_string(self,param,value):
         return param + " " + str(value)
 
+    # Create a command string from a parameter and a value
+    def three_command_string(self,param,value1,value2):
+        return param + " " + str(value1) + " " + str(value2)
+
     # Create an invalid boolean argument - parameter plus a single character that is neither y nor n (e.g. compile z)
     def invalid_single_char(self,param):
         return param + " " + bad_chars[randint(min_rand,max_rand) % len(bad_chars)]
 
     def test_change_single_time(self):
-
-        # Create a list of InterfaceMode objects
-        interface_modes = [InterfaceMode(),SingleTrace(),ForwardSingle(),InverseSingle(),ExactInverse(),TwoTrace(),WedgeAlpha(),ExactLinear(),ExactConstant(),ExactSquareRoot(),KappaAlpha("")]
 
         for _ in range(test_runs):
             for command in time_args:
@@ -99,7 +108,7 @@ class InterfaceModeTests(unittest.TestCase):
                     # Check that the member variable has changed to the expected value
                     self.assertEqual(mode.time_settings[command],rand_int,mode.time_settings[command])
 
-                    # Create a command for setting to the time to a random float
+                    # Create a command for setting to the time to a random float (risky due to conversion to and from string but this seems to work anyway)
                     rand_float = uniform(min_rand,max_rand)
                     arg = self.two_command_string(command,rand_float)
                     # Check that the time-change function returns True when this command is passed to the InterfaceMode obejct
@@ -107,9 +116,62 @@ class InterfaceModeTests(unittest.TestCase):
                     # Check that the assignment worked
                     self.assertEqual(mode.time_settings[command],rand_float,mode.time_settings[command])
 
-                    ## REJECTING NON-NUMBER TESTS - See that input function rejects unusual input (e.g. "times 2 aaaa" rather than "times 2 10")
+                    ## BAD INPUT TESTS - See that input function rejects unusual input (e.g. "starttime aaaa", "starttime starttime" rather than "starttime 2")
 
-                    arg = self.random_string(command)
+                    # Create a command for 'setting' time to a string - bad input
+                    arg = self.random_string_command(command)
+                    # Check that the time-change function returns False when this command is passed to the InterfaceMode obejct
+                    self.assertFalse(mode.change_single_time(*arg.split()))
+                    # Check that the time-change function returns False when only one argument is given
+                    self.assertFalse(mode.change_single_time(command,""))
+                    # Check that the time-change function returns False when the 'param' is given twice
+                    self.assertFalse(mode.change_single_time(command,command))
+                    # Check that the time-change function returns False when the time commands aren't given
+                    self.assertFalse(mode.change_single_time(command,command))
+
+    def test_change_both_times(self):
+
+        for _ in range(test_runs):
+            for mode in interface_modes:
+
+                ## CORRECT ASSIGNMENT TESTS - See that object member variables change as expected and that valid input returns True
+
+                # Create a command for setting both times to random ints
+                start_time = randint(min_rand,max_rand)
+                final_time = randint(min_rand,max_rand)
+                arg = self.three_command_string(MULTIPLE_TIMES,start_time,final_time)
+                # Check that the time-change function returns True when this command is passed to the InterfaceMode obejct
+                self.assertTrue(mode.change_both_times(*arg.split()))
+                # Check that the member variable has changed to the expected value
+                self.assertEqual(mode.time_settings[START_TIME],start_time,mode.time_settings[START_TIME])
+                self.assertEqual(mode.time_settings[FINAL_TIME],final_time,mode.time_settings[FINAL_TIME])
+
+                # Create a command for setting both times to random floats
+                start_time = uniform(min_rand,max_rand)
+                final_time = uniform(min_rand,max_rand)
+                arg = self.three_command_string(MULTIPLE_TIMES,start_time,final_time)
+                # Check that the time-change function returns True when this command is passed to the InterfaceMode obejct
+                self.assertTrue(mode.change_both_times(*arg.split()))
+                # Check that the member variable has changed to the expected value
+                self.assertEqual(mode.time_settings[START_TIME],start_time,mode.time_settings[START_TIME])
+                self.assertEqual(mode.time_settings[FINAL_TIME],final_time,mode.time_settings[FINAL_TIME])
+
+                ## BAD INPUT TESTS - See that input function rejects unusual input (e.g. "starttime aaaa", "starttime starttime" rather than "starttime 2")
+
+                '''
+
+                # Create a command for 'setting' time to a string - bad input
+                arg = self.random_string_command(command)
+                # Check that the time-change function returns False when this command is passed to the InterfaceMode obejct
+                self.assertFalse(mode.change_single_time(*arg.split()))
+                # Check that the time-change function returns False when only one argument is given
+                self.assertFalse(mode.change_single_time(command,""))
+                # Check that the time-change function returns False when the 'param' is given twice
+                self.assertFalse(mode.change_single_time(command,command))
+                # Check that the time-change function returns False when the time commands aren't given
+                self.assertFalse(mode.change_single_time(command,command))
+
+                '''
 
     def test_single_trace(self):
 
@@ -129,7 +191,7 @@ class InterfaceModeTests(unittest.TestCase):
                 self.assertEqual(invsin_mode.change_single_parameter(*arg.split()),True,arg)
 
                 # Check that the float commands reject strings
-                arg = self.random_string(command)
+                arg = self.random_string_command(command)
                 self.assertEqual(single_mode.change_single_parameter(*arg.split()),False,arg)
                 self.assertEqual(forsin_mode.change_single_parameter(*arg.split()),False,arg)
                 self.assertEqual(invsin_mode.change_single_parameter(*arg.split()),False,arg)
@@ -141,7 +203,7 @@ class InterfaceModeTests(unittest.TestCase):
                 self.assertEqual(invsin_mode.change_parameters(arg),True,arg)
 
                 # Check that the float commands reject strings
-                arg = self.random_string(command)
+                arg = self.random_string_command(command)
                 self.assertEqual(single_mode.change_parameters(arg),False,arg)
                 self.assertEqual(forsin_mode.change_parameters(arg),False,arg)
                 self.assertEqual(invsin_mode.change_parameters(arg),False,arg)
@@ -175,7 +237,7 @@ class InterfaceModeTests(unittest.TestCase):
                 self.assertEqual(invsin_mode.change_single_parameter(*arg.split()),True,arg)
 
                 # Check that the bool commands reject random strings
-                arg = self.random_string(command)
+                arg = self.random_string_command(command)
                 self.assertEqual(single_mode.change_single_parameter(*arg.split()),False,arg)
                 self.assertEqual(forsin_mode.change_single_parameter(*arg.split()),False,arg)
                 self.assertEqual(invsin_mode.change_single_parameter(*arg.split()),False,arg)
@@ -211,7 +273,7 @@ class InterfaceModeTests(unittest.TestCase):
                 self.assertEqual(invsin_mode.change_parameters(arg),True,arg)
 
                 # Check that the bool commands reject random strings
-                arg = self.random_string(command)
+                arg = self.random_string_command(command)
                 self.assertEqual(single_mode.change_parameters(arg),False,arg)
                 self.assertEqual(forsin_mode.change_parameters(arg),False,arg)
                 self.assertEqual(invsin_mode.change_parameters(arg),False,arg)
@@ -243,7 +305,7 @@ class InterfaceModeTests(unittest.TestCase):
                 self.assertEqual(invsin_mode.change_multiple_parameters(*arg.split()),True,arg)
 
                 # Check that the int commands reject strings
-                arg = self.random_string(command) + " " + self.random_string("")
+                arg = self.random_string_command(command) + " " + self.random_string_command("")
                 self.assertEqual(single_mode.change_multiple_parameters(*arg.split()),False,arg)
                 self.assertEqual(forsin_mode.change_multiple_parameters(*arg.split()),False,arg)
                 self.assertEqual(invsin_mode.change_multiple_parameters(*arg.split()),False,arg)
@@ -255,7 +317,7 @@ class InterfaceModeTests(unittest.TestCase):
                 self.assertEqual(invsin_mode.change_parameters(arg),True,arg)
 
                 # Check that the int commands reject strings
-                arg = self.random_string(command)
+                arg = self.random_string_command(command)
                 self.assertEqual(single_mode.change_parameters(arg),False,arg)
                 self.assertEqual(forsin_mode.change_parameters(arg),False,arg)
                 self.assertEqual(invsin_mode.change_parameters(arg),False,arg)
@@ -269,7 +331,7 @@ class InterfaceModeTests(unittest.TestCase):
                 self.assertEqual(invsin_mode.change_multiple_parameters(*arg.split()),True,arg)
 
                 # Check that the float commands reject strings
-                arg = self.random_string(command) + " " + self.random_string("")
+                arg = self.random_string_command(command) + " " + self.random_string_command("")
                 self.assertEqual(single_mode.change_multiple_parameters(*arg.split()),False,arg)
                 self.assertEqual(forsin_mode.change_multiple_parameters(*arg.split()),False,arg)
                 self.assertEqual(invsin_mode.change_multiple_parameters(*arg.split()),False,arg)
@@ -281,7 +343,7 @@ class InterfaceModeTests(unittest.TestCase):
                 self.assertEqual(invsin_mode.change_parameters(arg),True,arg)
 
                 # Check that the float commands reject strings
-                arg = self.random_string(command)
+                arg = self.random_string_command(command)
                 self.assertEqual(single_mode.change_parameters(arg),False,arg)
                 self.assertEqual(forsin_mode.change_parameters(arg),False,arg)
                 self.assertEqual(invsin_mode.change_parameters(arg),False,arg)

@@ -160,9 +160,27 @@ class InterfaceModeTests(unittest.TestCase):
                 self.assertEqual(mode.time_settings[START_TIME],start_time,mode.time_settings[START_TIME])
                 self.assertEqual(mode.time_settings[FINAL_TIME],final_time,mode.time_settings[FINAL_TIME])
 
+                # Set both time settings to None
+                mode.time_settings[START_TIME] = None
+                mode.time_settings[FINAL_TIME] = None
+
                 ## BAD INPUT TESTS - See that input function rejects unusual input (e.g. "times 0 aaaa", "times times times" rather than "times 0 2")
+                #                  - See that time values are unchanged by bad assignment
+
                 self.assertFalse(mode.change_both_times(MULTIPLE_TIMES,MULTIPLE_TIMES,MULTIPLE_TIMES))
+                self.assertTrue(all([val is None for val in mode.time_settings.values()]))
+
                 self.assertFalse(mode.change_both_times(MULTIPLE_TIMES,self.random_string(),self.random_string()))
+                self.assertTrue(all([val is None for val in mode.time_settings.values()]))
+
+                self.assertFalse(mode.change_both_times(MULTIPLE_TIMES,start_time,self.random_string()))
+                self.assertTrue(all([val is None for val in mode.time_settings.values()]))
+
+                self.assertFalse(mode.change_both_times(MULTIPLE_TIMES,self.random_string(),final_time))
+                self.assertTrue(all([val is None for val in mode.time_settings.values()]))
+
+                self.assertFalse(mode.change_both_times(START_TIME,start_time,final_time))
+                self.assertTrue(all([val is None for val in mode.time_settings.values()]))
 
     def test_single_trace(self):
 

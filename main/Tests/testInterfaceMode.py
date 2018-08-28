@@ -26,7 +26,7 @@ time_args = [START_TIME, FINAL_TIME]
 int_args = [START_TIME, FINAL_TIME, OUTER_RES, INNER_RES, KAPPA, DRIVE_ALPHA]
 
 # Create a list of single commands that can ONLY be matched with integer arguments (not converted to float)
-only_int_args = [OUTER_RES, INNER_RES]
+res_args = [OUTER_RES, INNER_RES]
 
 # Create a list of single commands that can be matched with float arguments
 float_args = [START_TIME, FINAL_TIME, KAPPA, DRIVE_ALPHA]
@@ -46,6 +46,11 @@ mult_only_int_args = [MULTIPLE_RES]
 # Create a list of all InterfaceMode objects
 interface_modes = [InterfaceMode(),SingleTrace(),ForwardSingle(),InverseSingle(),ExactInverse(),TwoTrace(),WedgeAlpha(),ExactLinear(),ExactConstant(),ExactSquareRoot(),KappaAlpha(""), \
         ForSinKappa()]
+
+# Create a list of InterfaceMode objects that require inner and outerres parameters
+innerres_modes = [InterfaceMode(),SingleTrace(),ForwardSingle(),InverseSingle(),TwoTrace(),WedgeAlpha(),KappaAlpha(""), ForSinKappa()]
+# Create a list of InterfaceMode objects that only use outerres parameters
+no_innerres_modes = [ExactInverse(),ExactLinear(),ExactConstant(),ExactSquareRoot()]
 
 class InterfaceModeTests(unittest.TestCase):
 
@@ -104,27 +109,34 @@ class InterfaceModeTests(unittest.TestCase):
                     # Use a random int as the time argument
                     rand_int = randint(min_rand,max_rand)
                     # Check that the time-change function returns True when these arguments are passed to the InterfaceMode obejct
-                    self.assertTrue(mode.change_single_time(command,rand_int))
+                    self.assertTrue(mode.change_single_time(command,str(rand_int)))
                     # Check that the member variable has changed to the expected value
                     self.assertEqual(mode.time_settings[command],rand_int,mode.time_settings[command])
 
                     # Use a random float as the time argument
                     rand_float = uniform(min_rand,max_rand)
                     # Check that the time-change function returns True when these areguments are passed to the InterfaceMode obejct
-                    self.assertTrue(mode.change_single_time(command,rand_float))
+                    self.assertTrue(mode.change_single_time(command,str(rand_float)))
                     # Check that the assignment worked
                     self.assertEqual(mode.time_settings[command],rand_float,mode.time_settings[command])
 
+                    mode.time_settings[command] = None
+
                     ## BAD INPUT TESTS - See that input function rejects unusual input (e.g. "starttime aaaa", "starttime starttime" rather than "starttime 2")
+                    #                  - See that time value isn't changed
 
                     # Check that the time-change function returns False when a random string is passed to the InterfaceMode obejct
                     self.assertFalse(mode.change_single_time(command,self.random_string()))
+                    self.assertIsNone(mode.time_settings[command])
                     # Check that the time-change function returns False when only one argument is given
                     self.assertFalse(mode.change_single_time(command,""))
+                    self.assertIsNone(mode.time_settings[command])
                     # Check that the time-change function returns False when the 'param' is given twice
                     self.assertFalse(mode.change_single_time(command,command))
+                    self.assertIsNone(mode.time_settings[command])
                     # Check that the time-change function returns False when the time commands aren't given
                     self.assertFalse(mode.change_single_time(command,command))
+                    self.assertIsNone(mode.time_settings[command])
 
     def test_change_both_times(self):
 
@@ -137,7 +149,7 @@ class InterfaceModeTests(unittest.TestCase):
                 start_time = randint(min_rand,max_rand)
                 final_time = randint(min_rand,max_rand)
                 # Check that the time-change function returns True these arguments are passed to the InterfaceMode obejct
-                self.assertTrue(mode.change_both_times(MULTIPLE_TIMES,start_time,final_time))
+                self.assertTrue(mode.change_both_times(MULTIPLE_TIMES,str(start_time),str(final_time)))
                 # Check that the member variable has changed to the expected value
                 self.assertEqual(mode.time_settings[START_TIME],start_time,mode.time_settings[START_TIME])
                 self.assertEqual(mode.time_settings[FINAL_TIME],final_time,mode.time_settings[FINAL_TIME])
@@ -146,7 +158,7 @@ class InterfaceModeTests(unittest.TestCase):
                 start_time = uniform(min_rand,max_rand)
                 final_time = uniform(min_rand,max_rand)
                 # Check that the time-change function returns True when arguments are passed to the InterfaceMode obejct
-                self.assertTrue(mode.change_both_times(MULTIPLE_TIMES,start_time,final_time))
+                self.assertTrue(mode.change_both_times(MULTIPLE_TIMES,str(start_time),str(final_time)))
                 # Check that the member variable has changed to the expected value
                 self.assertEqual(mode.time_settings[START_TIME],start_time,mode.time_settings[START_TIME])
                 self.assertEqual(mode.time_settings[FINAL_TIME],final_time,mode.time_settings[FINAL_TIME])
@@ -155,7 +167,7 @@ class InterfaceModeTests(unittest.TestCase):
                 start_time = randint(min_rand,max_rand)
                 final_time = uniform(min_rand,max_rand)
                 # Check that the time-change function returns True when this command is passed to the InterfaceMode obejct
-                self.assertTrue(mode.change_both_times(MULTIPLE_TIMES,start_time,final_time))
+                self.assertTrue(mode.change_both_times(MULTIPLE_TIMES,str(start_time),str(final_time)))
                 # Check that the member variable has changed to the expected value
                 self.assertEqual(mode.time_settings[START_TIME],start_time,mode.time_settings[START_TIME])
                 self.assertEqual(mode.time_settings[FINAL_TIME],final_time,mode.time_settings[FINAL_TIME])
@@ -173,253 +185,56 @@ class InterfaceModeTests(unittest.TestCase):
                 self.assertFalse(mode.change_both_times(MULTIPLE_TIMES,self.random_string(),self.random_string()))
                 self.assertTrue(all([val is None for val in mode.time_settings.values()]))
 
-                self.assertFalse(mode.change_both_times(MULTIPLE_TIMES,start_time,self.random_string()))
+                self.assertFalse(mode.change_both_times(MULTIPLE_TIMES,str(start_time),self.random_string()))
                 self.assertTrue(all([val is None for val in mode.time_settings.values()]))
 
-                self.assertFalse(mode.change_both_times(MULTIPLE_TIMES,self.random_string(),final_time))
+                self.assertFalse(mode.change_both_times(MULTIPLE_TIMES,self.random_string(),str(final_time)))
                 self.assertTrue(all([val is None for val in mode.time_settings.values()]))
 
-                self.assertFalse(mode.change_both_times(START_TIME,start_time,final_time))
+                self.assertFalse(mode.change_both_times(START_TIME,str(start_time),str(final_time)))
                 self.assertTrue(all([val is None for val in mode.time_settings.values()]))
 
-    def test_single_trace(self):
-
-        # Create an InterfaceMode object
-        single_mode = SingleTrace()
-        forsin_mode = ForwardSingle()
-        invsin_mode = InverseSingle()
+    def test_change_single_resolution(self):
 
         for _ in range(test_runs):
 
-            for command in float_args:
+            for mode in innerres_modes:
 
-                # Check that the float commands accept floats
-                arg = self.valid_float_single(command)
-                self.assertEqual(single_mode.change_single_parameter(*arg.split()),True,arg)
-                self.assertEqual(forsin_mode.change_single_parameter(*arg.split()),True,arg)
-                self.assertEqual(invsin_mode.change_single_parameter(*arg.split()),True,arg)
+                # GOOD INPUTS
 
-                # Check that the float commands reject strings
-                arg = self.random_string_command(command)
-                self.assertEqual(single_mode.change_single_parameter(*arg.split()),False,arg)
-                self.assertEqual(forsin_mode.change_single_parameter(*arg.split()),False,arg)
-                self.assertEqual(invsin_mode.change_single_parameter(*arg.split()),False,arg)
+                # Use random ints as the res arguments
+                rand_outer = randint(min_rand,max_rand)
+                rand_inner = randint(min_rand,max_rand)
+                # Check that the methods accept the input
+                self.assertTrue(mode.change_single_resolution(OUTER_RES,str(rand_outer)))
+                self.assertTrue(mode.change_single_resolution(INNER_RES,str(rand_inner)))
+                # Check that the assignments worked
+                self.assertEqual(mode.res_settings[OUTER_RES],rand_outer)
+                self.assertEqual(mode.res_settings[INNER_RES],rand_inner)
 
-                # Check that the float commands accept floats
-                arg = self.valid_float_single(command)
-                self.assertEqual(single_mode.change_parameters(arg),True,arg)
-                self.assertEqual(forsin_mode.change_parameters(arg),True,arg)
-                self.assertEqual(invsin_mode.change_parameters(arg),True,arg)
+                # BAD INPUTS
 
-                # Check that the float commands reject strings
-                arg = self.random_string_command(command)
-                self.assertEqual(single_mode.change_parameters(arg),False,arg)
-                self.assertEqual(forsin_mode.change_parameters(arg),False,arg)
-                self.assertEqual(invsin_mode.change_parameters(arg),False,arg)
+                # Set the resolution member variables to None
+                mode.res_settings[OUTER_RES] = None
+                mode.res_settings[INNER_RES] = None
+                # Use random floats as the res arguments
+                rand_outer = uniform(min_rand,max_rand)
+                rand_inner = uniform(min_rand,max_rand)
+                # Check that the methods reject the input
+                self.assertFalse(mode.change_single_resolution(OUTER_RES,str(rand_outer)),rand_outer)
+                self.assertFalse(mode.change_single_resolution(INNER_RES,str(rand_inner)),rand_inner)
+                # Check that the assignments didn't work
+                self.assertIsNone(mode.res_settings[OUTER_RES])
+                self.assertIsNone(mode.res_settings[INNER_RES])
 
-            for command in only_int_args:
+            for mode in no_innerres_modes:
+                pass
 
-                # Check that the int only commands reject floats
-                arg = self.valid_float_single(command)
-                self.assertEqual(single_mode.change_single_parameter(*arg.split()),False,arg)
-                self.assertEqual(forsin_mode.change_single_parameter(*arg.split()),False,arg)
-                self.assertEqual(invsin_mode.change_single_parameter(*arg.split()),False,arg)
+                # test innerres
+                # ensure outerres is rejected
 
-                # Check that the int only commands reject floats
-                arg = self.valid_float_single(command)
-                self.assertEqual(single_mode.change_parameters(arg),False,arg)
-                self.assertEqual(forsin_mode.change_parameters(arg),False,arg)
-                self.assertEqual(invsin_mode.change_parameters(arg),False,arg)
-
-            for command in bool_args:
-
-                # Check that the bool commands accept a 'true' response
-                arg = self.valid_yes(command)
-                self.assertEqual(single_mode.change_single_parameter(*arg.split()),True,arg)
-                self.assertEqual(forsin_mode.change_single_parameter(*arg.split()),True,arg)
-                self.assertEqual(invsin_mode.change_single_parameter(*arg.split()),True,arg)
-
-                # Check that the bool commands accept a 'false' response
-                arg = self.valid_no(command)
-                self.assertEqual(single_mode.change_single_parameter(*arg.split()),True,arg)
-                self.assertEqual(forsin_mode.change_single_parameter(*arg.split()),True,arg)
-                self.assertEqual(invsin_mode.change_single_parameter(*arg.split()),True,arg)
-
-                # Check that the bool commands reject random strings
-                arg = self.random_string_command(command)
-                self.assertEqual(single_mode.change_single_parameter(*arg.split()),False,arg)
-                self.assertEqual(forsin_mode.change_single_parameter(*arg.split()),False,arg)
-                self.assertEqual(invsin_mode.change_single_parameter(*arg.split()),False,arg)
-
-                # Check that the bool commands reject ints
-                arg = self.valid_int_single(command)
-                self.assertEqual(single_mode.change_single_parameter(*arg.split()),False,arg)
-                self.assertEqual(forsin_mode.change_single_parameter(*arg.split()),False,arg)
-                self.assertEqual(invsin_mode.change_single_parameter(*arg.split()),False,arg)
-
-                # Check that the bool commands reject floats
-                arg = self.valid_float_single(command)
-                self.assertEqual(single_mode.change_single_parameter(*arg.split()),False,arg)
-                self.assertEqual(forsin_mode.change_single_parameter(*arg.split()),False,arg)
-                self.assertEqual(invsin_mode.change_single_parameter(*arg.split()),False,arg)
-
-                # Check that the bool commands reject single-letter arguments that aren't y/n
-                arg = self.invalid_single_char(command)
-                self.assertEqual(single_mode.change_single_parameter(*arg.split()),False,arg)
-                self.assertEqual(forsin_mode.change_single_parameter(*arg.split()),False,arg)
-                self.assertEqual(invsin_mode.change_single_parameter(*arg.split()),False,arg)
-
-                # Check that the bool commands accept a 'true' response
-                arg = self.valid_yes(command)
-                self.assertEqual(single_mode.change_parameters(arg),True,arg)
-                self.assertEqual(forsin_mode.change_parameters(arg),True,arg)
-                self.assertEqual(invsin_mode.change_parameters(arg),True,arg)
-
-                # Check that the bool commands accept a 'false' response
-                arg = self.valid_no(command)
-                self.assertEqual(single_mode.change_parameters(arg),True,arg)
-                self.assertEqual(forsin_mode.change_parameters(arg),True,arg)
-                self.assertEqual(invsin_mode.change_parameters(arg),True,arg)
-
-                # Check that the bool commands reject random strings
-                arg = self.random_string_command(command)
-                self.assertEqual(single_mode.change_parameters(arg),False,arg)
-                self.assertEqual(forsin_mode.change_parameters(arg),False,arg)
-                self.assertEqual(invsin_mode.change_parameters(arg),False,arg)
-
-                # Check that the bool commands reject ints
-                arg = self.valid_int_single(command)
-                self.assertEqual(single_mode.change_parameters(arg),False,arg)
-                self.assertEqual(forsin_mode.change_parameters(arg),False,arg)
-                self.assertEqual(invsin_mode.change_parameters(arg),False,arg)
-
-                # Check that the bool commands reject floats
-                arg = self.valid_float_single(command)
-                self.assertEqual(single_mode.change_parameters(arg),False,arg)
-                self.assertEqual(forsin_mode.change_parameters(arg),False,arg)
-                self.assertEqual(invsin_mode.change_parameters(arg),False,arg)
-
-                # Check that the bool commands reject single-letter arguments that aren't y/n
-                arg = self.invalid_single_char(command)
-                self.assertEqual(single_mode.change_parameters(arg),False,arg)
-                self.assertEqual(forsin_mode.change_parameters(arg),False,arg)
-                self.assertEqual(invsin_mode.change_parameters(arg),False,arg)
-
-            for command in mult_int_args:
-
-                # Check that the int commands accept ints
-                arg = self.valid_int_multiple(command)
-                self.assertEqual(single_mode.change_multiple_parameters(*arg.split()),True,arg)
-                self.assertEqual(forsin_mode.change_multiple_parameters(*arg.split()),True,arg)
-                self.assertEqual(invsin_mode.change_multiple_parameters(*arg.split()),True,arg)
-
-                # Check that the int commands reject strings
-                arg = self.random_string_command(command) + " " + self.random_string_command("")
-                self.assertEqual(single_mode.change_multiple_parameters(*arg.split()),False,arg)
-                self.assertEqual(forsin_mode.change_multiple_parameters(*arg.split()),False,arg)
-                self.assertEqual(invsin_mode.change_multiple_parameters(*arg.split()),False,arg)
-
-                # Check that the int commands accept ints
-                arg = self.valid_int_multiple(command)
-                self.assertEqual(single_mode.change_parameters(arg),True,arg)
-                self.assertEqual(forsin_mode.change_parameters(arg),True,arg)
-                self.assertEqual(invsin_mode.change_parameters(arg),True,arg)
-
-                # Check that the int commands reject strings
-                arg = self.random_string_command(command)
-                self.assertEqual(single_mode.change_parameters(arg),False,arg)
-                self.assertEqual(forsin_mode.change_parameters(arg),False,arg)
-                self.assertEqual(invsin_mode.change_parameters(arg),False,arg)
-
-            for command in mult_float_args:
-
-                # Check that the float commands accept floats
-                arg = self.valid_float_multiple(command)
-                self.assertEqual(single_mode.change_multiple_parameters(*arg.split()),True,arg)
-                self.assertEqual(forsin_mode.change_multiple_parameters(*arg.split()),True,arg)
-                self.assertEqual(invsin_mode.change_multiple_parameters(*arg.split()),True,arg)
-
-                # Check that the float commands reject strings
-                arg = self.random_string_command(command) + " " + self.random_string_command("")
-                self.assertEqual(single_mode.change_multiple_parameters(*arg.split()),False,arg)
-                self.assertEqual(forsin_mode.change_multiple_parameters(*arg.split()),False,arg)
-                self.assertEqual(invsin_mode.change_multiple_parameters(*arg.split()),False,arg)
-
-                # Check that the float commands accept floats
-                arg = self.valid_float_multiple(command)
-                self.assertEqual(single_mode.change_parameters(arg),True,arg)
-                self.assertEqual(forsin_mode.change_parameters(arg),True,arg)
-                self.assertEqual(invsin_mode.change_parameters(arg),True,arg)
-
-                # Check that the float commands reject strings
-                arg = self.random_string_command(command)
-                self.assertEqual(single_mode.change_parameters(arg),False,arg)
-                self.assertEqual(forsin_mode.change_parameters(arg),False,arg)
-                self.assertEqual(invsin_mode.change_parameters(arg),False,arg)
-
-            for command in mult_only_int_args:
-
-                # Check that the int only commands reject floats
-                arg = self.valid_float_multiple(command)
-                self.assertEqual(single_mode.change_multiple_parameters(*arg.split()),False,arg)
-                self.assertEqual(forsin_mode.change_multiple_parameters(*arg.split()),False,arg)
-                self.assertEqual(invsin_mode.change_multiple_parameters(*arg.split()),False,arg)
-
-                # Check that the int only commands reject floats
-                arg = self.valid_float_multiple(command)
-                self.assertEqual(single_mode.change_parameters(arg),False,arg)
-                self.assertEqual(forsin_mode.change_parameters(arg),False,arg)
-                self.assertEqual(invsin_mode.change_parameters(arg),False,arg)
-
-            for command in time_args:
-
-                # Set the time to a random int with change_single_parameter
-                rand_int = randint(min_rand,max_rand)
-                arg = self.two_command_string(command,rand_int)
-                single_mode.change_single_parameter(*arg.split())
-                forsin_mode.change_single_parameter(*arg.split())
-                invsin_mode.change_single_parameter(*arg.split())
-
-                # Check that the assignment worked
-                self.assertEqual(single_mode.time_settings[command],rand_int,single_mode.time_settings[command])
-                self.assertEqual(forsin_mode.time_settings[command],rand_int,forsin_mode.time_settings[command])
-                self.assertEqual(invsin_mode.time_settings[command],rand_int,invsin_mode.time_settings[command])
-
-                # Set the time to a random int with change_parameters
-                rand_int = randint(min_rand,max_rand)
-                arg = self.two_command_string(command,rand_int)
-                single_mode.change_parameters(arg)
-                forsin_mode.change_parameters(arg)
-                invsin_mode.change_parameters(arg)
-
-                # Check that the assignment worked
-                self.assertEqual(single_mode.time_settings[command],rand_int,single_mode.time_settings[command])
-                self.assertEqual(forsin_mode.time_settings[command],rand_int,forsin_mode.time_settings[command])
-                self.assertEqual(invsin_mode.time_settings[command],rand_int,invsin_mode.time_settings[command])
-
-                # Set the time to a random float with change_single_parameter
-                rand_float = uniform(min_rand,max_rand)
-                arg = self.two_command_string(command,rand_float)
-                single_mode.change_single_parameter(*arg.split())
-                forsin_mode.change_single_parameter(*arg.split())
-                invsin_mode.change_single_parameter(*arg.split())
-
-                # Check that the assignment worked
-                self.assertEqual(single_mode.time_settings[command],rand_float,single_mode.time_settings[command])
-                self.assertEqual(forsin_mode.time_settings[command],rand_float,forsin_mode.time_settings[command])
-                self.assertEqual(invsin_mode.time_settings[command],rand_float,invsin_mode.time_settings[command])
-
-                # Set the time to a random int with change_parameters
-                rand_float = uniform(min_rand,max_rand)
-                arg = self.two_command_string(command,rand_float)
-                single_mode.change_parameters(arg)
-                forsin_mode.change_parameters(arg)
-                invsin_mode.change_parameters(arg)
-
-                # Check that the assignment worked
-                self.assertEqual(single_mode.time_settings[command],rand_float,single_mode.time_settings[command])
-                self.assertEqual(forsin_mode.time_settings[command],rand_float,forsin_mode.time_settings[command])
-                self.assertEqual(invsin_mode.time_settings[command],rand_float,invsin_mode.time_settings[command])
+    def test_validate_time(self):
+        pass
 
     def test_exactinverse_mode(self):
 

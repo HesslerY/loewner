@@ -129,7 +129,7 @@ class InterfaceMode:
 
         try:
             # Attempt to convert the value to an int
-            self.res_settings[param]  = int(value)
+            self.res_settings[param] = int(value)
         except ValueError:
             return False
 

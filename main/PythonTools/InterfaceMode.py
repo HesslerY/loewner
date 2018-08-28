@@ -262,11 +262,11 @@ class InterfaceMode:
         if param != KAPPA:
             return False
 
-            # Attempt to convert the value to a float
-            try:
-                self.kappa = float(value)
-            except ValueError:
-                return False
+        # Attempt to convert the value to a float
+        try:
+            self.kappa = float(value)
+        except ValueError:
+            return False
 
         # Return true if input matches instruction to change kappa value
         return True

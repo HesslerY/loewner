@@ -10,7 +10,11 @@ test_runs = 20
 min_rand = 0
 max_rand = 150
 
+# List of characters used to constuct a random word
 chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!£$%^&*()-+=@?/\.,#~;:][{}<>|"
+
+# List of characters with y and n ommitted to test yes/no functions
+bad_chars = "abcdefghijklmopqrstuvwxzABCDEFGHIJKLMNOPQRSTUVWXYZ!£$%^&*()-+=@?/\.,#~;:][{}<>|"
 
 rand_str_length = 10
 
@@ -70,6 +74,9 @@ class InterfaceModeTests(unittest.TestCase):
 
     def two_command_string(self,param,value):
         return param + " " + str(value)
+
+    def invalid_single_char(self,param):
+        return param + " " + bad_chars[randint(min_rand,max_rand) % len(bad_chars)]
 
     def test_single_trace(self):
 
@@ -151,6 +158,48 @@ class InterfaceModeTests(unittest.TestCase):
                 self.assertEqual(single_mode.change_single_parameter(*arg.split()),False,arg)
                 self.assertEqual(forsin_mode.change_single_parameter(*arg.split()),False,arg)
                 self.assertEqual(invsin_mode.change_single_parameter(*arg.split()),False,arg)
+
+                # Check that the bool commands reject single-letter arguments that aren't y/n
+                arg = self.invalid_single_char(command)
+                self.assertEqual(single_mode.change_single_parameter(*arg.split()),False,arg)
+                self.assertEqual(forsin_mode.change_single_parameter(*arg.split()),False,arg)
+                self.assertEqual(invsin_mode.change_single_parameter(*arg.split()),False,arg)
+
+                # Check that the bool commands accept a 'true' response
+                arg = self.valid_yes(command)
+                self.assertEqual(single_mode.change_parameters(arg),True,arg)
+                self.assertEqual(forsin_mode.change_parameters(arg),True,arg)
+                self.assertEqual(invsin_mode.change_parameters(arg),True,arg)
+
+                # Check that the bool commands accept a 'false' response
+                arg = self.valid_no(command)
+                self.assertEqual(single_mode.change_parameters(arg),True,arg)
+                self.assertEqual(forsin_mode.change_parameters(arg),True,arg)
+                self.assertEqual(invsin_mode.change_parameters(arg),True,arg)
+
+                # Check that the bool commands reject random strings
+                arg = self.random_string(command)
+                self.assertEqual(single_mode.change_parameters(arg),False,arg)
+                self.assertEqual(forsin_mode.change_parameters(arg),False,arg)
+                self.assertEqual(invsin_mode.change_parameters(arg),False,arg)
+
+                # Check that the bool commands reject ints
+                arg = self.valid_int_single(command)
+                self.assertEqual(single_mode.change_parameters(arg),False,arg)
+                self.assertEqual(forsin_mode.change_parameters(arg),False,arg)
+                self.assertEqual(invsin_mode.change_parameters(arg),False,arg)
+
+                # Check that the bool commands reject floats
+                arg = self.valid_float_single(command)
+                self.assertEqual(single_mode.change_parameters(arg),False,arg)
+                self.assertEqual(forsin_mode.change_parameters(arg),False,arg)
+                self.assertEqual(invsin_mode.change_parameters(arg),False,arg)
+
+                # Check that the bool commands reject single-letter arguments that aren't y/n
+                arg = self.invalid_single_char(command)
+                self.assertEqual(single_mode.change_parameters(arg),False,arg)
+                self.assertEqual(forsin_mode.change_parameters(arg),False,arg)
+                self.assertEqual(invsin_mode.change_parameters(arg),False,arg)
 
             for command in mult_int_args:
 

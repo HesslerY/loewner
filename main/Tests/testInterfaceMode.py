@@ -37,6 +37,12 @@ mult_only_int_args = [MULTIPLE_RES]
 
 class InterfaceModeTests(unittest.TestCase):
 
+    def valid_yes(self,first_arg):
+        return first_arg + " y"
+
+    def valid_no(self,first_arg):
+        return first_arg + " n"
+
     def valid_int_single(self,first_arg):
         return first_arg + " " + str(randint(min_rand,max_rand))
 
@@ -139,6 +145,38 @@ class InterfaceModeTests(unittest.TestCase):
             for command in only_int_args:
 
                 # Check that the int only commands reject floats
+                arg = self.valid_float_single(command)
+                self.assertEqual(single_mode.change_single_parameter(*arg.split()),False,arg)
+                self.assertEqual(forsin_mode.change_single_parameter(*arg.split()),False,arg)
+                self.assertEqual(invsin_mode.change_single_parameter(*arg.split()),False,arg)
+
+            for command in bool_args:
+
+                # Check that the bool commands accept a 'true' response
+                arg = self.valid_yes(command)
+                self.assertEqual(single_mode.change_single_parameter(*arg.split()),True,arg)
+                self.assertEqual(forsin_mode.change_single_parameter(*arg.split()),True,arg)
+                self.assertEqual(invsin_mode.change_single_parameter(*arg.split()),True,arg)
+
+                # Check that the bool commands accept a 'false' response
+                arg = self.valid_no(command)
+                self.assertEqual(single_mode.change_single_parameter(*arg.split()),True,arg)
+                self.assertEqual(forsin_mode.change_single_parameter(*arg.split()),True,arg)
+                self.assertEqual(invsin_mode.change_single_parameter(*arg.split()),True,arg)
+
+                # Check that the bool commands reject random strings
+                arg = self.random_string(command)
+                self.assertEqual(single_mode.change_single_parameter(*arg.split()),False,arg)
+                self.assertEqual(forsin_mode.change_single_parameter(*arg.split()),False,arg)
+                self.assertEqual(invsin_mode.change_single_parameter(*arg.split()),False,arg)
+
+                # Check that the bool commands reject ints
+                arg = self.valid_int_single(command)
+                self.assertEqual(single_mode.change_single_parameter(*arg.split()),False,arg)
+                self.assertEqual(forsin_mode.change_single_parameter(*arg.split()),False,arg)
+                self.assertEqual(invsin_mode.change_single_parameter(*arg.split()),False,arg)
+
+                # Check that the bool commands reject floats
                 arg = self.valid_float_single(command)
                 self.assertEqual(single_mode.change_single_parameter(*arg.split()),False,arg)
                 self.assertEqual(forsin_mode.change_single_parameter(*arg.split()),False,arg)

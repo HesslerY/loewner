@@ -143,10 +143,10 @@ class MyTest(unittest.TestCase):
         for arg in good_kappa_args:
             self.assertEqual(kappa_forsin_mode.change_parameters(arg),True,arg)
 
-        # Check that InterfaceMode returns True for the bad arguments
+        # Check that InterfaceMode returns False for the bad arguments
         for arg in bad_args:
-            self.assertEqual(kappa_forsin_mode.change_parameters(arg),True,arg)
-        for arg in good_three:
+            self.assertEqual(kappa_forsin_mode.change_parameters(arg),False,arg)
+        for arg in bad_three:
             self.assertEqual(kappa_forsin_mode.change_multiple_parameters(*arg.split()),False,arg)
             self.assertEqual(kappa_forsin_mode.change_parameters(arg),False,arg)
 

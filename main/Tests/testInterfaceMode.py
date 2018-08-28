@@ -72,11 +72,38 @@ class InterfaceModeTests(unittest.TestCase):
     def valid_float_multiple(self,first_arg):
         return " ".join([first_arg, str(uniform(min_rand,max_rand)), str(uniform(min_rand,max_rand))])
 
+    # Create a command string from a parameter and a value
     def two_command_string(self,param,value):
         return param + " " + str(value)
 
+    # Create an invalid boolean argument - parameter plus a single character that is neither y nor n (e.g. compile z)
     def invalid_single_char(self,param):
         return param + " " + bad_chars[randint(min_rand,max_rand) % len(bad_chars)]
+
+    def test_change_single_time(self):
+
+        # Create a list of InterfaceMode objects
+        interface_modes = [InterfaceMode(),SingleTrace(),ForwardSingle(),InverseSingle(),ExactInverse(),TwoTrace(),WedgeAlpha(),ExactLinear(),ExactConstant(),ExactSquareRoot(),KappaAlpha("")]
+
+        for _ in range(test_runs):
+            for command in time_args:
+                for mode in interface_modes:
+
+                    # Set the time to a random int with change_single_parameter
+                    rand_int = randint(min_rand,max_rand)
+                    arg = self.two_command_string(command,rand_int)
+                    mode.change_single_time(*arg.split())
+
+                    # Check that the assignment worked
+                    self.assertEqual(mode.time_settings[command],rand_int,mode.time_settings[command])
+
+                    # Set the time to a random float with change_single_parameter
+                    rand_float = uniform(min_rand,max_rand)
+                    arg = self.two_command_string(command,rand_float)
+                    mode.change_single_time(*arg.split())
+
+                    # Check that the assignment worked
+                    self.assertEqual(mode.time_settings[command],rand_float,mode.time_settings[command])
 
     def test_single_trace(self):
 

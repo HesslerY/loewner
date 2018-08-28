@@ -192,6 +192,22 @@ class InterfaceModeTests(unittest.TestCase):
                 # Check that the assignment worked
                 self.assertEqual(single_mode.time_settings[command],rand_int,single_mode.time_settings[command])
 
+                # Set the time to a random float with change_single_parameter
+                rand_float = uniform(min_rand,max_rand)
+                arg = self.two_command_string(command,rand_float)
+                single_mode.change_single_parameter(*arg.split())
+
+                # Check that the assignment worked
+                self.assertEqual(single_mode.time_settings[command],rand_float,single_mode.time_settings[command])
+
+                # Set the time to a random int with change_parameters
+                rand_float = uniform(min_rand,max_rand)
+                arg = self.two_command_string(command,rand_float)
+                single_mode.change_parameters(arg)
+
+                # Check that the assignment worked
+                self.assertEqual(single_mode.time_settings[command],rand_float,single_mode.time_settings[command])
+
     def test_exactinverse_mode(self):
 
         # Create an InterfaceMode object

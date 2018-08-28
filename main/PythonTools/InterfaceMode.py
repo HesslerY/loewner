@@ -939,25 +939,25 @@ class KappaAlpha(InterfaceMode):
             return False
 
         # Check that the next argument indicated that the start kappa/calpha value is being given
-        if values[3] != LAST_VALUE:
+        if values[2] != LAST_VALUE:
             return False
 
         try:
             # Attempt to convert the value to a float
-            final_val = float(values[4])
+            final_val = float(values[3])
         except ValueError:
             # Return false if unsuccessful
             return False
 
         # See if the next argument matches an instruction to create an array of kappa/calpha values
-        if values[5] not in self.input_type.keys():
+        if values[4] not in self.input_type.keys():
             return False
 
-        if values[5] == NUM_SQRT_RUNS:
+        if values[4] == NUM_SQRT_RUNS:
 
             try:
                 # Attempt to convert the value to an int
-                third_arg = int(values[6])
+                third_arg = int(values[5])
             except ValueError:
                 # Return False if unsuccessful
                 return False
@@ -965,11 +965,11 @@ class KappaAlpha(InterfaceMode):
             if third_arg <= 2:
                 return False
 
-        if values[5] == SQRT_STEP:
+        if values[4] == SQRT_STEP:
 
             try:
                 # Attempt to convert the value to an int
-                third_arg = float(values[6])
+                third_arg = float(values[5])
             except ValueError:
                 # Return False if unsuccessful
                 return False
@@ -981,7 +981,7 @@ class KappaAlpha(InterfaceMode):
             return False
 
         # Use the inputs to create a list of kappa/calpha values
-        self.sqrt_arr = self.input_type[param](start_val,final_val,third_arg)
+        self.sqrt_arr = self.input_type[values[4]](start_val,final_val,third_arg)
 
         # Return true if input matches intruction to change kappa/calpha parameters
         return True

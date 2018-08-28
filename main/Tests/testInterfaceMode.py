@@ -89,21 +89,27 @@ class InterfaceModeTests(unittest.TestCase):
             for command in time_args:
                 for mode in interface_modes:
 
-                    # Set the time to a random int with change_single_parameter
+                    ## CORRECT ASSIGNMENT TESTS - See that object member variables change as expected and that valid input returns True
+
+                    # Create a command for setting to the time to a random int
                     rand_int = randint(min_rand,max_rand)
                     arg = self.two_command_string(command,rand_int)
-                    mode.change_single_time(*arg.split())
-
-                    # Check that the assignment worked
+                    # Check that the time-change function returns True when this command is passed to the InterfaceMode obejct
+                    self.assertTrue(mode.change_single_time(*arg.split()))
+                    # Check that the member variable has changed to the expected value
                     self.assertEqual(mode.time_settings[command],rand_int,mode.time_settings[command])
 
-                    # Set the time to a random float with change_single_parameter
+                    # Create a command for setting to the time to a random float
                     rand_float = uniform(min_rand,max_rand)
                     arg = self.two_command_string(command,rand_float)
-                    mode.change_single_time(*arg.split())
-
+                    # Check that the time-change function returns True when this command is passed to the InterfaceMode obejct
+                    self.assertTrue(mode.change_single_time(*arg.split()))
                     # Check that the assignment worked
                     self.assertEqual(mode.time_settings[command],rand_float,mode.time_settings[command])
+
+                    ## REJECTING NON-NUMBER TESTS - See that input function rejects unusual input (e.g. "times 2 aaaa" rather than "times 2 10")
+
+                    arg = self.random_string(command)
 
     def test_single_trace(self):
 

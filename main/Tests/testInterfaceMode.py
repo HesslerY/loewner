@@ -188,39 +188,39 @@ class InterfaceModeTests(unittest.TestCase):
                 self.assertEqual(forsin_mode.change_parameters(arg),False,arg)
                 self.assertEqual(invsin_mode.change_parameters(arg),False,arg)
 
-    def test_numerical_inverse(self):
+            # Check that the int commands accept ints and reject strings
+            for command in mult_int_args:
 
-        # Create an InterfaceMode object
-        interface_mode = InverseSingle()
+                arg = self.valid_int_multiple(command)
+                self.assertEqual(single_mode.change_parameters(arg),True,arg)
+                self.assertEqual(forsin_mode.change_parameters(arg),True,arg)
+                self.assertEqual(invsin_mode.change_parameters(arg),True,arg)
 
-        # Create a list of good two-argument commands
-        good_args = ["starttime 0","finaltime 3","outerres 3","innerres 5","saveplots y","saveplots n","savedata y", \
-                "savedata n","compile y","compile n","kappa 3.5","drivealpha 0.2"]
+                arg = self.random_string(command)
+                self.assertEqual(single_mode.change_parameters(arg),False,arg)
+                self.assertEqual(forsin_mode.change_parameters(arg),False,arg)
+                self.assertEqual(invsin_mode.change_parameters(arg),False,arg)
 
-        # Create a list of good three-argument commands
-        good_three = ["times 0 10", "res 100 2", "times 4.8 10", "times 0.5 10.5", "times 2 10.5", "res 1 1"]
+            # Check that the float commands accept floats and reject strings
+            for command in mult_float_args:
 
-        # Create a list of bad three-argument commands
-        bad_three = ["times a b", "res !! -", "times 4.8 b", "times a 10.5", "res 10.2 1", "res 10.2 a", "res a 1", "res 1 a"]
+                arg = self.valid_float_multiple(command)
+                self.assertEqual(single_mode.change_parameters(arg),True,arg)
+                self.assertEqual(forsin_mode.change_parameters(arg),True,arg)
+                self.assertEqual(invsin_mode.change_parameters(arg),True,arg)
 
-        # Create a list of bad arguments
-        bad_args = ["starttime x","finaltime -","outerres 3.2","innerres 0.1","saveplots x","saveplots 2.5","savedata 1"]
+                arg = self.random_string(command)
+                self.assertEqual(single_mode.change_parameters(arg),False,arg)
+                self.assertEqual(forsin_mode.change_parameters(arg),False,arg)
+                self.assertEqual(invsin_mode.change_parameters(arg),False,arg)
 
-        # Check that InterfaceMode returns True for the correct arguments
-        for arg in good_args:
-            self.assertEqual(interface_mode.change_single_parameter(*arg.split()),True,arg)
-            self.assertEqual(interface_mode.change_parameters(arg),True,arg)
-        for arg in good_three:
-            self.assertEqual(interface_mode.change_multiple_parameters(*arg.split()),True,arg)
-            self.assertEqual(interface_mode.change_parameters(arg),True,arg)
+            # Check that the int only commands reject floats
+            for command in mult_only_int_args:
 
-        # Check that InterfaceMode returns False for the bad arguments
-        for arg in bad_args:
-            self.assertEqual(interface_mode.change_single_parameter(*arg.split()),False,arg)
-            self.assertEqual(interface_mode.change_parameters(arg),False,arg)
-        for arg in bad_three:
-            self.assertEqual(interface_mode.change_multiple_parameters(*arg.split()),False,arg)
-            self.assertEqual(interface_mode.change_parameters(arg),False,arg)
+                arg = self.valid_float_multiple(command)
+                self.assertEqual(single_mode.change_parameters(arg),False,arg)
+                self.assertEqual(forsin_mode.change_parameters(arg),False,arg)
+                self.assertEqual(invsin_mode.change_parameters(arg),False,arg)
 
     def test_exactinverse_mode(self):
 

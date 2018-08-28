@@ -912,9 +912,6 @@ class KappaAlpha(InterfaceMode):
         # Set variable name
         self.varname = varname
 
-        # Create a vaiable for the calpha/kappa values
-        self.sqrt_param = None
-
         # Create a dictionary of argument-function pairs for creating kappa/calpha array
         self.input_type = {
                             NUM_SQRT_RUNS : linspace,
@@ -965,6 +962,9 @@ class KappaAlpha(InterfaceMode):
                 # Return False if unsuccessful
                 return False
 
+            if third_arg <= 2:
+                return False
+
         if values[5] == SQRT_STEP:
 
             try:
@@ -974,8 +974,11 @@ class KappaAlpha(InterfaceMode):
                 # Return False if unsuccessful
                 return False
 
+            if third_arg >= final_val - start_val:
+                return False
+
         if not self.validate_range(start_val,final_val):
-            return True
+            return False
 
         # Use the inputs to create a list of kappa/calpha values
         self.sqrt_arr = self.input_type[param](start_val,final_val,third_arg)
@@ -985,6 +988,21 @@ class KappaAlpha(InterfaceMode):
 
     def validate_range(self,start_val,final_val):
         pass
+
+    def validate_settings(self):
+
+        # Check that all the validation methods return True
+        return self.validate_time() and self.validate_resolution() and self.validate_saving() and self.validate_compilation() and self.validate_sqrt_array()
+
+    def change_single_parameter(self,param,value):
+
+        # See if the inputs match with an instruction to change a single parameters
+        return self.change_single_time(param,value) or self.change_single_resolution(param,value) or self.change_saving(param,value) or self.change_compilation(param,value)
+
+    def change_multiple_parameters(self,param,value1,value2):
+
+        # See if the inputs match with an instruction to change multiple parameters
+        return self.change_both_times(param,value1,value2) or self.change_both_resolutions(param,value1,value2)
 
     def change_parameters(self,user_input):
 
@@ -1012,8 +1030,61 @@ class KappaAlpha(InterfaceMode):
         # Return false if input doesn't have correct number of arguments
         return False
 
-    def validate_kappas(self):
-        pass
+    def create_kappa_runs(self):
+
+        # Create the LoewnerRunFactory object with the user-given parameters
+        self.loewner_fact = LoewnerRunFactory(self.time_settings[START_TIME],self.time_settings[FINAL_TIME],self.res_settings[OUTER_RES],self.res_settings[INNER_RES],self.compile,self.save_settings[SAVE_DATA],self.save_settings[SAVE_PLOTS])
+
+        # Create a list of LoewnerRuns with the LoewnerRunFactory
+        return self.loewner_fact.vary_kappa(self.sqrt_arr)
+
+    def create_calpha_runs(self):
+
+        # Create the LoewnerRunFactory object with the user-given parameters
+        self.loewner_fact = LoewnerRunFactory(self.time_settings[START_TIME],self.time_settings[FINAL_TIME],self.res_settings[OUTER_RES],self.res_settings[INNER_RES],self.compile,self.save_settings[SAVE_DATA],self.save_settings[SAVE_PLOTS])
+
+        # Create a list of LoewnerRuns with the LoewnerRunFactory
+        return self.loewner_fact.vary_alpha(self.sqrt_arr)
+
+    def validate_kappa_range(self,start_val,final_val):
+
+        # Check that the range of kappa values starts with a value >= 0
+        if start_val < 0:
+            return False
+
+        # Check that the final value is greater than the starting value
+        if final_val <= start_val:
+            return False
+
+        # Return True when all conditions are satisifed
+        return True
+
+    def validate_sqrt_array(self):
+
+        # Check that the array has been set
+        if self.sqrt_arr is None:
+            self.error = "Validation Error: Array of kappa/alpha values hasn't been set."
+            return False
+
+        # Return True if the array is valid
+        return True
+
+    def validate_calpha_range(self,start_val,final_val):
+
+        # Check that the range of kappa values starts with a value greater than zero
+        if start_val <= 0:
+            return False
+
+        # Check that the final value is greater than the starting value
+        if final_val <= start_val:
+            return False
+
+        # Check that the final value is less than one
+        if final_val >= 1:
+            return False
+
+        # Return True when all conditions are satisifed
+        return True
 
 class ForSinKappa(KappaAlpha):
 
@@ -1022,6 +1093,14 @@ class ForSinKappa(KappaAlpha):
         # Initialise superclass
         KappaAlpha.__init__(self,KAPPA)
 
-    def validate_settings(self):
-        pass
+        # Set the validate_range function to check for appropriate kappa values
+        self.validate_range = self.validate_kappa_range
 
+    def execute(self):
+
+        # Create a list of kappa runs for the different kappa values
+        kappa_runs = self.create_kappa_runs()
+
+        # Execute the forward single-trace algorithm for the different kappa valiues
+        for run in kappa_runs:
+            run.quadratic_forward_loewner()

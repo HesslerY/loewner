@@ -16,6 +16,7 @@ chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!£$%^&*()-+=@?/\.,
 # List of characters with y and n ommitted to test yes/no functions
 bad_chars = "abcdefghijklmopqrstuvwxzABCDEFGHIJKLMNOPQRSTUVWXYZ!£$%^&*()-+=@?/\.,#~;:][{}<>|"
 
+# Define a length for the random string function
 rand_str_length = 10
 
 # Create a list of time-related commands for the InterfaceMode object
@@ -100,28 +101,24 @@ class InterfaceModeTests(unittest.TestCase):
 
                     ## CORRECT ASSIGNMENT TESTS - See that object member variables change as expected and that valid input returns True
 
-                    # Create a command for setting to the time to a random int
+                    # Use a random int as the time argument
                     rand_int = randint(min_rand,max_rand)
-                    arg = self.two_command_string(command,rand_int)
-                    # Check that the time-change function returns True when this command is passed to the InterfaceMode obejct
-                    self.assertTrue(mode.change_single_time(*arg.split()))
+                    # Check that the time-change function returns True when these arguments are passed to the InterfaceMode obejct
+                    self.assertTrue(mode.change_single_time(command,rand_int))
                     # Check that the member variable has changed to the expected value
                     self.assertEqual(mode.time_settings[command],rand_int,mode.time_settings[command])
 
-                    # Create a command for setting to the time to a random float (risky due to conversion to and from string but this seems to work anyway)
+                    # Use a random float as the time argument
                     rand_float = uniform(min_rand,max_rand)
-                    arg = self.two_command_string(command,rand_float)
-                    # Check that the time-change function returns True when this command is passed to the InterfaceMode obejct
-                    self.assertTrue(mode.change_single_time(*arg.split()))
+                    # Check that the time-change function returns True when these areguments are passed to the InterfaceMode obejct
+                    self.assertTrue(mode.change_single_time(command,rand_float))
                     # Check that the assignment worked
                     self.assertEqual(mode.time_settings[command],rand_float,mode.time_settings[command])
 
                     ## BAD INPUT TESTS - See that input function rejects unusual input (e.g. "starttime aaaa", "starttime starttime" rather than "starttime 2")
 
-                    # Create a command for 'setting' time to a string - bad input
-                    arg = self.random_string_command(command)
-                    # Check that the time-change function returns False when this command is passed to the InterfaceMode obejct
-                    self.assertFalse(mode.change_single_time(*arg.split()))
+                    # Check that the time-change function returns False when a random string is passed to the InterfaceMode obejct
+                    self.assertFalse(mode.change_single_time(command,self.random_string()))
                     # Check that the time-change function returns False when only one argument is given
                     self.assertFalse(mode.change_single_time(command,""))
                     # Check that the time-change function returns False when the 'param' is given twice
@@ -136,42 +133,36 @@ class InterfaceModeTests(unittest.TestCase):
 
                 ## CORRECT ASSIGNMENT TESTS - See that object member variables change as expected and that valid input returns True
 
-                # Create a command for setting both times to random ints
+                # Find random int start and final times
                 start_time = randint(min_rand,max_rand)
                 final_time = randint(min_rand,max_rand)
-                arg = self.three_command_string(MULTIPLE_TIMES,start_time,final_time)
-                # Check that the time-change function returns True when this command is passed to the InterfaceMode obejct
-                self.assertTrue(mode.change_both_times(*arg.split()))
+                # Check that the time-change function returns True these arguments are passed to the InterfaceMode obejct
+                self.assertTrue(mode.change_both_times(MULTIPLE_TIMES,start_time,final_time))
                 # Check that the member variable has changed to the expected value
                 self.assertEqual(mode.time_settings[START_TIME],start_time,mode.time_settings[START_TIME])
                 self.assertEqual(mode.time_settings[FINAL_TIME],final_time,mode.time_settings[FINAL_TIME])
 
-                # Create a command for setting both times to random floats
+                # Find random float start and final times
                 start_time = uniform(min_rand,max_rand)
                 final_time = uniform(min_rand,max_rand)
-                arg = self.three_command_string(MULTIPLE_TIMES,start_time,final_time)
+                # Check that the time-change function returns True when arguments are passed to the InterfaceMode obejct
+                self.assertTrue(mode.change_both_times(MULTIPLE_TIMES,start_time,final_time))
+                # Check that the member variable has changed to the expected value
+                self.assertEqual(mode.time_settings[START_TIME],start_time,mode.time_settings[START_TIME])
+                self.assertEqual(mode.time_settings[FINAL_TIME],final_time,mode.time_settings[FINAL_TIME])
+
+                # Create a command for setting one time to randint and another to a random float
+                start_time = randint(min_rand,max_rand)
+                final_time = uniform(min_rand,max_rand)
                 # Check that the time-change function returns True when this command is passed to the InterfaceMode obejct
-                self.assertTrue(mode.change_both_times(*arg.split()))
+                self.assertTrue(mode.change_both_times(MULTIPLE_TIMES,start_time,final_time))
                 # Check that the member variable has changed to the expected value
                 self.assertEqual(mode.time_settings[START_TIME],start_time,mode.time_settings[START_TIME])
                 self.assertEqual(mode.time_settings[FINAL_TIME],final_time,mode.time_settings[FINAL_TIME])
 
                 ## BAD INPUT TESTS - See that input function rejects unusual input (e.g. "times 0 aaaa", "times times times" rather than "times 0 2")
-
-                '''
-
-                # Create a command for 'setting' time to a string - bad input
-                arg = self.random_string_command(command)
-                # Check that the time-change function returns False when this command is passed to the InterfaceMode obejct
-                self.assertFalse(mode.change_single_time(*arg.split()))
-                # Check that the time-change function returns False when only one argument is given
-                self.assertFalse(mode.change_single_time(command,""))
-                # Check that the time-change function returns False when the 'param' is given twice
-                self.assertFalse(mode.change_single_time(command,command))
-                # Check that the time-change function returns False when the time commands aren't given
-                self.assertFalse(mode.change_single_time(command,command))
-
-                '''
+                self.assertFalse(mode.change_both_times(MULTIPLE_TIMES,MULTIPLE_TIMES,MULTIPLE_TIMES))
+                self.assertFalse(mode.change_both_times(MULTIPLE_TIMES,self.random_string(),self.random_string()))
 
     def test_single_trace(self):
 

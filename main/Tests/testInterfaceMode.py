@@ -34,6 +34,9 @@ float_args = [START_TIME, FINAL_TIME, KAPPA, DRIVE_ALPHA]
 # Create a list of single commands that can be matched with 'boolean' (y/n) arguments
 bool_args = [SAVE_PLOTS, SAVE_DATA, COMPILE]
 
+# Create a list of single commands that can be matched with 'boolean' (y/n) arguments
+save_args = [SAVE_PLOTS, SAVE_DATA]
+
 # Create a list 'multiple' commands (i.e. take the form PARAM VAL1 VAL2) that accept int values
 mult_int_args = [MULTIPLE_RES,MULTIPLE_TIMES]
 
@@ -42,6 +45,9 @@ mult_float_args = [MULTIPLE_TIMES]
 
 # Create a list 'multiple' commands (i.e. take the form PARAM VAL1 VAL2) that only accept int values
 mult_only_int_args = [MULTIPLE_RES]
+
+# Create a list of valid "bools"
+valid_bools = [USER_FALSE,USER_TRUE]
 
 # Create a list of all InterfaceMode objects
 interface_modes = [InterfaceMode(),SingleTrace(),ForwardSingle(),InverseSingle(),ExactInverse(),TwoTrace(),WedgeAlpha(),ExactLinear(),ExactConstant(),ExactSquareRoot(),KappaAlpha(""), \
@@ -279,7 +285,65 @@ class InterfaceModeTests(unittest.TestCase):
                 self.assertIsNone(mode.res_settings[OUTER_RES])
                 self.assertIsNone(mode.res_settings[INNER_RES])
 
+    def test_change_saving(self):
+
+        for _ in range(rest_runs):
+            for mode in interface_modes:
+                for command in save_args:
+
+                    # GOOD INPUTS
+
+                    # Set the save value to true
+                    self.assertTrue(mode.change_saving(command,"y"))
+                    self.assertTrue(mode.save_settings[command])
+
+                    # Set the save value to false
+                    self.assertTrue(mode.change_saving(command,"n"))
+                    self.assertFalse(mode.save_settings[command])
+
     def test_validate_time(self):
+        pass
+
+    def test_change_saving(self):
+        pass
+
+    def test_change_kappa(self):
+        pass
+
+    def test_change_drivealpha(self):
+        pass
+
+    def test_change_constant(self):
+        pass
+
+    def test_change_parameters(self):
+        pass
+
+    def test_change_driving_functions(self):
+        pass
+
+    def test_create_driving_functions(self):
+        pass
+
+    def test_validate_resolution(self):
+        pass
+
+    def test_validate_outer_resolution(self):
+        pass
+
+    def test_validate_saving(self):
+        pass
+
+    def test_validate_compilation(self):
+        pass
+
+    def test_validate_kappa(self):
+        pass
+
+    def test_validate_drive_alpha(self):
+        pass
+
+    def test_validate_constant(self):
         pass
 
     def test_exactinverse_mode(self):

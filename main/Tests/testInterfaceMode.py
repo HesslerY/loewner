@@ -252,6 +252,27 @@ class InterfaceModeTests(unittest.TestCase):
                 self.assertEqual(mode.res_settings[OUTER_RES],outer_res)
                 self.assertEqual(mode.res_settings[INNER_RES],inner_res)
 
+                # BAD INPUTS
+
+                # Set the resolution values to None
+                mode.res_settings[OUTER_RES] = None
+                mode.res_settings[INNER_RES] = None
+
+                # Use random ints as the res arguments
+                outer_res = randint(min_rand,max_rand)
+                inner_res = randint(min_rand,max_rand)
+                # Check that the methods rejects the input when an incomplete command is given
+                self.assertFalse(mode.change_both_resolutions(MULTIPLE_RES[:-2],str(outer_res),str(inner_res)))
+                # Check that the assignments didn't work
+                self.assertIsNone(mode.res_settings[OUTER_RES])
+                self.assertIsNone(mode.res_settings[INNER_RES])
+
+                # Check that the methods rejects the input when a float argument is given
+                self.assertFalse(mode.change_both_resolutions(MULTIPLE_RES,str(uniform(max_rand,min_rand)),str(uniform(max_rand,min_rand))))
+                # Check that the assignments didn't work
+                self.assertIsNone(mode.res_settings[OUTER_RES])
+                self.assertIsNone(mode.res_settings[INNER_RES])
+
     def test_validate_time(self):
         pass
 

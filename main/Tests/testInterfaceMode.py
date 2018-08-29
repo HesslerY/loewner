@@ -197,41 +197,60 @@ class InterfaceModeTests(unittest.TestCase):
     def test_change_single_resolution(self):
 
         for _ in range(test_runs):
+            for command in res_args:
+                for mode in interface_modes:
 
-            for mode in innerres_modes:
+                    # GOOD INPUTS
+
+                    # Use random ints as the res arguments
+                    rand_res = randint(min_rand,max_rand)
+                    # Check that the methods accept the input
+                    self.assertTrue(mode.change_single_resolution(command,str(rand_res)))
+                    # Check that the assignments worked
+                    self.assertEqual(mode.res_settings[command],rand_res)
+
+                    # BAD INPUTS
+
+                    # Set the resolution member variables to None
+                    mode.res_settings[command] = None
+
+                    # Use random floats as the res arguments
+                    rand_res = uniform(min_rand,max_rand)
+                    # Check that the methods reject the input
+                    self.assertFalse(mode.change_single_resolution(command,str(rand_res)),rand_res)
+                    # Check that the assignments didn't work
+                    self.assertIsNone(mode.res_settings[command])
+
+                    # Use a random string as the res argument
+                    rand_res = self.random_string()
+                    # Check that the methods reject the input
+                    self.assertFalse(mode.change_single_resolution(command,rand_res),rand_res)
+                    # Check that the assignments didn't work
+                    self.assertIsNone(mode.res_settings[command])
+
+                    # Use a random string as the res argument
+                    rand_string = self.random_string()
+                    rand_res = uniform(min_rand,max_rand)
+                    # Check that the methods reject the input
+                    self.assertFalse(mode.change_single_resolution(rand_string,rand_res),rand_res)
+                    # Check that the assignments didn't work
+                    self.assertIsNone(mode.res_settings[command])
+
+    def test_change_both_resolutions(self):
+
+        for _ in range(test_runs):
+            for mode in interface_modes:
 
                 # GOOD INPUTS
 
                 # Use random ints as the res arguments
-                rand_outer = randint(min_rand,max_rand)
-                rand_inner = randint(min_rand,max_rand)
+                outer_res = randint(min_rand,max_rand)
+                inner_res = randint(min_rand,max_rand)
                 # Check that the methods accept the input
-                self.assertTrue(mode.change_single_resolution(OUTER_RES,str(rand_outer)))
-                self.assertTrue(mode.change_single_resolution(INNER_RES,str(rand_inner)))
+                self.assertTrue(mode.change_both_resolutions(MULTIPLE_RES,str(outer_res),str(inner_res)))
                 # Check that the assignments worked
-                self.assertEqual(mode.res_settings[OUTER_RES],rand_outer)
-                self.assertEqual(mode.res_settings[INNER_RES],rand_inner)
-
-                # BAD INPUTS
-
-                # Set the resolution member variables to None
-                mode.res_settings[OUTER_RES] = None
-                mode.res_settings[INNER_RES] = None
-                # Use random floats as the res arguments
-                rand_outer = uniform(min_rand,max_rand)
-                rand_inner = uniform(min_rand,max_rand)
-                # Check that the methods reject the input
-                self.assertFalse(mode.change_single_resolution(OUTER_RES,str(rand_outer)),rand_outer)
-                self.assertFalse(mode.change_single_resolution(INNER_RES,str(rand_inner)),rand_inner)
-                # Check that the assignments didn't work
-                self.assertIsNone(mode.res_settings[OUTER_RES])
-                self.assertIsNone(mode.res_settings[INNER_RES])
-
-            for mode in no_innerres_modes:
-                pass
-
-                # test innerres
-                # ensure outerres is rejected
+                self.assertEqual(mode.res_settings[OUTER_RES],outer_res)
+                self.assertEqual(mode.res_settings[INNER_RES],inner_res)
 
     def test_validate_time(self):
         pass

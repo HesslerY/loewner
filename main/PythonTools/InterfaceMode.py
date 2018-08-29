@@ -80,7 +80,7 @@ class InterfaceMode:
     def change_both_times(self,param,value1,value2):
 
         # Check if the times values are being changed
-        if param not in MULTIPLE_TIMES:
+        if param != MULTIPLE_TIMES:
             return False
 
         try:

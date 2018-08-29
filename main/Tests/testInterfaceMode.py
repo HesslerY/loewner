@@ -301,6 +301,27 @@ class InterfaceModeTests(unittest.TestCase):
                     self.assertTrue(mode.change_saving(command,"n"))
                     self.assertFalse(mode.save_settings[command])
 
+                    # BAD INPUTS
+
+                    # Set the save setting to None
+                    mode.save_settings[command] = None
+
+                    # Set second argument to a random string
+                    self.assertFalse(mode.change_saving(command,self.random_string()))
+                    self.assertIsNone(mode.save_settings[command])
+
+                    # Set second argument to a random int
+                    self.assertFalse(mode.change_saving(command,str(randint(min_rand,max_rand))))
+                    self.assertIsNone(mode.save_settings[command])
+
+                    # Set second argument to a random float
+                    self.assertFalse(mode.change_saving(command,str(uniform(min_rand,max_rand))))
+                    self.assertIsNone(mode.save_settings[command])
+
+                    # Use an incomplete first argument
+                    self.assertFalse(mode.change_saving(command[:-2],"y"))
+                    self.assertIsNone(mode.save_settings[command])
+
     def test_validate_time(self):
         pass
 

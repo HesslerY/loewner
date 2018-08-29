@@ -322,8 +322,29 @@ class InterfaceModeTests(unittest.TestCase):
                     self.assertFalse(mode.change_saving(command[:-2],"y"))
                     self.assertIsNone(mode.save_settings[command])
 
+                    # Use an incorrect first argument
+                    self.assertFalse(mode.change_saving(KAPPA,"y"))
+                    self.assertIsNone(mode.save_settings[command])
+
     def test_validate_time(self):
-        pass
+
+        interface_modes[7].equation_type[LINR_IM] = True
+
+        for _ in range(test_runs):
+            for mode in interface_modes:
+
+                # GOOD SETTINGS
+
+                mode.time_settings[START_TIME] = uniform(min_rand,max_rand)
+                mode.time_settings[FINAL_TIME] = max_rand + 2
+
+                self.assertTrue(mode.validate_time())
+
+                # BAD SETTINGS
+
+                # Set the time to None
+                mode.time_settings[START_TIME] = None
+                self.assertFalse(mode.validate_time(),type(mode))
 
     def test_change_saving(self):
         pass

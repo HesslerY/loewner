@@ -267,8 +267,14 @@ class InterfaceModeTests(unittest.TestCase):
                 self.assertIsNone(mode.res_settings[OUTER_RES])
                 self.assertIsNone(mode.res_settings[INNER_RES])
 
-                # Check that the methods rejects the input when a float argument is given
+                # Check that the methods rejects the input when float arguments are given
                 self.assertFalse(mode.change_both_resolutions(MULTIPLE_RES,str(uniform(max_rand,min_rand)),str(uniform(max_rand,min_rand))))
+                # Check that the assignments didn't work
+                self.assertIsNone(mode.res_settings[OUTER_RES])
+                self.assertIsNone(mode.res_settings[INNER_RES])
+
+                # Check that the methods rejects the input when float arguments are given
+                self.assertFalse(mode.change_both_resolutions(MULTIPLE_RES,self.random_string(),self.random_string()))
                 # Check that the assignments didn't work
                 self.assertIsNone(mode.res_settings[OUTER_RES])
                 self.assertIsNone(mode.res_settings[INNER_RES])

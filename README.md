@@ -339,6 +339,10 @@ For the explicit linear exact solution, the output filename will take the form:
   
 ``[INDEX]-PHI-[START PHI]-[FINAL PHI]-[OUTER RESOLUTION].EXT``
 
+## Testing
+
+Call ``python -m unittest discover Tests`` from main directory.
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
